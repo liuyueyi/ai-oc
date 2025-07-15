@@ -1,5 +1,7 @@
 package com.git.hui.offer.web.controller.admin;
 
+import com.git.hui.offer.components.permission.Permission;
+import com.git.hui.offer.components.permission.UserRole;
 import com.git.hui.offer.oc.dao.entity.GatherDraftOcEntity;
 import com.git.hui.offer.oc.dao.entity.OcEntity;
 import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
@@ -21,6 +23,7 @@ import java.util.List;
  * @date 2025/7/14
  */
 @Slf4j
+@Permission(role = UserRole.ADMIN)
 @RestController
 @RequestMapping(path = "/admin/draft")
 public class DraftController {

@@ -73,7 +73,7 @@ public interface OcRepository extends JpaRepository<OcEntity, Long>, JpaSpecific
                 // 分页查询
                 , PageRequest.of(req.getPage() - 1, req.getSize())
                         // 根据时间倒排，时间相同的根据id进行倒排
-                        .withSort(Sort.by(Sort.Order.desc("update_time"), Sort.Order.desc("id")))
+                        .withSort(Sort.by(Sort.Order.desc("lastUpdatedTime"), Sort.Order.desc("id")))
         );
         return PageListVo.of(ans.getContent(), ans.getTotalElements(), req.getPage(), req.getSize());
     }

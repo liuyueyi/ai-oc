@@ -1,5 +1,6 @@
 package com.git.hui.offer.web.model;
 
+import com.git.hui.offer.components.bizexception.StatusEnum;
 import lombok.Data;
 
 /**
@@ -31,7 +32,19 @@ public class ResVo<T> {
         return new ResVo<>(t);
     }
 
+    public static <T> ResVo<T> fail(StatusEnum statusEnum) {
+        return new ResVo<>(statusEnum.getCode(), statusEnum.getMsg());
+    }
+
     public static <T> ResVo<T> fail(int code, String msg) {
         return new ResVo<>(code, msg);
     }
+
+    public static <T> ResVo<T> fail(int code, String msg, T t) {
+        ResVo<T> res = new ResVo<>(code, msg);
+        res.data = t;
+        return res;
+    }
+
+
 }

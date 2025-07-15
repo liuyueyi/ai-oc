@@ -3,9 +3,9 @@ package com.git.hui.offer.gather.service;
 import cn.hutool.core.io.resource.ResourceUtil;
 import com.git.hui.offer.gather.convert.Draft2EntityConvert;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
-import com.git.hui.offer.web.model.req.GatherReq;
 import com.git.hui.offer.oc.service.OcService;
 import com.git.hui.offer.util.json.JsonUtil;
+import com.git.hui.offer.web.model.req.GatherReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +37,7 @@ public class OfferGatherService {
         Function<GatherReq, List<GatherOcDraftBo>> func = switch (req.type()) {
             case TEXT -> gatherByText();
             case HTML_TEXT -> gatherByHtmlText(req.content());
+            case HTTP_URL -> gatherByHttpUrl(req.content());
             default -> null;
         };
         if (func == null) {
@@ -76,10 +77,16 @@ public class OfferGatherService {
     }
 
     private Function<GatherReq, List<GatherOcDraftBo>> gatherByHtmlText(String text) {
-        String testText = ResourceUtil.readUtf8Str("data/oc-html.text");
+        String testText = ResourceUtil.readUtf8Str("data/oc-html.txt");
         // fixme 需要考虑上下文长度溢出导致问题
         return (s) -> {
-            return gatherAiAgent.gatherByText(testText);
+            return gatherAiAgent.gatherByAutoSplit(testText);
+        };
+    }
+
+    private Function<GatherReq, List<GatherOcDraftBo>> gatherByHttpUrl(String filePath) {
+        return (s) -> {
+            return gatherAiAgent.gatherByAutoSplit("https://www.givemeoc.com/");
         };
     }
 }

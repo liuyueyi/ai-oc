@@ -1,0 +1,798 @@
+<table class="int-table">
+            <thead>
+                <tr>
+                    <th class="int-col-company">公司名称</th>
+                    <th class="int-col-type">公司类型</th>
+                    <th class="int-col-location">工作地点</th>
+                    <th class="int-col-recruitment-type">招聘类型</th>
+                    <th class="int-col-target">招聘对象</th>
+                    <th class="int-col-position">岗位(大都不限专业)</th>
+                    <th class="int-col-status">投递进度</th>
+                    <th class="int-col-update-time">更新时间</th>
+                    <th class="int-col-deadline">投递截止</th>
+                    <th class="int-col-links">相关链接</th>
+                    <th class="int-col-notice">招聘公告</th>
+                    <th class="int-col-referral">内推码</th>
+                    <th class="int-col-notes">备注</th>
+                </tr>
+            </thead>
+            <tbody id="int-companies-tbody">
+                <script>document.cookie = 'shuaidi_OC=3; expires=Sat, 13 Sep 2025 01:41:48; path=/';</script>                                                                    <tr data-id="6581" class="">
+                            <td class="int-col-company">Babycare</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">全国</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">校园大使</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-15</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://babycare.jobs.feishu.cn/campus/position/7523124897410025747/detail" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/4Xc585IIkCKSd5MyTXhFhg" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6580" class="">
+                            <td class="int-col-company">华鑫证券研究所</td>
+                            <td class="int-col-type"><span class="int-badge int-type-央国企">央国企</span></td>
+                            <td class="int-col-location">北京市,上海市,深圳市</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">研究类,销售类,产品类,后合支持</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-15</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/kiTOJO44S-3FcVLKcJDcGA" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/kiTOJO44S-3FcVLKcJDcGA" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6579">
+                            <td class="int-col-company">高盛</td>
+                            <td class="int-col-type"><span class="int-badge int-type-外企">外企</span></td>
+                            <td class="int-col-location">北京市,上海市,深圳市,香港特别行政区,国外</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">暑期分析员(SummerAnalyst)，暑期经理(SummerAssociate)</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-15</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://www.goldmansachs.com/careers/students/programs-and-internships?1=gscomprogram-region-careersasia-pacific" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/GA3XX-YzDCtrfiNk7YYSKA" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6578">
+                            <td class="int-col-company">结行科技</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">全国</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">校园大使</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-15</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://www.wjx.cn/vm/PUevtMP.aspx" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/TKr5TpBGYMLFON_BwAY1mg" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6577" class="">
+                            <td class="int-col-company">中航工程集成设备有限公司</td>
+                            <td class="int-col-type"><span class="int-badge int-type-央国企">央国企</span></td>
+                            <td class="int-col-location">北京</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">工艺设计师、机械设计师、工艺总体工程师</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-15</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/ae7nUhQ_ZjRgcC_V2DS75A" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/ae7nUhQ_ZjRgcC_V2DS75A" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                        要求硕士                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6576" class="">
+                            <td class="int-col-company">小米-顶尖实习生计划</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">北京 上海</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">顶尖实习生计划:参与AI、芯片、具身智能自动驾驶等定义未来的项目;</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-15</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://xiaomi.jobs.f.mioffice.cn/topintern?sessionid=111999826" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/fH92Zz8umm0KSfphJrSmhA" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6575">
+                            <td class="int-col-company">科幻世界</td>
+                            <td class="int-col-type"><span class="int-badge int-type-央国企">央国企</span></td>
+                            <td class="int-col-location">成都市</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-14</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/E0_Btz6SATgg6-fV0Ku6Gw" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/E0_Btz6SATgg6-fV0Ku6Gw" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6574">
+                            <td class="int-col-company">火羽科技</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">广州市</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">游戏矩阵运营实习生,游戏社区运营实习生,场景原画实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-14</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/a2ge3GPu8HxIm9x4vr7P4Q" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/a2ge3GPu8HxIm9x4vr7P4Q" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6573">
+                            <td class="int-col-company">迅雷</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">全国</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">校园猎手</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-14</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/vMxuTOZ-evTzlLIkp5OTSg" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/vMxuTOZ-evTzlLIkp5OTSg" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6572">
+                            <td class="int-col-company">Momenta 2026校园品牌大使</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">全国</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">校园品牌大使</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-14</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/XW55bpxaLHKzeMPENcJ56A" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/XW55bpxaLHKzeMPENcJ56A" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6571">
+                            <td class="int-col-company">亚玛芬</td>
+                            <td class="int-col-type"><span class="int-badge int-type-外企">外企</span></td>
+                            <td class="int-col-location">上海</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">客户关系管理实习生,需求计划实习生,销售运营实习生,零售市场营销实习生,市场营销实习生财务计划部实</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-14</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/kDUjM6LHbUbGms36TwjS2A" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/kDUjM6LHbUbGms36TwjS2A" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6570">
+                            <td class="int-col-company">益佳半导体</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">北京</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">电子元器件相关岗位</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-14</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/sSW6g6sGFW8WbatXAqR1QQ" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/sSW6g6sGFW8WbatXAqR1QQ" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6569">
+                            <td class="int-col-company">元达律所</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">上海北京</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-13</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/vLoKKIx85r3OqgHmMXY9Sg" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/vLoKKIx85r3OqgHmMXY9Sg" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6568">
+                            <td class="int-col-company">北京金诚同达</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">上海</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-13</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/o1zlPDxbQEoWwR1g1nDZXA" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/o1zlPDxbQEoWwR1g1nDZXA" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6567">
+                            <td class="int-col-company">中联基金</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">北京</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">DCM日常实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-13</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/rgoYHkN3H2J5nXlbysrQrQ" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/rgoYHkN3H2J5nXlbysrQrQ" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6566">
+                            <td class="int-col-company">苏新基金</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">上海</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">助理研究员(固收)、助理研究员(权益)、销售经理助理，</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-13</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://suzhoubank.zhiye.com/intern" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/vu15aG02kushBK5FLvkqRw" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                        要求硕士                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6565" class="">
+                            <td class="int-col-company">美国美迈斯律师事务所美国美迈斯律师事务所</td>
+                            <td class="int-col-type"><span class="int-badge int-type-外企">外企</span></td>
+                            <td class="int-col-location">北京</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">法律顾问实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/yfK5ZruahbWDaLI4O_c_9g" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/yfK5ZruahbWDaLI4O_c_9g" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6564">
+                            <td class="int-col-company">上海市测绘产品质量监督检验站</td>
+                            <td class="int-col-type"><span class="int-badge int-type-事业单位">事业单位</span></td>
+                            <td class="int-col-location">上海</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/FLyZRCUwxAybWmhYoOI0qA" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/FLyZRCUwxAybWmhYoOI0qA" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6563">
+                            <td class="int-col-company">凡岛2025校园大使</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">全国</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">校园大使</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://job.fandow.com/home" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/F9gSB1TaqApvQASubGCY4g" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6562">
+                            <td class="int-col-company">上海君实生物医药</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">佛山市</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/CIt35yVzr_UpwGA22dwkOA" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/CIt35yVzr_UpwGA22dwkOA" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6561">
+                            <td class="int-col-company">深圳市金证科技</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">深圳市</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">C/C++开发实习生,测试实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://szkingdom1.zhiye.com/campus/jobs" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://career.cuhk.edu.cn/job/view/id/465653" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6560">
+                            <td class="int-col-company">中建青岛投资建设</td>
+                            <td class="int-col-type"><span class="int-badge int-type-央国企">央国企</span></td>
+                            <td class="int-col-location">青岛市</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">综合党建类实习生,市场投资类实习生,商务法务类实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://xsc.qut.edu.cn/jy/companyIndex.html?id=13094" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://xsc.qut.edu.cn/jy/companyIndex.html?id=13094" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6559" class="">
+                            <td class="int-col-company">浦银理财</td>
+                            <td class="int-col-type"><span class="int-badge int-type-央国企">央国企</span></td>
+                            <td class="int-col-location">上海</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">投资研究方向、风控合规方向、金融科技方向、产品管理方向、运营管理方向、产品销售力向、综合管理方向;</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/iFUeuCXYg8uFGL8c2GdAtw" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/iFUeuCXYg8uFGL8c2GdAtw" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                        要求硕士                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6558" class="">
+                            <td class="int-col-company">迪卡依</td>
+                            <td class="int-col-type"><span class="int-badge int-type-外企">外企</span></td>
+                            <td class="int-col-location">上海深圳苏州</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">天猫类目运营实习生、电商HR实习生、市场部市场营销实习生、人力资源实习生、采购数据分析咨询实习生、采购供应链实习生、自行车部门工业质量实习生、羽毛球馆实习生、测试工程师实习生、UXR用户研发实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/MHUj2DpBo7eAWh_GZKELfw" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/MHUj2DpBo7eAWh_GZKELfw" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6557">
+                            <td class="int-col-company">搜狐畅游</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">北京</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">引擎开发实习生</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-12</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://app.mokahr.com/campus-recruitment/cyou-inc/42233?sessionid=-107712091#/job/a1e80023-91cd-45b1-bacc-fcec19c884b1?from=qrcode" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/PCthq1WxmoDBHWULZO1c8w" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6556">
+                            <td class="int-col-company">POP趋势</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">上海</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">助理设计师,产品助理,前瞻洞察研究助理,翻译,款式助理,前瞻趋势研究助理,新媒体运营/视频剪辑,设计</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-11</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/tkhlJ927trTwgYosWNYMXA" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/tkhlJ927trTwgYosWNYMXA" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6555">
+                            <td class="int-col-company">佰分比留学</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">北京</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">实习助教,学业助教</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-11</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/UYy61gjrPyZ22xGguQ1Ddg" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/UYy61gjrPyZ22xGguQ1Ddg" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6554">
+                            <td class="int-col-company">青岛远方私募基金</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">青岛市</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">运营实习生,事业部助理</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-11</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/nnea8NclCthvlu2sTtVNNQ" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/nnea8NclCthvlu2sTtVNNQ" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6553">
+                            <td class="int-col-company">兴证全球基金</td>
+                            <td class="int-col-type"><span class="int-badge int-type-央国企">央国企</span></td>
+                            <td class="int-col-location">全国</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">股票交易岗,产品支持岗,法务助理</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-11</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://career.cuhk.edu.cn/job/view/id/465652" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://career.cuhk.edu.cn/job/view/id/465652" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6552">
+                            <td class="int-col-company">金证股份</td>
+                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
+                            <td class="int-col-location">深圳市,长沙市</td>
+                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
+                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="int-col-position">
+                                <div class="int-positions">
+                                    <span class="int-position-tag">销售经理,售前工程师,测试工程师,C++/Web/Java工程师</span>                                </div>
+                            </td>
+                            <td class="int-col-status">
+                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="int-col-update-time">2025-07-11</td>
+                            <td class="int-col-deadline">招满为止</td>
+                            <td class="int-col-links">
+                                                                    <a href="https://neitui.italent.cn/szkingdom/sharejobs?shareId=75ba4aa7-8188-477f-a3c1-e413d631786c&amp;language=zh_CN&amp;qr=1" target="_blank" class="int-link">投递</a>                                                            </td>
+                            <td class="int-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/Y60yHrGFnmeF-qh6z_LHXg" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
+                            <td class="int-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="int-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                </tbody>
+        </table>

@@ -1,9 +1,10 @@
 package com.git.hui.offer.web.controller.admin;
 
+import com.git.hui.offer.components.permission.Permission;
+import com.git.hui.offer.components.permission.UserRole;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
-import com.git.hui.offer.web.model.req.GatherReq;
 import com.git.hui.offer.gather.service.OfferGatherService;
-import com.git.hui.offer.util.json.JsonUtil;
+import com.git.hui.offer.web.model.req.GatherReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author YiHui
  * @date 2025/7/14
  */
+@Permission(role = UserRole.ADMIN)
 @RestController
 @RequestMapping(path = "/admin/gather")
 public class OfferGatherController {
