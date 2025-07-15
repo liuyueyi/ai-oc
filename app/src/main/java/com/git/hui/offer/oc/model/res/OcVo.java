@@ -1,27 +1,29 @@
-package com.git.hui.offer.oc.dao.entity;
+package com.git.hui.offer.oc.model.res;
 
-import jakarta.persistence.Entity;
+import com.git.hui.offer.model.oc.CompanyTypeEnum;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 /**
- * 正式对外提供的招聘信息数据
- *
  * @author YiHui
- * @date 2025/7/14
+ * @date 2025/7/15
  */
 @Data
-@Accessors(chain = true)
-@Entity
-public class GatherOcEntity {
+public class OcVo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /**
+     * 草稿数据
+     */
+    private Long draftId;
+
     /**
      * 公司名称
      */
@@ -33,7 +35,7 @@ public class GatherOcEntity {
     /**
      * 工作地点
      */
-    private String jobLocation;
+    private List<String> jobLocation;
     /**
      * 招聘类型
      */
@@ -90,5 +92,4 @@ public class GatherOcEntity {
      * 更新时间
      */
     private Date updateTime;
-
 }

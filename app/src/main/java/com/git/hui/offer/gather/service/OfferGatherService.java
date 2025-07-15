@@ -4,7 +4,7 @@ import cn.hutool.core.io.resource.ResourceUtil;
 import com.git.hui.offer.gather.convert.Draft2EntityConvert;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
 import com.git.hui.offer.gather.model.GatherReq;
-import com.git.hui.offer.oc.service.GatherService;
+import com.git.hui.offer.oc.service.OcService;
 import com.git.hui.offer.util.json.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +25,10 @@ public class OfferGatherService {
 
     private final GatherAiAgent gatherAiAgent;
 
-    private final GatherService gatherService;
+    private final OcService gatherService;
 
     @Autowired
-    public OfferGatherService(GatherAiAgent gatherAiAgent, GatherService gatherService) {
+    public OfferGatherService(GatherAiAgent gatherAiAgent, OcService gatherService) {
         this.gatherAiAgent = gatherAiAgent;
         this.gatherService = gatherService;
     }

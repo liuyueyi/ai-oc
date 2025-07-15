@@ -1,7 +1,7 @@
 package com.git.hui.offer.gather.convert;
 
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
-import com.git.hui.offer.oc.dao.entity.GatherOcDraftEntity;
+import com.git.hui.offer.oc.dao.entity.GatherDraftOcEntity;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class Draft2EntityConvert {
 
-    public static GatherOcDraftEntity convert(GatherOcDraftBo bo) {
-        return new GatherOcDraftEntity()
+    public static GatherDraftOcEntity convert(GatherOcDraftBo bo) {
+        return new GatherDraftOcEntity()
                 .setCompanyName(bo.companyName())
                 .setCompanyType(bo.companyType())
                 .setJobLocation(bo.jobLocation())
@@ -33,7 +33,7 @@ public class Draft2EntityConvert {
                 ;
     }
 
-    public static List<GatherOcDraftEntity> convert(List<GatherOcDraftBo> bos) {
+    public static List<GatherDraftOcEntity> convert(List<GatherOcDraftBo> bos) {
         if (CollectionUtils.isEmpty(bos)) {
             return Collections.emptyList();
         }

@@ -1,26 +1,13 @@
-package com.git.hui.offer.oc.dao.entity;
+package com.git.hui.offer.oc.model.req;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
-import lombok.experimental.Accessors;
-
-import java.util.Date;
 
 /**
- * ai获取的草稿数据，通常需要进一步进行处理
- *
  * @author YiHui
- * @date 2025/7/14
+ * @date 2025/7/15
  */
 @Data
-@Accessors(chain = true)
-@Entity
-public class GatherOcDraftEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class OcSearchReq {
     private Long id;
     /**
      * 公司名称
@@ -87,7 +74,4 @@ public class GatherOcDraftEntity {
      * 1 表示这条数据待处理
      */
     private Integer toProcess;
-    private Date createTime;
-    private Date updateTime;
-
 }
