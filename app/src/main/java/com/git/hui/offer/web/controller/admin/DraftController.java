@@ -1,8 +1,8 @@
-package com.git.hui.offer.oc.controller;
+package com.git.hui.offer.web.controller.admin;
 
 import com.git.hui.offer.oc.dao.entity.GatherDraftOcEntity;
 import com.git.hui.offer.oc.dao.entity.OcEntity;
-import com.git.hui.offer.oc.model.req.DraftOcUpdateReq;
+import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
 import com.git.hui.offer.oc.service.OcService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
@@ -33,7 +33,7 @@ public class DraftController {
 
     @GetMapping(path = "list")
     public List<GatherDraftOcEntity> list() {
-        return ocService.getDraftList();
+        return ocService.searchDraftList();
     }
 
     /**

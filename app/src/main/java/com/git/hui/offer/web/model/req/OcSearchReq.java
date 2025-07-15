@@ -1,4 +1,4 @@
-package com.git.hui.offer.oc.model.req;
+package com.git.hui.offer.web.model.req;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2025/7/15
  */
 @Data
-public class OcSearchReq {
+public class OcSearchReq extends PageReq {
     private Long id;
     /**
      * 公司名称
@@ -38,30 +38,11 @@ public class OcSearchReq {
      */
     private String deliveryProgress;
     /**
-     * 岗位更新时间
+     * 岗位更新时间，时间戳
      */
-    private String lastUpdatedTime;
-    /**
-     * 投递截止
-     */
-    private String deadline;
-    /**
-     * 相关链接
-     */
-    private String relatedLink;
-    /**
-     * 招聘公告
-     */
-    private String jobAnnouncement;
-    /**
-     * 内推码
-     */
-    private String internalReferralCode;
-    /**
-     * 备注
-     */
-    private String remarks;
+    private Long lastUpdatedTimeAfter;
 
+    private Long lastUpdatedTimeBefore;
     /**
      * 状态:
      * -1 删除
@@ -69,9 +50,4 @@ public class OcSearchReq {
      * 1 已发布
      */
     private Integer state;
-    /**
-     * 0 表示这条记录已处理
-     * 1 表示这条数据待处理
-     */
-    private Integer toProcess;
 }

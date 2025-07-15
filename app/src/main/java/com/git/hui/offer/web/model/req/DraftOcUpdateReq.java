@@ -1,92 +1,65 @@
-package com.git.hui.offer.oc.dao.entity;
+package com.git.hui.offer.web.model.req;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
-import lombok.experimental.Accessors;
-
-import java.util.Date;
 
 /**
- * ai获取的草稿数据，通常需要进一步进行处理
- *
  * @author YiHui
- * @date 2025/7/14
+ * @date 2025/7/15
  */
 @Data
-@Accessors(chain = true)
-@Entity(name = "gather_draft_oc")
-public class GatherDraftOcEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DraftOcUpdateReq {
     private Long id;
     /**
      * 公司名称
      */
-    @Column(name = "company_name")
     private String companyName;
     /**
      * 公司类型
      */
-    @Column(name = "company_type")
     private String companyType;
     /**
      * 工作地点
      */
-    @Column(name = "job_location")
     private String jobLocation;
     /**
      * 招聘类型
      */
-    @Column(name = "recruitment_type")
     private String recruitmentType;
     /**
      * 招聘对象
      */
-    @Column(name = "recruitment_target")
     private String recruitmentTarget;
     /**
      * 岗位
      */
-    @Column(name = "position")
     private String position;
     /**
      * 投递进度
      */
-    @Column(name = "delivery_progress")
     private String deliveryProgress;
     /**
      * 岗位更新时间
      */
-    @Column(name = "last_updated_time")
     private String lastUpdatedTime;
     /**
      * 投递截止
      */
-    @Column(name = "deadline")
     private String deadline;
     /**
      * 相关链接
      */
-    @Column(name = "related_link")
     private String relatedLink;
     /**
      * 招聘公告
      */
-    @Column(name = "job_announcement")
     private String jobAnnouncement;
     /**
      * 内推码
      */
-    @Column(name = "internal_referral_code")
     private String internalReferralCode;
     /**
      * 备注
      */
-    @Column(name = "remarks")
     private String remarks;
 
     /**
@@ -95,17 +68,10 @@ public class GatherDraftOcEntity {
      * 0 草稿
      * 1 已发布
      */
-    @Column(name = "state")
     private Integer state;
     /**
      * 0 表示这条记录已处理
      * 1 表示这条数据待处理
      */
-    @Column(name = "to_process")
     private Integer toProcess;
-    @Column(name = "create_time")
-    private Date createTime;
-    @Column(name = "update_time")
-    private Date updateTime;
-
 }

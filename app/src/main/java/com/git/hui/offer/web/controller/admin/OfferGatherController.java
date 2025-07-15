@@ -1,6 +1,7 @@
-package com.git.hui.offer.gather.controller;
+package com.git.hui.offer.web.controller.admin;
 
-import com.git.hui.offer.gather.model.GatherReq;
+import com.git.hui.offer.gather.model.GatherOcDraftBo;
+import com.git.hui.offer.web.model.req.GatherReq;
 import com.git.hui.offer.gather.service.OfferGatherService;
 import com.git.hui.offer.util.json.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ public class OfferGatherController {
     }
 
     @RequestMapping(path = "submit")
-    public String submit(@RequestBody(required = false) GatherReq req) {
+    public List<GatherOcDraftBo> submit(@RequestBody(required = false) GatherReq req) {
         List list = offerGatherService.gatherInfo(req);
-        return JsonUtil.toStr(list);
+        return list;
     }
 }

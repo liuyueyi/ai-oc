@@ -1,13 +1,12 @@
-package com.git.hui.offer.oc.controller;
+package com.git.hui.offer.web.controller.front;
 
 import com.git.hui.offer.oc.dao.entity.OcEntity;
 import com.git.hui.offer.oc.service.OcService;
+import com.git.hui.offer.web.model.PageListVo;
+import com.git.hui.offer.web.model.req.OcSearchReq;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author YiHui
@@ -23,8 +22,8 @@ public class OcController {
         this.ocService = ocService;
     }
 
-    @GetMapping(path = "list")
-    public List<OcEntity> list() {
-        return ocService.getOcList();
+    @RequestMapping(path = "list")
+    public PageListVo<OcEntity> list(OcSearchReq req) {
+        return ocService.searchOcList(req);
     }
 }

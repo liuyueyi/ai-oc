@@ -1,6 +1,5 @@
-package com.git.hui.offer.oc.model.res;
+package com.git.hui.offer.web.model.res;
 
-import com.git.hui.offer.model.oc.CompanyTypeEnum;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

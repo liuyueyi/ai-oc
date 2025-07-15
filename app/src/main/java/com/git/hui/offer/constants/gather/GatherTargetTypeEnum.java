@@ -1,4 +1,4 @@
-package com.git.hui.offer.model.gather;
+package com.git.hui.offer.constants.gather;
 
 import com.git.hui.offer.util.json.IntBaseEnum;
 import lombok.Getter;

@@ -3,7 +3,7 @@ package com.git.hui.offer.gather.service;
 import cn.hutool.core.io.resource.ResourceUtil;
 import com.git.hui.offer.gather.convert.Draft2EntityConvert;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
-import com.git.hui.offer.gather.model.GatherReq;
+import com.git.hui.offer.web.model.req.GatherReq;
 import com.git.hui.offer.oc.service.OcService;
 import com.git.hui.offer.util.json.JsonUtil;
 import org.slf4j.Logger;

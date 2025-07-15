@@ -1,6 +1,6 @@
-package com.git.hui.offer.gather.model;
+package com.git.hui.offer.web.model.req;
 
-import com.git.hui.offer.model.gather.GatherTargetTypeEnum;
+import com.git.hui.offer.constants.gather.GatherTargetTypeEnum;
 
 /**
  * 请求实体

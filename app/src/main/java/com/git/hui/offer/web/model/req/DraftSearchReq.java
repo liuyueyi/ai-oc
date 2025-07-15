@@ -1,13 +1,18 @@
-package com.git.hui.offer.oc.model.req;
+package com.git.hui.offer.web.model.req;
 
 import lombok.Data;
 
 /**
+ * 草稿列表查询
+ *
  * @author YiHui
  * @date 2025/7/15
  */
 @Data
-public class DraftOcUpdateReq {
+public class DraftSearchReq extends PageReq {
+    /**
+     * 主键
+     */
     private Long id;
     /**
      * 公司名称
@@ -34,34 +39,9 @@ public class DraftOcUpdateReq {
      */
     private String position;
     /**
-     * 投递进度
-     */
-    private String deliveryProgress;
-    /**
      * 岗位更新时间
      */
     private String lastUpdatedTime;
-    /**
-     * 投递截止
-     */
-    private String deadline;
-    /**
-     * 相关链接
-     */
-    private String relatedLink;
-    /**
-     * 招聘公告
-     */
-    private String jobAnnouncement;
-    /**
-     * 内推码
-     */
-    private String internalReferralCode;
-    /**
-     * 备注
-     */
-    private String remarks;
-
     /**
      * 状态:
      * -1 删除

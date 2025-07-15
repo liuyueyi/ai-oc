@@ -2,6 +2,7 @@ package com.git.hui.offer.oc.convert;
 
 import com.git.hui.offer.oc.dao.entity.GatherDraftOcEntity;
 import com.git.hui.offer.oc.dao.entity.OcEntity;
+import com.git.hui.offer.util.DateUtil;
 
 import java.util.Date;
 
@@ -23,7 +24,8 @@ public class OcConvert {
                 .setRecruitmentTarget(draft.getRecruitmentTarget())
                 .setPosition(draft.getPosition())
                 .setDeliveryProgress(draft.getDeliveryProgress())
-                .setLastUpdatedTime(draft.getLastUpdatedTime())
+                // 日期转时间
+                .setLastUpdatedTime(DateUtil.toDate(draft.getLastUpdatedTime()))
                 .setDeadline(draft.getDeadline())
                 .setRelatedLink(draft.getRelatedLink())
                 .setJobAnnouncement(draft.getJobAnnouncement())

@@ -1,14 +1,16 @@
 package com.git.hui.offer.oc.service;
 
-import com.git.hui.offer.model.oc.DraftProcessEnum;
-import com.git.hui.offer.model.oc.DraftStateEnum;
-import com.git.hui.offer.model.oc.OcStateEnum;
+import com.git.hui.offer.constants.oc.DraftProcessEnum;
+import com.git.hui.offer.constants.oc.DraftStateEnum;
+import com.git.hui.offer.constants.oc.OcStateEnum;
 import com.git.hui.offer.oc.convert.OcConvert;
 import com.git.hui.offer.oc.dao.entity.GatherDraftOcEntity;
 import com.git.hui.offer.oc.dao.entity.OcEntity;
 import com.git.hui.offer.oc.dao.repository.GatherOcDraftRepository;
 import com.git.hui.offer.oc.dao.repository.OcRepository;
-import com.git.hui.offer.oc.model.req.DraftOcUpdateReq;
+import com.git.hui.offer.web.model.PageListVo;
+import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
+import com.git.hui.offer.web.model.req.OcSearchReq;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,7 @@ public class OcService {
         this.ocRepository = ocRepository;
     }
 
-    public List<GatherDraftOcEntity> getDraftList() {
+    public List<GatherDraftOcEntity> searchDraftList() {
         return draftRepository.findAll();
     }
 
@@ -123,6 +125,7 @@ public class OcService {
         List<OcEntity> updateList = new ArrayList<>();
         draftData.forEach(draft -> {
             OcEntity ocEntity = OcConvert.toOc(draft);
+            ocEntity.setState(OcStateEnum.PUBLISHED.getValue());
             if (ocMap.containsKey(draft.getId())) {
                 // 更新
                 ocEntity.setId(ocMap.get(draft.getId()).getId());
@@ -147,8 +150,11 @@ public class OcService {
 
     // -------------------------------------------- oc 相关服务 ------------------------------------------
 
-    public List<OcEntity> getOcList() {
-        return ocRepository.findAll();
+    public PageListVo<OcEntity> searchOcList(OcSearchReq req) {
+        if (req.getState() == null) {
+            req.setState(OcStateEnum.PUBLISHED.getValue());
+        }
+        req.autoInitPage();
+        return ocRepository.findList(req);
     }
-
 }
