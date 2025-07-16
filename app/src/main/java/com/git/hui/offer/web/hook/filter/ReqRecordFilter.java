@@ -1,8 +1,13 @@
 package com.git.hui.offer.web.hook.filter;
 
 import com.git.hui.offer.components.context.ReqInfoContext;
+import com.git.hui.offer.components.env.SpringUtil;
+import com.git.hui.offer.constants.user.LoginConstants;
+import com.git.hui.offer.user.helper.SessionHelper;
+import com.git.hui.offer.user.service.UserService;
 import com.git.hui.offer.util.CrossUtil;
 import com.git.hui.offer.util.IpUtil;
+import com.git.hui.offer.util.SessionUtil;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -11,6 +16,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +26,8 @@ import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 1. 请求参数日志输出过滤器
@@ -79,10 +87,21 @@ public class ReqRecordFilter implements Filter {
             reqInfo.setReferer(request.getHeader("referer"));
             reqInfo.setClientIp(IpUtil.getClientIp(request));
             reqInfo.setUserAgent(request.getHeader("User-Agent"));
+            reqInfo.setDeviceId(getOrInitDeviceId(request, response));
 
             request = this.wrapperRequest(request, reqInfo);
 
-
+            // 注入用户信息
+            Optional.ofNullable(SessionUtil.findCookieByName(request, LoginConstants.SESSION_KEY))
+                    .ifPresent(cookie -> {
+                        // 从cookie中解析用户信息，放入到全局上下文中
+                        String session = cookie.getValue();
+                        Long userId = SpringUtil.getBean(SessionHelper.class).getUserIdBySession(session);
+                        reqInfo.setUserId(userId);
+                        if (userId != null) {
+                            reqInfo.setUser(SpringUtil.getBean(UserService.class).getUserBo(userId));
+                        }
+                    });
             ReqInfoContext.addReqInfo(reqInfo);
         } catch (Exception e) {
             log.error("init reqInfo error!", e);
@@ -141,5 +160,27 @@ public class ReqRecordFilter implements Filter {
                 || request.getRequestURI().endsWith("svg")
                 || request.getRequestURI().endsWith("min.js.map")
                 || request.getRequestURI().endsWith("min.css.map");
+    }
+
+    /**
+     * 初始化设备id
+     *
+     * @return
+     */
+    private String getOrInitDeviceId(HttpServletRequest request, HttpServletResponse response) {
+        String deviceId = request.getParameter("deviceId");
+        if (StringUtils.isNotBlank(deviceId) && !"null".equalsIgnoreCase(deviceId)) {
+            return deviceId;
+        }
+
+        Cookie device = SessionUtil.findCookieByName(request, LoginConstants.USER_DEVICE_KEY);
+        if (device == null) {
+            deviceId = UUID.randomUUID().toString();
+            if (response != null) {
+                response.addCookie(SessionUtil.newCookie(LoginConstants.USER_DEVICE_KEY, deviceId));
+            }
+            return deviceId;
+        }
+        return device.getValue();
     }
 }

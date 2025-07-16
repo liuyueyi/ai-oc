@@ -12,7 +12,7 @@ public enum UserRole implements IntBaseEnum {
     /**
      * 登录用户
      */
-    LOGIN(1, "普通用户"),
+    NORMAL(1, "普通用户"),
 
     /**
      * 会员用户

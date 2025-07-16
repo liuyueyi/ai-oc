@@ -4,16 +4,18 @@ import com.git.hui.offer.constants.oc.DraftProcessEnum;
 import com.git.hui.offer.constants.oc.DraftStateEnum;
 import com.git.hui.offer.constants.oc.OcStateEnum;
 import com.git.hui.offer.oc.convert.OcConvert;
-import com.git.hui.offer.oc.dao.entity.GatherDraftOcEntity;
-import com.git.hui.offer.oc.dao.entity.OcEntity;
-import com.git.hui.offer.oc.dao.repository.GatherOcDraftRepository;
+import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
+import com.git.hui.offer.oc.dao.entity.OcInfoEntity;
+import com.git.hui.offer.oc.dao.repository.OcDraftRepository;
 import com.git.hui.offer.oc.dao.repository.OcRepository;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
+import com.git.hui.offer.web.model.req.DraftSearchReq;
 import com.git.hui.offer.web.model.req.OcSearchReq;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,17 +29,21 @@ import java.util.stream.Collectors;
  */
 @Service
 public class OcService {
-    private final GatherOcDraftRepository draftRepository;
+    private final OcDraftRepository draftRepository;
     private final OcRepository ocRepository;
 
     @Autowired
-    public OcService(GatherOcDraftRepository repository, OcRepository ocRepository) {
+    public OcService(OcDraftRepository repository, OcRepository ocRepository) {
         this.draftRepository = repository;
         this.ocRepository = ocRepository;
     }
 
-    public List<GatherDraftOcEntity> searchDraftList() {
-        return draftRepository.findAll();
+    public PageListVo<OcDraftEntity> searchDraftList(DraftSearchReq req) {
+        if (req.getState() == null) {
+            req.setNotState(OcStateEnum.DELETED.getValue());
+        }
+        req.autoInitPage();
+        return draftRepository.findList(req);
     }
 
 
@@ -49,11 +55,11 @@ public class OcService {
      *
      * @param dataList 要保存的草稿数据列表，包含多个GatherOcDraftEntity对象
      */
-    public void saveDraftDataList(List<GatherDraftOcEntity> dataList) {
+    public void saveDraftDataList(List<OcDraftEntity> dataList) {
         // 保存数据之前，需要先从数据库中做一个去重
         // 以公司名称 + 工作地点 + 更新时间 + 岗位 作为去重条件
-        for (GatherDraftOcEntity data : dataList) {
-            List<GatherDraftOcEntity> existingRecords = draftRepository.findByUniqueKey(
+        for (OcDraftEntity data : dataList) {
+            List<OcDraftEntity> existingRecords = draftRepository.findByUniqueKey(
                     data.getCompanyName(),
                     data.getJobLocation(),
                     data.getLastUpdatedTime(),
@@ -66,10 +72,10 @@ public class OcService {
                 data.setState(DraftStateEnum.DRAFT.getValue());
                 data.setCreateTime(new Date());
                 data.setUpdateTime(new Date());
-                draftRepository.save(data);
+                draftRepository.saveAndFlush(data);
             } else {
                 // 存在重复数据，更新已有的记录
-                for (GatherDraftOcEntity existing : existingRecords) {
+                for (OcDraftEntity existing : existingRecords) {
                     // 更新数据ID，保持状态，但将处理状态改为未处理
                     data.setId(existing.getId());
                     data.setState(existing.getState());
@@ -77,10 +83,14 @@ public class OcService {
                     data.setCreateTime(existing.getCreateTime());
                     data.setUpdateTime(new Date());
                     // 保存更新后的记录
-                    draftRepository.save(existing);
+                    draftRepository.saveAndFlush(existing);
                 }
             }
         }
+    }
+
+    public boolean deleteDraft(Long draftId) {
+        return draftRepository.updateStateById(draftId, DraftStateEnum.DELETED.getValue()) > 0;
     }
 
     /**
@@ -92,16 +102,17 @@ public class OcService {
      * @return 返回更新操作是否成功的结果
      */
     public boolean updateDraft(DraftOcUpdateReq req) {
-        GatherDraftOcEntity draft = draftRepository.findById(req.getId()).orElse(null);
+        OcDraftEntity draft = draftRepository.findById(req.getId()).orElse(null);
         if (draft == null) {
             // req -> entity
-            draft = new GatherDraftOcEntity();
+            draft = new OcDraftEntity();
             BeanUtils.copyProperties(req, draft);
             draft.setCreateTime(new Date());
             draft.setToProcess(DraftProcessEnum.UNPROCESS.getValue());
         } else {
-            // 执行更新
+            // 执行更新，将待更新字段设置为true
             BeanUtils.copyProperties(req, draft);
+            draft.setToProcess(DraftProcessEnum.UNPROCESS.getValue());
         }
         draft.setUpdateTime(new Date());
         draftRepository.saveAndFlush(draft);
@@ -113,18 +124,19 @@ public class OcService {
      *
      * @param draftIds
      */
-    public List<OcEntity> moveToOc(List<Long> draftIds) {
+    @Transactional
+    public List<OcInfoEntity> moveToOc(List<Long> draftIds) {
         // 1. 获取草稿数据
-        List<GatherDraftOcEntity> draftData = draftRepository.findAllById(draftIds);
+        List<OcDraftEntity> draftData = draftRepository.findAllById(draftIds);
 
         // 2. 从正式库中，查询草稿数据，对于已经已经存在的，使用更细；不存在的，使用插入
-        List<OcEntity> ocDatas = ocRepository.findByDraftIdInAndStateNot(draftIds, OcStateEnum.DELETED.getValue());
-        Map<Long, OcEntity> ocMap = ocDatas.stream().collect(Collectors.toMap(OcEntity::getDraftId, v -> v));
+        List<OcInfoEntity> ocDatas = ocRepository.findByDraftIdInAndStateNot(draftIds, OcStateEnum.DELETED.getValue());
+        Map<Long, OcInfoEntity> ocMap = ocDatas.stream().collect(Collectors.toMap(OcInfoEntity::getDraftId, v -> v));
 
-        List<OcEntity> insertList = new ArrayList<>();
-        List<OcEntity> updateList = new ArrayList<>();
+        List<OcInfoEntity> insertList = new ArrayList<>();
+        List<OcInfoEntity> updateList = new ArrayList<>();
         draftData.forEach(draft -> {
-            OcEntity ocEntity = OcConvert.toOc(draft);
+            OcInfoEntity ocEntity = OcConvert.toOc(draft);
             ocEntity.setState(OcStateEnum.PUBLISHED.getValue());
             if (ocMap.containsKey(draft.getId())) {
                 // 更新
@@ -141,8 +153,12 @@ public class OcService {
 
         // 4. 批量更新
         ocRepository.saveAll(updateList);
+        ocRepository.flush();
 
-        // 5. 返回所有的变更数据
+        // 5. 将草稿中的数据状态更新为已处理
+        draftRepository.updateProcessAndStateByIds(new ArrayList<>(ocMap.keySet()), DraftProcessEnum.PROCEED.getValue(), DraftStateEnum.PUBLISHED.getValue());
+        draftRepository.flush();
+
         insertList.addAll(updateList);
         return insertList;
     }
@@ -150,7 +166,7 @@ public class OcService {
 
     // -------------------------------------------- oc 相关服务 ------------------------------------------
 
-    public PageListVo<OcEntity> searchOcList(OcSearchReq req) {
+    public PageListVo<OcInfoEntity> searchOcList(OcSearchReq req) {
         if (req.getState() == null) {
             req.setState(OcStateEnum.PUBLISHED.getValue());
         }

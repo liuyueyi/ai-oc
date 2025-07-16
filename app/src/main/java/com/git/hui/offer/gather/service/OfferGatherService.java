@@ -80,7 +80,7 @@ public class OfferGatherService {
         String testText = ResourceUtil.readUtf8Str("data/oc-html.txt");
         // fixme 需要考虑上下文长度溢出导致问题
         return (s) -> {
-            return gatherAiAgent.gatherByAutoSplit(testText);
+            return gatherAiAgent.gatherByText(testText);
         };
     }
 

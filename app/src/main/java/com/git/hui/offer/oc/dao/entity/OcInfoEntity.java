@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Date;
 
@@ -18,8 +19,10 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-@Entity(name = "oc")
-public class OcEntity {
+// 动态更新字段
+@DynamicUpdate
+@Entity(name = "oc_info")
+public class OcInfoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

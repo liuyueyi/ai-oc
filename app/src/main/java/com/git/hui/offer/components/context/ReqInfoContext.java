@@ -71,6 +71,9 @@ public class ReqInfoContext {
          * 用户信息
          */
         private UserBo user;
+
+        private String deviceId;
+
         /**
          * 消息数量
          */

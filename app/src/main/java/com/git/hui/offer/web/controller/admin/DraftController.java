@@ -2,10 +2,12 @@ package com.git.hui.offer.web.controller.admin;
 
 import com.git.hui.offer.components.permission.Permission;
 import com.git.hui.offer.components.permission.UserRole;
-import com.git.hui.offer.oc.dao.entity.GatherDraftOcEntity;
-import com.git.hui.offer.oc.dao.entity.OcEntity;
-import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
+import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
+import com.git.hui.offer.oc.dao.entity.OcInfoEntity;
 import com.git.hui.offer.oc.service.OcService;
+import com.git.hui.offer.web.model.PageListVo;
+import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
+import com.git.hui.offer.web.model.req.DraftSearchReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,8 +37,13 @@ public class DraftController {
     }
 
     @GetMapping(path = "list")
-    public List<GatherDraftOcEntity> list() {
-        return ocService.searchDraftList();
+    public PageListVo<OcDraftEntity> list(DraftSearchReq req) {
+        return ocService.searchDraftList(req);
+    }
+
+    @GetMapping(path = "delete")
+    public Boolean delete(Long draftId) {
+        return ocService.deleteDraft(draftId);
     }
 
     /**
@@ -58,7 +65,7 @@ public class DraftController {
      * @return
      */
     @PostMapping(path = "toOc")
-    public List<OcEntity> toOc(@RequestBody List<Long> ids) {
+    public List<OcInfoEntity> toOc(@RequestBody List<Long> ids) {
         Assert.notEmpty(ids, "请选择需要迁移的数据");
         return ocService.moveToOc(ids);
     }

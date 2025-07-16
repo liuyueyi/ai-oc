@@ -98,7 +98,7 @@ export default function HomePage() {
   const handleSearch = () => {
     const params = {
       companyName: searchFilters.companyName || undefined,
-      companyType: (searchFilters.companyType == 'all' ? undefined :  searchFilters.companyType)|| undefined,
+      companyType: (searchFilters.companyType == 'all' ? undefined : searchFilters.companyType) || undefined,
       jobLocation: searchFilters.location || undefined,
       recruitmentType: (searchFilters.recruitmentType == 'all' ? undefined : searchFilters.recruitmentType) || undefined,
       recruitmentTarget: (searchFilters.recruitmentTarget == 'all' ? undefined : searchFilters.recruitmentTarget) || undefined,
@@ -153,12 +153,6 @@ export default function HomePage() {
                 </a>
                 <a href="#" className="text-gray-700 hover:text-blue-600">
                   实习
-                </a>
-                <a href="#" className="text-gray-700 hover:text-blue-600">
-                  榜单与内推
-                </a>
-                <a href="#" className="text-gray-700 hover:text-blue-600">
-                  OC小店
                 </a>
               </nav>
             </div>

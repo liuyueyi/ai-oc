@@ -41,7 +41,9 @@ public class DraftSearchReq extends PageReq {
     /**
      * 岗位更新时间
      */
-    private String lastUpdatedTime;
+    private String lastUpdatedTimeAfter;
+
+    private String lastUpdatedTimeBefore;
     /**
      * 状态:
      * -1 删除
@@ -49,6 +51,8 @@ public class DraftSearchReq extends PageReq {
      * 1 已发布
      */
     private Integer state;
+
+    private Integer notState;
     /**
      * 0 表示这条记录已处理
      * 1 表示这条数据待处理

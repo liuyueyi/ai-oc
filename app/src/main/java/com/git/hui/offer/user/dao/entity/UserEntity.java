@@ -17,7 +17,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-@Entity(name = "user")
+@Entity(name = "user_info")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +40,12 @@ public class UserEntity {
      */
     @Column(name = "password")
     private String password;
+
+    /**
+     * 头像
+     */
+    @Column(name = "avatar")
+    private String avatar;
 
     /**
      * 微信登录时，这里存储微信的三方id

@@ -18,8 +18,9 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-@Entity(name = "gather_draft_oc")
-public class GatherDraftOcEntity {
+// 动态更新字段
+@Entity(name = "draft_oc")
+public class OcDraftEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -85,10 +85,10 @@ public class GatherAiAgent {
         });
         String format = beanOutputConverter.getFormat();
         PromptTemplate template = new PromptTemplate("""
-                    {text}.
-                    {format}
+                    {text}
                 """);
-        SystemMessage systemMessage = new SystemMessage(template.render(Map.of("text", SYSTEM_PROMPT, "format", format)));
+//        SystemMessage systemMessage = new SystemMessage(template.render(Map.of("text", SYSTEM_PROMPT, "format", format)));
+        SystemMessage systemMessage = new SystemMessage(SYSTEM_PROMPT);
         chatMemory.add(conversationId, systemMessage);
 
         StringBuilder ans = new StringBuilder();
@@ -96,7 +96,7 @@ public class GatherAiAgent {
         while (true) {
             UserMessage msg;
             if (cnt == 0) {
-                msg = new UserMessage(text);
+                msg = new UserMessage(new PromptTemplate("{text}.{format}").render(Map.of("text", text, "format", format)));
             } else {
                 msg = new UserMessage("你之前返回的结果不完整，继续返回剩余的内容");
             }

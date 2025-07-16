@@ -2,7 +2,7 @@ package com.git.hui.offer.web.controller.front;
 
 import com.git.hui.offer.components.permission.Permission;
 import com.git.hui.offer.components.permission.UserRole;
-import com.git.hui.offer.oc.dao.entity.OcEntity;
+import com.git.hui.offer.oc.dao.entity.OcInfoEntity;
 import com.git.hui.offer.oc.service.OcService;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.OcSearchReq;
@@ -28,7 +28,7 @@ public class OcController {
     }
 
     @RequestMapping(path = "list")
-    public PageListVo<OcEntity> list(OcSearchReq req) {
+    public PageListVo<OcInfoEntity> list(OcSearchReq req) {
         return ocService.searchOcList(req);
     }
 }

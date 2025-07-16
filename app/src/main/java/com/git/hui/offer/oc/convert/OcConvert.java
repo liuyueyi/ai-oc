@@ -1,7 +1,7 @@
 package com.git.hui.offer.oc.convert;
 
-import com.git.hui.offer.oc.dao.entity.GatherDraftOcEntity;
-import com.git.hui.offer.oc.dao.entity.OcEntity;
+import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
+import com.git.hui.offer.oc.dao.entity.OcInfoEntity;
 import com.git.hui.offer.util.DateUtil;
 
 import java.util.Date;
@@ -14,8 +14,8 @@ import java.util.Date;
  */
 public class OcConvert {
 
-    public static OcEntity toOc(GatherDraftOcEntity draft) {
-        return new OcEntity()
+    public static OcInfoEntity toOc(OcDraftEntity draft) {
+        return new OcInfoEntity()
                 .setDraftId(draft.getId())
                 .setCompanyName(draft.getCompanyName())
                 .setCompanyType(draft.getCompanyType())

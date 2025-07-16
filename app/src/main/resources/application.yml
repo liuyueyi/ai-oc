@@ -13,7 +13,11 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     show-sql: true
     database-platform: org.hibernate.dialect.H2Dialect
-
+oc:
+  jwt:
+    issuer: pai_coding # 签发者
+    secret: hello_world # 签名密钥
+    expire: 2592000000 # jwt的有效期，默认30天
 
 # 修改日志级别
 logging:

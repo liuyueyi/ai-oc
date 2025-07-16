@@ -93,3 +93,29 @@ export async function fetchDraftList(params: DraftListQuery): Promise<DraftListR
   }
   throw new Error(res.data?.msg || "获取草稿列表失败")
 }
+
+/**
+ * 批量发布草稿
+ * @param ids 草稿 id 数组
+ * @returns 发布结果
+ */
+export async function batchPublishDrafts(ids: number[]): Promise<void> {
+  const res = await api.post("/admin/draft/toOc", ids)
+  if (res.data && res.data.code === 0) {
+    return
+  }
+  throw new Error(res.data?.msg || "发布失败")
+}
+
+/**
+ * 更新草稿
+ * @param draft DraftItem
+ * @returns 是否成功
+ */
+export async function updateDraft(draft: DraftItem): Promise<boolean> {
+  const res = await api.post("/admin/draft/update", draft)
+  if (res.data && res.data.code === 0) {
+    return true
+  }
+  throw new Error(res.data?.msg || "草稿更新失败")
+}
