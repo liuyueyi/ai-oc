@@ -1,6 +1,8 @@
 package com.git.hui.offer.gather.service;
 
 import cn.hutool.core.io.resource.ResourceUtil;
+import com.git.hui.offer.components.bizexception.BizException;
+import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.gather.convert.Draft2EntityConvert;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
 import com.git.hui.offer.oc.service.OcService;
@@ -11,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.net.URI;
 import java.util.List;
 import java.util.function.Function;
 
@@ -41,7 +43,7 @@ public class OfferGatherService {
             default -> null;
         };
         if (func == null) {
-            return Collections.emptyList();
+            throw new BizException(StatusEnum.UNEXPECT_ERROR, "当前方式还未支持，敬请期待");
         }
         List<GatherOcDraftBo> list = func.apply(req);
         log.info("返回结果是：{}", JsonUtil.toStr(list));
@@ -80,13 +82,24 @@ public class OfferGatherService {
         String testText = ResourceUtil.readUtf8Str("data/oc-html.txt");
         // fixme 需要考虑上下文长度溢出导致问题
         return (s) -> {
-            return gatherAiAgent.gatherByText(testText);
+            return gatherAiAgent.gatherByAutoSplit(testText);
         };
     }
 
     private Function<GatherReq, List<GatherOcDraftBo>> gatherByHttpUrl(String filePath) {
+        try {
+            // 做一个url的合法性判断
+            URI uri = URI.create(filePath.trim());
+            if (uri.getScheme() == null || !uri.getScheme().startsWith("http")) {
+                // 使用默认的网页进行兜底
+                throw new BizException(StatusEnum.UNEXPECT_ERROR, "请输入合法的url地址");
+            }
+        } catch (Exception e) {
+            throw new BizException(StatusEnum.UNEXPECT_ERROR, "请输入合法的url地址");
+        }
+
         return (s) -> {
-            return gatherAiAgent.gatherByAutoSplit("https://www.givemeoc.com/");
+            return gatherAiAgent.gatherByAutoSplit(filePath);
         };
     }
 }

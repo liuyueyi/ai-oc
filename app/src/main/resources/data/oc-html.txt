@@ -1,151 +1,800 @@
-<table class="int-table">
+<table class="crt-table">
             <thead>
                 <tr>
-                    <th class="int-col-company">公司名称</th>
-                    <th class="int-col-type">公司类型</th>
-                    <th class="int-col-location">工作地点</th>
-                    <th class="int-col-recruitment-type">招聘类型</th>
-                    <th class="int-col-target">招聘对象</th>
-                    <th class="int-col-position">岗位(大都不限专业)</th>
-                    <th class="int-col-status">投递进度</th>
-                    <th class="int-col-update-time">更新时间</th>
-                    <th class="int-col-deadline">投递截止</th>
-                    <th class="int-col-links">相关链接</th>
-                    <th class="int-col-notice">招聘公告</th>
-                    <th class="int-col-referral">内推码</th>
-                    <th class="int-col-notes">备注</th>
+                    <th class="crt-col-company">公司名称</th>
+                    <th class="crt-col-type">公司类型</th>
+                    <th class="crt-col-location">工作地点</th>
+                    <th class="crt-col-recruitment-type">招聘类型</th>
+                    <th class="crt-col-target">招聘对象</th>
+                    <th class="crt-col-position">岗位(大都不限专业)</th>
+                    <th class="crt-col-status">投递进度</th>
+                    <th class="crt-col-update-time">更新时间</th>
+                    <th class="crt-col-deadline">投递截止</th>
+                    <th class="crt-col-links">相关链接</th>
+                    <th class="crt-col-notice">招聘公告</th>
+                    <th class="crt-col-referral">内推码</th>
+                    <th class="crt-col-notes">备注</th>
                 </tr>
             </thead>
-            <tbody id="int-companies-tbody">
-                <script>document.cookie = 'shuaidi_OC=3; expires=Sat, 13 Sep 2025 01:41:48; path=/';</script>
-
-
-
-
-
-
-                                                                    <tr data-id="6574" class="">
-                            <td class="int-col-company">火羽科技</td>
-                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
-                            <td class="int-col-location">广州市</td>
-                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
-                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
-                            <td class="int-col-position">
-                                <div class="int-positions">
-                                    <span class="int-position-tag">游戏矩阵运营实习生,游戏社区运营实习生,场景原画实习生</span>                                </div>
+            <tbody id="crt-companies-tbody">
+                <script>document.cookie = 'shuaidi_OC=1; expires=Sun, 14 Sep 2025 09:57:41; path=/';</script><script>document.cookie = 'shuaidi_OC=1; expires=Sun, 14 Sep 2025 09:57:41; path=/';</script>                                                                    <tr data-id="6626" class="">
+                            <td class="crt-col-company">中兴终端</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-央国企">央国企</span></td>
+                            <td class="crt-col-location">上海市,深圳市,西安市,成都市</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">AI算法工程师,软件开发工程师射频开发工程师,结构设计工程师</span>                                </div>
                             </td>
-                            <td class="int-col-status">
-                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
                                                             </td>
-                            <td class="int-col-update-time">2025-07-14</td>
-                            <td class="int-col-deadline">招满为止</td>
-                            <td class="int-col-links">
-                                                                    <a href="https://mp.weixin.qq.com/s/a2ge3GPu8HxIm9x4vr7P4Q" target="_blank" class="int-link">投递</a>                                                            </td>
-                            <td class="int-col-notice">
-                                                                    <a href="https://mp.weixin.qq.com/s/a2ge3GPu8HxIm9x4vr7P4Q" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
-                            <td class="int-col-referral">
+                            <td class="crt-col-update-time">2025-07-16</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://job.zte.com.cn/cn/" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/WB8AzWth5B5ZChCFJPOdKw" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
                                                                     -
                                                             </td>
-                            <td class="int-col-notes">
+                            <td class="crt-col-notes">
                                                                     -
                                                             </td>
                         </tr>
-                                                                    <tr data-id="6573" class="">
-                            <td class="int-col-company">迅雷</td>
-                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
-                            <td class="int-col-location">全国</td>
-                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
-                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
-                            <td class="int-col-position">
-                                <div class="int-positions">
-                                    <span class="int-position-tag">校园猎手</span>                                </div>
+                                                                    <tr data-id="6625" class="">
+                            <td class="crt-col-company">友芝友集团</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">武汉市</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">管培生</span>                                </div>
                             </td>
-                            <td class="int-col-status">
-                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
                                                             </td>
-                            <td class="int-col-update-time">2025-07-14</td>
-                            <td class="int-col-deadline">招满为止</td>
-                            <td class="int-col-links">
-                                                                    <a href="https://mp.weixin.qq.com/s/vMxuTOZ-evTzlLIkp5OTSg" target="_blank" class="int-link">投递</a>                                                            </td>
-                            <td class="int-col-notice">
-                                                                    <a href="https://mp.weixin.qq.com/s/vMxuTOZ-evTzlLIkp5OTSg" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
-                            <td class="int-col-referral">
+                            <td class="crt-col-update-time">2025-07-16</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/W4lxjTd9KQDdC9LETSrwpw" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/W4lxjTd9KQDdC9LETSrwpw" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
                                                                     -
                                                             </td>
-                            <td class="int-col-notes">
+                            <td class="crt-col-notes">
                                                                     -
                                                             </td>
                         </tr>
-                                                                    <tr data-id="6572" class="">
-                            <td class="int-col-company">Momenta 2026校园品牌大使</td>
-                            <td class="int-col-type"><span class="int-badge int-type-民企">民企</span></td>
-                            <td class="int-col-location">全国</td>
-                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
-                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
-                            <td class="int-col-position">
-                                <div class="int-positions">
-                                    <span class="int-position-tag">校园品牌大使</span>                                </div>
+                                                                    <tr data-id="6624" class="">
+                            <td class="crt-col-company">极客未来</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">成都市,重庆市</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">班课主讲教师,A计划-数学竞赛教师,学科校长管培生,运营校长管培生</span>                                </div>
                             </td>
-                            <td class="int-col-status">
-                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
                                                             </td>
-                            <td class="int-col-update-time">2025-07-14</td>
-                            <td class="int-col-deadline">招满为止</td>
-                            <td class="int-col-links">
-                                                                    <a href="https://mp.weixin.qq.com/s/XW55bpxaLHKzeMPENcJ56A" target="_blank" class="int-link">投递</a>                                                            </td>
-                            <td class="int-col-notice">
-                                                                    <a href="https://mp.weixin.qq.com/s/XW55bpxaLHKzeMPENcJ56A" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
-                            <td class="int-col-referral">
+                            <td class="crt-col-update-time">2025-07-16</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://jsj.top/f/N4enYy" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/rGGn4IPR1gvhAzUJNEBUNQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
                                                                     -
                                                             </td>
-                            <td class="int-col-notes">
+                            <td class="crt-col-notes">
                                                                     -
                                                             </td>
                         </tr>
-                                                                    <tr data-id="6571">
-                            <td class="int-col-company">亚玛芬</td>
-                            <td class="int-col-type"><span class="int-badge int-type-外企">外企</span></td>
-                            <td class="int-col-location">上海</td>
-                            <td class="int-col-recruitment-type"><span class="int-badge int-recruitment-暑假实习">暑假实习</span></td>
-                            <td class="int-col-target"><span class="int-badge int-target-2026年毕业生">2026年毕业生</span></td>
-                            <td class="int-col-position">
-                                <div class="int-positions">
-                                    <span class="int-position-tag">客户关系管理实习生,需求计划实习生,销售运营实习生,零售市场营销实习生,市场营销实习生财务计划部实</span>                                </div>
+                                                                    <tr data-id="6623" class="">
+                            <td class="crt-col-company">中望软件</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">广州 武汉 上海 北京西安</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">算法研究员(博士专项)、图形算法工程师、CAM算法工程师、C++研发工程师、销售管培生海外销售管培生、海外市场营销管培生;</span>                                </div>
                             </td>
-                            <td class="int-col-status">
-                                                                    <span class="int-badge int-status-未投递">未投递</span>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
                                                             </td>
-                            <td class="int-col-update-time">2025-07-14</td>
-                            <td class="int-col-deadline">招满为止</td>
-                            <td class="int-col-links">
-                                                                    <a href="https://mp.weixin.qq.com/s/kDUjM6LHbUbGms36TwjS2A" target="_blank" class="int-link">投递</a>                                                            </td>
-                            <td class="int-col-notice">
-                                                                    <a href="https://mp.weixin.qq.com/s/kDUjM6LHbUbGms36TwjS2A" target="_blank" class="int-link int-notice-link">公告</a>                                                            </td>
-                            <td class="int-col-referral">
+                            <td class="crt-col-update-time">2025-07-16</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://www.zwsoft.cn/job/campus" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/KTW2Fq3aaQ0J-TZCLCOIuA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
                                                                     -
                                                             </td>
-                            <td class="int-col-notes">
+                            <td class="crt-col-notes">
                                                                     -
                                                             </td>
                         </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                                                    <tr data-id="6622" class="">
+                            <td class="crt-col-company">新浪&amp;微博-管培生</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">北京</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">产品管培生、商业管培生、运营管培生、研发管培生(算法方向);</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-16</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://app.mokahr.com/campus-recruitment/sina/43536?locale=zh-CN#/jobs?project0=100102761&amp;page=1&amp;anchorName=jobsList" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/y2DFOwvLmmsLNxWFwrqMJQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6621" class="">
+                            <td class="crt-col-company">昂瑞微</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">北京大连上海深圳苏州</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">管理培训生、嵌入式软件工程师、数字验证工程师、现场应用工程师、应用工程师、交付工程师、新产品导入工程师、客户质量工程、师产品质量工程师、质量体系工程师;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-16</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/l2Lq53Wcn83VkIsGBhFJ0g" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/l2Lq53Wcn83VkIsGBhFJ0g" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6620" class="">
+                            <td class="crt-col-company">泰凌微电子</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">上海南京深圳</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">射频模拟设计工程师、数字芯片设计工程师、算法工程师、项目管理工程师、硬件工程师、嵌入式软件工程师;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-16</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://telink.m.zhiye.com/#/" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/Z4NWfPCyQVITOuVmeiiwJQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6619" class="">
+                            <td class="crt-col-company">湖北邮政</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-银行">银行</span></td>
+                            <td class="crt-col-location">武汉荆州孝感襄阳恩施黄冈 宜昌 十堰荆门 黄石 咸宁随州鄂州仙桃天门 潜江神农架区</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2024和2025年毕业生">2024和2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">综合管理岗、普服管理岗、营销岗、技术岗、金融业务岗、寄递业务岗;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://campus.51job.com/hbyz2025/job.html" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/RNVEk2tmgSurKyRRPR_jOg" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6618">
+                            <td class="crt-col-company">网易游戏雷火</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">杭州</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">虚拟世界架构师(游戏策划)、技术类、艺术/设计类、用户体验和综合类，8月4日以后开放:技术类、用户体验和综合类、艺术/设计类;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://leihuo.163.com/campus/?sessionid=141166464#/full?channel=GxcIhhvZ" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/qz4hNcJHkgGZIjcQ9B5lCA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6617">
+                            <td class="crt-col-company">0C&amp;C中国团队</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-外企">外企</span></td>
+                            <td class="crt-col-location">上海</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">助理咨询顾问</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/iZuUPrb8UzGwrZcBfzrr8A" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/iZuUPrb8UzGwrZcBfzrr8A" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6616">
+                            <td class="crt-col-company">中国兵器工业第二0六研究所</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-央国企">央国企</span></td>
+                            <td class="crt-col-location">西安</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">电子科学与技术、电磁场与微波技术、电路与系统:信息与通信工程、信号与信息处理:集成电路科学与工程:计算机科学与技术:人工智能:智能科学与技术:电子信息、通信工程:控制科学与工程、控制理论与控制工程、导航制导与控制、模式识别与智能系统:软件工程</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://xadzgc.zhiye.com/jobs?activityGuid=cc7e292e-615f-4b99-94c6-8b078c927f19" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/yg8ET-jGh70EVqojl9rStA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6615">
+                            <td class="crt-col-company">拼多多集团-PDD</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">上海</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">服务端研发工程师、算法工程师、Web前端研发工程师、客户端研发工程师、数据分析师、安全工程师;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://careers.pddglobalhr.com/campus" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/vRTtQOb7z_AvHn1PkEmYOA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6614">
+                            <td class="crt-col-company">北方华创</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-央国企">央国企</span></td>
+                            <td class="crt-col-location">北京</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">材料工程师、业务赋能类、软件测试工程师软件工程师、电气工程师、机械工程师、半导体工艺工程师、射频工程师;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://career.naura.com/campus/jobs?memory=&amp;silence=1" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://career.naura.com/campus/jobs?memory=&amp;silence=1" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6613">
+                            <td class="crt-col-company">OPPO</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">深圳东莞北京上海成都南京重庆杭州武汉西安</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">AI/算法类、标准研究类、软件类、硬件类、工程技术类、采购类、品牌策划类、销售服务类、综合职能类、设计类、产品类;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/Mtv-rOIHAkXhWgUDpQI2EA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6612">
+                            <td class="crt-col-company">西藏银行</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-银行">银行</span></td>
+                            <td class="crt-col-location">那曲 阿里</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-春招">春招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025年毕业生">2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">西藏银行那曲分行6人、西藏银行阿里分行6人；</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://xzyh2025.zhaopin.com/" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/M0MIsjhbq391I2JBekfnuQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6611">
+                            <td class="crt-col-company">中国联合工程有限公司</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-央国企">央国企</span></td>
+                            <td class="crt-col-location">杭州 上海 厦门 深圳 喀什 全国其他</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-春招">春招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025年毕业生">2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">策划咨询岗、博士后科研岗、工程设计岗、项目管理/全过程项目咨询岗、职能管理岗；</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="http://chinacuc.zhiye.com/home" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/kHm-9sXK0qv1twEC5zKlTA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6610">
+                            <td class="crt-col-company">乐道销售培训生</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">南京 无锡 徐州 常州 苏州 南通 连云港市 淮安 盐城 扬州 镇江 泰州 宿迁 杭州 宁波 温州 嘉兴 湖州 绍兴 金华 衢州 舟山 台州 丽水 上海</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-春招">春招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2024和2025年毕业生">2024和2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">销售培训生</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-15</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://nio.jobs.feishu.cn/index/?keywords=&amp;category=&amp;location=&amp;project=7509697704005191955&amp;type=&amp;job_hot_flag=&amp;current=1&amp;limit=10&amp;functionCategory=&amp;tag=&amp;spread=234A6VN&amp;sessionid=139075494" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/JvOmjWSO-joKqqUNnWlERQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6609">
+                            <td class="crt-col-company">江苏智檬智能科技</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">南京市</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025和2026年毕业生">2025和2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">企宣助理,品牌运营,文化出海岗</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-14</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://mp.weixin.qq.com/s/6BNOvCVP2WS59RaO4fAq-A" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/6BNOvCVP2WS59RaO4fAq-A" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6608">
+                            <td class="crt-col-company">中国有研科技</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-央国企">央国企</span></td>
+                            <td class="crt-col-location">北京市,廊坊市,德州市,忻州市,青岛市上海市,合肥市,重庆市,新余市,</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-春招">春招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025年毕业生">2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">研发工程师,工艺工程师,检测工程师,电气工程师,安全工程师,技工</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-14</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://hrcloud.grinm.com/recruit" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/MeoieU-DGHMlW9yBrgFkoQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6607">
+                            <td class="crt-col-company">东方航空食品</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-央国企">央国企</span></td>
+                            <td class="crt-col-location">上海</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-春招">春招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025年毕业生">2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">航食储备人才</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-14</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://job.ceair.com/" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/MS7nha8dg4b_w-Gv5corGA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6606">
+                            <td class="crt-col-company">星猿哲</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-外企">外企</span></td>
+                            <td class="crt-col-location">全国,国外</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">硬件研发岗(机械、电气),系统研发岗,运动算法岗,视觉算法岗,仿真算法岗,软件测试岗,硬件测试岗</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-14</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://app.mokahr.com/campus_apply/xyzrobotics/26847#/" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/nGfOYd-68Y17I8qFcE5pcA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6605">
+                            <td class="crt-col-company">NVIDIA英伟达</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-外企">外企</span></td>
+                            <td class="crt-col-location">北京 上海深圳</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">硬件类:板级硬件设计、芯片设计、物理设计版图设计、芯片验证等;软件类:深度学习/高性能、C++软件工程师、Web 开发工程师等;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-13</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://app.mokahr.com/campus-recruitment/nvidia/47111?sessionid=-64147913#/jobs" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/eX565uefSDETUzO1LvXORA" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6604">
+                            <td class="crt-col-company">普源精电</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">苏州西安上海北京 深圳</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">硬件类、软件类、算法类、IC应用类、半导体类、其他开发类、营销类、职能类等;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-13</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://rigolportal.jobs.feishu.cn/campus/position/list?spread=9HENZ3G" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://rigolportal.jobs.feishu.cn/campus/?spread=9HENZ3G" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6602">
+                            <td class="crt-col-company">国机集团</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-央国企">央国企</span></td>
+                            <td class="crt-col-location">北京、上海、广州、杭州</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-春招">春招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025年毕业生">2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">经营管理类、工程技术类、科技科研类、贸易服务类、技能类；</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-13</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://zhaopin.sinomach.com.cn/SU64b4cfe82f9d24760ae8b80c/pb/school.html" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/DWnGQwRGNL6DnTL3lrc9sQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6603">
+                            <td class="crt-col-company">苏州誉高</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">苏州</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-春招">春招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025年毕业生">2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">管培生</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-13</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://www.wjx.cn/vm/exfklrI.aspx?code=021VzN1w3i4ih53eoB0w3bsbIH1VzN1g&amp;state=sojump" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/XwkYE9qxWjhOGIazSepUNQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6601">
+                            <td class="crt-col-company">自如补录</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">北京 上海 深圳 杭州 武汉 天津 广州 成都 南京 苏州</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-春招">春招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025年毕业生">2025年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">客户管家、业主电销、收房管家</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-13</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://job.ziroom.com/campus/enter" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/AuIFJq-QkOoX4-w1t8yuCg" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6600">
+                            <td class="crt-col-company">广东南粤银行</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-银行">银行</span></td>
+                            <td class="crt-col-location">广州</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">总行科技专培生，计算机类相关专业。</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-12</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://wecruit.hotjob.cn/SU670a291d6202cc7666c744bc/pb/posDetail.html?postId=686c8334e57172288b5016d3&amp;postType=campus" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://www.gdnybank.com/employee/20250708/36422.html" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6599">
+                            <td class="crt-col-company">东软-灵犀人才计划</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">沈阳大连北京上海日本</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招提前批">秋招提前批</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2025和2026年毕业生">2025和2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">技术管培生</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-12</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://neusoft-campus.zhiye.com/campus/detail?jobAdId=a646e03d-4c82-40dd-8c38-6cd189e4b645" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/m8zYj9LjOQEgrpYGmNhm5Q" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                        要求硕士                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6598">
+                            <td class="crt-col-company">九坤投资</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">上海 北京</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">里化策略实习生、AI算法实习生、数据科学实习生、里化实现实习生、Quant Developer实习生、高性能计算与系统优化实习生、全栈开发实习生、Linux kernelEngineer、单化分析实习生、里化风险研究员;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-12</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://app.mokahr.com/campus-recruitment/ubiquantrecruit/37031?sessionid=-117731348&amp;sourceToken=71e5a94e58c8c999c012323f37279c11#/jobs?zhineng=&amp;page=1" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/M5xGserDZuGw43CqqFakiQ" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
+                                                                    <tr data-id="6597">
+                            <td class="crt-col-company">南芯科技</td>
+                            <td class="crt-col-type"><span class="crt-badge crt-type-民企">民企</span></td>
+                            <td class="crt-col-location">上海成都深圳北京西安 珠海南京</td>
+                            <td class="crt-col-recruitment-type"><span class="crt-badge crt-recruitment-秋招">秋招</span></td>
+                            <td class="crt-col-target"><span class="crt-badge crt-target-2026年毕业生">2026年毕业生</span></td>
+                            <td class="crt-col-position">
+                                <div class="crt-positions">
+                                    <span class="crt-position-tag">研发类、系统应用类、生产运营类、质里类、业务类、其他职位;</span>                                </div>
+                            </td>
+                            <td class="crt-col-status">
+                                                                    <span class="crt-badge crt-status-未投递">未投递</span>
+                                                            </td>
+                            <td class="crt-col-update-time">2025-07-12</td>
+                            <td class="crt-col-deadline">招满为止</td>
+                            <td class="crt-col-links">
+                                                                    <a href="https://nanxin.zhiye.com/campus/jobs" target="_blank" class="crt-link">投递</a>                                                            </td>
+                            <td class="crt-col-notice">
+                                                                    <a href="https://mp.weixin.qq.com/s/D1tqFHtdb2RKlYxvzJMrRw" target="_blank" class="crt-link crt-notice-link">公告</a>                                                            </td>
+                            <td class="crt-col-referral">
+                                                                    -
+                                                            </td>
+                            <td class="crt-col-notes">
+                                                                    -
+                                                            </td>
+                        </tr>
                                                                 </tbody>
         </table>

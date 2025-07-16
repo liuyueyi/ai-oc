@@ -4,6 +4,8 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
+import com.git.hui.offer.gather.service.helper.GatherResFormat;
+import com.git.hui.offer.util.json.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -53,6 +55,8 @@ public class GatherAiAgent {
 
     private final ChatModel chatModel;
 
+    private BeanOutputConverter<ArrayList<GatherOcDraftBo>> gatherResConverter;
+
     @Autowired
     public GatherAiAgent(ZhiPuAiChatModel chatModel) {
         this.chatModel = chatModel;
@@ -61,6 +65,8 @@ public class GatherAiAgent {
                 .defaultOptions(ChatOptions.builder().stopSequences(Collections.emptyList()).build()) // 取消默认停止符
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
+        gatherResConverter = new BeanOutputConverter<>(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
+        });
     }
 
 
@@ -81,22 +87,17 @@ public class GatherAiAgent {
         ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
         String conversationId = RandomUtil.randomString(6);
 
-        BeanOutputConverter<ArrayList<GatherOcDraftBo>> beanOutputConverter = new BeanOutputConverter<>(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
-        });
-        String format = beanOutputConverter.getFormat();
-        PromptTemplate template = new PromptTemplate("""
-                    {text}
-                """);
-//        SystemMessage systemMessage = new SystemMessage(template.render(Map.of("text", SYSTEM_PROMPT, "format", format)));
         SystemMessage systemMessage = new SystemMessage(SYSTEM_PROMPT);
         chatMemory.add(conversationId, systemMessage);
 
-        StringBuilder ans = new StringBuilder();
+        List<String> itemList = new ArrayList<>();
+        StringBuilder remain = new StringBuilder();
         int cnt = 0;
         while (true) {
+            log.info("第{}次大模型数据解析", cnt + 1);
             UserMessage msg;
             if (cnt == 0) {
-                msg = new UserMessage(new PromptTemplate("{text}.{format}").render(Map.of("text", text, "format", format)));
+                msg = new UserMessage(new PromptTemplate("{text}.{format}").render(Map.of("text", text, "format", gatherResConverter.getFormat())));
             } else {
                 msg = new UserMessage("你之前返回的结果不完整，继续返回剩余的内容");
             }
@@ -106,18 +107,43 @@ public class GatherAiAgent {
             ChatOptions chatOptions = ToolCallingChatOptions.builder()
                     .toolCallbacks(ToolCallbacks.from(new CrawlerTools()))
                     .build();
-            ChatResponse response = chatModel.call(new Prompt(chatMemory.get(conversationId), chatOptions));
-            AssistantMessage assistantMessage = response.getResult().getOutput();
-            chatMemory.add(conversationId, assistantMessage);
-            cnt += 1;
+            try {
+                ChatResponse response = chatModel.call(new Prompt(chatMemory.get(conversationId), chatOptions));
+                AssistantMessage assistantMessage = response.getResult().getOutput();
+                chatMemory.add(conversationId, assistantMessage);
+                cnt += 1;
 
-            String outText = assistantMessage.getText().trim();
-            ans.append(outText);
-            if (outText.endsWith("```")) {
+                String outText = assistantMessage.getText().trim();
+                itemList.addAll(GatherResFormat.extact(remain, outText));
+//                list.addAll(GatherResFormat.discardBrokenGatherItem(gatherResConverter, outText));
+                if (cnt > 1 && outText.startsWith("```json")) {
+                    // 表示大模型总是返回相同的数据，直接跳出循环
+                    break;
+                }
+                if (outText.endsWith("```") || cnt >= 10) {
+                    // 做一个次数限制，避免无效调用大模型
+                    break;
+                }
+            } catch (Exception e) {
+                // 避免因为多次调用模型出现异常，导致前面获取的数据被丢掉，我们直接跳出来，将已经解析的结果保存下来
+                log.error("gather error: {}", e.getMessage());
                 break;
             }
         }
-        ArrayList<GatherOcDraftBo> list = beanOutputConverter.convert(ans.toString());
+
+        List<GatherOcDraftBo> list = new ArrayList<>();
+        if (!itemList.isEmpty()) {
+            // 非空时，尝试合并为一个大的json数组字符串
+            StringBuilder toParse = new StringBuilder("[");
+            for (String item : itemList) {
+                try {
+                    list.add(JsonUtil.toObj(item, GatherOcDraftBo.class));
+                } catch (Exception e) {
+                    log.warn("解析异常: {}", item, e);
+                }
+            }
+        }
+
         return list;
     }
 
@@ -135,7 +161,9 @@ public class GatherAiAgent {
             Document document = Jsoup.parse(text);
             Element table = document.select("table").first();
             String ans = table.html().trim();
-            log.info("获取到的表格内容为：{}", ans);
+            if (log.isDebugEnabled()) {
+                log.debug("获取到的表格内容为：{}", ans);
+            }
             return ans;
         }
     }
