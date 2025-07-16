@@ -18,4 +18,9 @@ public class BizException extends RuntimeException {
         this.code = code;
         this.msg = msg;
     }
+
+    public BizException(StatusEnum status, Object... args) {
+        this.code = status.getCode();
+        this.msg = (String.format(status.getMsg(), args));
+    }
 }

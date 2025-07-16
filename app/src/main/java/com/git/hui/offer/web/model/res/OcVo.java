@@ -1,11 +1,8 @@
 package com.git.hui.offer.web.model.res;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,9 +10,8 @@ import java.util.List;
  * @date 2025/7/15
  */
 @Data
+@Accessors(chain = true)
 public class OcVo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
@@ -86,9 +82,9 @@ public class OcVo {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Long createTime;
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private Long updateTime;
 }

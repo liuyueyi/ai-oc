@@ -65,6 +65,9 @@ public interface OcRepository extends JpaRepository<OcInfoEntity, Long>, JpaSpec
             if (req.getState() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("state"), req.getState()));
             }
+            if (req.getNotState() != null) {
+                predicates.add(criteriaBuilder.notEqual(root.get("state"), req.getNotState()));
+            }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 

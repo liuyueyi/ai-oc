@@ -50,4 +50,6 @@ public class OcSearchReq extends PageReq {
      * 1 已发布
      */
     private Integer state;
+
+    private Integer notState;
 }

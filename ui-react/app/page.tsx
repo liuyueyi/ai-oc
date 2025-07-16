@@ -296,7 +296,7 @@ export default function HomePage() {
               {paginatedOffers.map((offer) => (
                 <TableRow key={String(offer.id)} className="hover:bg-gray-50 cursor-pointer">
                   <TableCell className="font-medium break-words w-32">
-                    <Link href={`/job/${offer.id}`} className="text-blue-600 hover:underline">
+                    <Link href={`/job?id=${offer.id}`} className="text-blue-600 hover:underline">
                       {offer.companyName}
                     </Link>
                   </TableCell>

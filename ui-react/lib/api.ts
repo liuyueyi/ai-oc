@@ -33,6 +33,17 @@ export async function fetchJobList(params?: JobListQuery): Promise<JobListRespon
   throw new Error(res.data?.msg || "获取岗位列表失败")
 }
 
+
+export async function jobDetail(id: number) {
+  const res = await api.get(`/api/oc/detail?id=${id}`)
+  if (res.data && res.data.code === 0) {
+    return res.data.data
+  }
+  throw new Error(res.data?.msg || "获取岗位信息失败")
+}
+
+
+
 export async function submitAIEntry(params: { content: string; model: string; type: string }) {
   const res = await api.post("/admin/gather/submit", params)
   if (res.data && res.data.code === 0) {
