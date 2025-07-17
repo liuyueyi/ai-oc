@@ -22,4 +22,6 @@ oc:
 # 修改日志级别
 logging:
   level:
-    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
+    com:
+      git:
+        hui: info

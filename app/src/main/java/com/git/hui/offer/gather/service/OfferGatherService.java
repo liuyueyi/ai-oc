@@ -1,29 +1,49 @@
 package com.git.hui.offer.gather.service;
 
 import cn.hutool.core.io.resource.ResourceUtil;
+import cn.idev.excel.ExcelReader;
+import cn.idev.excel.FastExcel;
+import cn.idev.excel.context.AnalysisContext;
+import cn.idev.excel.metadata.data.ReadCellData;
+import cn.idev.excel.read.listener.ReadListener;
 import com.git.hui.offer.components.bizexception.BizException;
 import com.git.hui.offer.components.bizexception.StatusEnum;
+import com.git.hui.offer.constants.gather.GatherTargetTypeEnum;
 import com.git.hui.offer.gather.convert.Draft2EntityConvert;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
 import com.git.hui.offer.oc.service.OcService;
 import com.git.hui.offer.util.json.JsonUtil;
 import com.git.hui.offer.web.model.req.GatherReq;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.base.Joiner;
+import io.micrometer.common.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
  * @author YiHui
  * @date 2025/7/14
  */
+@Slf4j
 @Service
 public class OfferGatherService {
-    private static final Logger log = LoggerFactory.getLogger(OfferGatherService.class);
+    // 默认六行数据一组
+    private static final Integer SPLIT_LEN = 6;
 
     private final GatherAiAgent gatherAiAgent;
 
@@ -35,15 +55,16 @@ public class OfferGatherService {
         this.gatherService = gatherService;
     }
 
-    public List<GatherOcDraftBo> gatherInfo(GatherReq req) {
+    public List<GatherOcDraftBo> gatherInfo(GatherReq req, MultipartFile file) throws IOException {
         Function<GatherReq, List<GatherOcDraftBo>> func = switch (req.type()) {
-            case TEXT -> gatherByText();
+            case TEXT -> gatherByText(req.content());
             case HTML_TEXT -> gatherByHtmlText(req.content());
             case HTTP_URL -> gatherByHttpUrl(req.content());
+            case IMAGE -> gatherByImg(file);
             default -> null;
         };
         if (func == null) {
-            throw new BizException(StatusEnum.UNEXPECT_ERROR, "当前方式还未支持，敬请期待");
+            return gatherFileInfo(req, file);
         }
         List<GatherOcDraftBo> list = func.apply(req);
         log.info("返回结果是：{}", JsonUtil.toStr(list));
@@ -52,35 +73,60 @@ public class OfferGatherService {
     }
 
     /**
+     * 传入文件进行数据提取的场景，我们直接读取文件，做好分页调用大模型，避免大模型返回数据截断的问题
+     * 1. 支持传入 csv, excel； 要求第一行为标题，第二行开始为数据
+     *
+     * @return
+     * @throws IOException
+     */
+    public List<GatherOcDraftBo> gatherFileInfo(GatherReq req, MultipartFile file) throws IOException {
+        Pair<String, List<String>> pair;
+        if (req.type() == GatherTargetTypeEnum.CSV_FILE) {
+            pair = parseContentsFromCsv(file);
+        } else if (req.type() == GatherTargetTypeEnum.EXCEL_FILE) {
+            pair = parseContentsFromExcel(file);
+        } else {
+            throw new BizException(StatusEnum.UNEXPECT_ERROR, "不支持的文件类型");
+        }
+
+        List<GatherOcDraftBo> res = new ArrayList<>();
+        StringBuilder builder;
+        int index = 0;
+        while (index < pair.getSecond().size()) {
+            builder = new StringBuilder();
+            builder.append(pair.getFirst()).append("\n");
+            List<String> items = pair.getSecond().subList(index, Math.min(index + SPLIT_LEN, pair.getSecond().size()));
+            builder.append(Joiner.on("\n").join(items));
+            index += SPLIT_LEN;
+
+            try {
+                // 文本解析
+                List<GatherOcDraftBo> list = gatherAiAgent.gatherByText(builder.toString());
+                log.info("返回结果是：{}", JsonUtil.toStr(list));
+                gatherService.saveDraftDataList(Draft2EntityConvert.convert(list));
+                res.addAll(list);
+            } catch (Exception e) {
+                log.error("解析失败，请检查大模型是否正常", e);
+            }
+        }
+
+        return res;
+    }
+
+    /**
      * 直接根据用户传入的文本，进行解析获取职位信息
      *
      * @return
      */
-    private Function<GatherReq, List<GatherOcDraftBo>> gatherByText() {
-        String testText = """
-                公司名称	公司类型	工作地点	招聘类型	招聘对象	岗位(大都不限专业)	投递进度	更新时间	投递截止	相关链接	招聘公告	内推码	备注
-                江苏智檬智能科技	民企	南京市	秋招提前批	2025和2026年毕业生	
-                企宣助理,品牌运营,文化出海岗
-                未投递	2025-07-14	招满为止	投递	公告	-	-
-                中国有研科技	央国企	北京市,廊坊市,德州市,忻州市,青岛市上海市,合肥市,重庆市,新余市,	春招	2025年毕业生	
-                研发工程师,工艺工程师,检测工程师,电气工程师,安全工程师,技工
-                未投递	2025-07-14	招满为止	投递	公告	-	-
-                东方航空食品	央国企	上海	春招	2025年毕业生	
-                航食储备人才
-                未投递	2025-07-14	招满为止	投递	公告	-	-
-                星猿哲	外企	全国,国外	秋招提前批	2026年毕业生	
-                硬件研发岗(机械、电气),系统研发岗,运动算法岗,视觉算法岗,仿真算法岗,软件测试岗,硬件测试岗
-                未投递	2025-07-14	招满为止	投递	公告	-	-
-                """;
-
+    private Function<GatherReq, List<GatherOcDraftBo>> gatherByText(String txt) {
+        String testText = StringUtils.isBlank(txt) ? ResourceUtil.readUtf8Str("data/oc-text.txt") : txt;
         return (s) -> {
             return gatherAiAgent.gatherByText(testText);
         };
     }
 
     private Function<GatherReq, List<GatherOcDraftBo>> gatherByHtmlText(String text) {
-        String testText = ResourceUtil.readUtf8Str("data/oc-html.txt");
-        // fixme 需要考虑上下文长度溢出导致问题
+        String testText = StringUtils.isBlank(text) ? ResourceUtil.readUtf8Str("data/oc-html.txt") : text;
         return (s) -> {
             return gatherAiAgent.gatherByAutoSplit(testText);
         };
@@ -101,5 +147,88 @@ public class OfferGatherService {
         return (s) -> {
             return gatherAiAgent.gatherByAutoSplit(filePath);
         };
+    }
+
+    private Function<GatherReq, List<GatherOcDraftBo>> gatherByImg(MultipartFile file) throws IOException {
+        byte[] bytes;
+        MimeType type;
+        if (file == null || file.isEmpty()) {
+            // 使用默认的图片进行兜底
+            Resource resource = new ClassPathResource("data/oc-img.jpg");
+            bytes = resource.getContentAsByteArray();
+            type = MimeTypeUtils.IMAGE_JPEG;
+        } else {
+            bytes = file.getBytes();
+            type = MimeTypeUtils.parseMimeType(file.getContentType());
+        }
+        return (s) -> {
+            return gatherAiAgent.gatherByImg(type, bytes);
+        };
+    }
+
+    private Pair<String, List<String>> parseContentsFromCsv(MultipartFile file) throws IOException {
+        byte[] bytes;
+        if (file == null || file.isEmpty()) {
+            // 使用默认的图片进行兜底
+            Resource resource = new ClassPathResource("data/oc.csv");
+            bytes = resource.getContentAsByteArray();
+        } else {
+            bytes = file.getBytes();
+        }
+
+        // 读取数据，进行拆分，用于多次与大模型交互；避免大模型返回结果截断
+        String datas = new String(bytes, "utf-8");
+        String[] lines = org.apache.commons.lang3.StringUtils.splitByWholeSeparator(datas, "\n");
+        String title = lines[0];
+        List<String> contents = new ArrayList<>();
+        for (int i = 1; i < lines.length; i++) {
+            contents.add(lines[i]);
+        }
+        return Pair.of(title, contents);
+    }
+
+    private Pair<String, List<String>> parseContentsFromExcel(MultipartFile file) throws IOException {
+        byte[] bytes;
+        if (file == null || file.isEmpty()) {
+            // 使用默认的图片进行兜底
+            Resource resource = new ClassPathResource("data/oc.xlsx");
+            bytes = resource.getContentAsByteArray();
+        } else {
+            bytes = file.getBytes();
+        }
+
+        final String[] title = new String[1];
+        List<String> contents = new ArrayList<>();
+        ExcelReader reader = FastExcel.read(new ByteArrayInputStream(bytes), new ReadListener<LinkedHashMap>() {
+            @Override
+            public void invokeHead(Map headMap, AnalysisContext context) {
+                StringBuilder builder = new StringBuilder();
+                for (Object entry : headMap.entrySet()) {
+                    ReadCellData val = (ReadCellData) ((Map.Entry) entry).getValue();
+                    builder.append(val.getStringValue());
+                    builder.append(",");
+                }
+                title[0] = builder.toString();
+            }
+
+            @Override
+            public void invoke(LinkedHashMap map, AnalysisContext analysisContext) {
+                StringBuilder builder = new StringBuilder();
+                for (Object entry : map.entrySet()) {
+                    String val = (String) ((Map.Entry) entry).getValue();
+                    builder.append(val);
+                    builder.append(",");
+                }
+                contents.add(builder.toString());
+            }
+
+            @Override
+            public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+            }
+        }).build();
+        reader.readAll();
+        reader.close();
+
+        return Pair.of(title[0], contents);
     }
 }

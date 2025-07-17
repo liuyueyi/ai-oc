@@ -22,6 +22,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.content.Media;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.support.ToolCallbacks;
@@ -31,11 +32,13 @@ import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MimeType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * AI采集代理
@@ -51,12 +54,25 @@ public class GatherAiAgent {
             如果我给你的是一个http链接，则借助function tool crawlerHttpTable从链接对应的网页中找到表格元素返回给用户希望的信息
              """;
 
+    /**
+     * 文本类大模型
+     */
     private final ChatClient chatClient;
+
+    /**
+     * 图片视觉理解的模型
+     */
+    private final ChatClient imgChatClient;
 
     private final ChatModel chatModel;
 
     private BeanOutputConverter<ArrayList<GatherOcDraftBo>> gatherResConverter;
 
+    /**
+     * fixme 支持多个模型的切换，现在仅支持一个模型
+     *
+     * @param chatModel
+     */
     @Autowired
     public GatherAiAgent(ZhiPuAiChatModel chatModel) {
         this.chatModel = chatModel;
@@ -65,12 +81,21 @@ public class GatherAiAgent {
                 .defaultOptions(ChatOptions.builder().stopSequences(Collections.emptyList()).build()) // 取消默认停止符
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
-        gatherResConverter = new BeanOutputConverter<>(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
+        gatherResConverter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
         });
+
+        // 图片理解
+        imgChatClient = ChatClient.builder(chatModel)
+                .defaultSystem(SYSTEM_PROMPT)
+                .defaultOptions(ChatOptions.builder()
+                        .model("GLM-4V-Flash")
+                        .stopSequences(Collections.emptyList()).build())
+                .defaultAdvisors(new SimpleLoggerAdvisor())
+                .build();
     }
 
 
-    // fixme 需要处理传入数据太长，导致解析的结果被截断的场景
+    // 传入数据太长，导致解析的结果被截断的场景时，转用下面的 gatherByAutoSplit 调用方法
     public List<GatherOcDraftBo> gatherByText(String text) {
         ArrayList<GatherOcDraftBo> list = chatClient.prompt(text)
                 .tools(new CrawlerTools())
@@ -80,6 +105,50 @@ public class GatherAiAgent {
         return list;
     }
 
+    public List<GatherOcDraftBo> gatherByImg(MimeType type, byte[] bytes) {
+        String rid = UUID.randomUUID().toString();
+        Media media = Media.builder().mimeType(type)
+                .data(bytes)
+                .name("图片-" + type.getSubtype() + "-" + rid)
+                .id("")
+                .build();
+        UserMessage msg = UserMessage.builder()
+                .media(media)
+                .text("提取图片中的表格信息，按照指定要求返回")
+                .build();
+        ArrayList<GatherOcDraftBo> list = imgChatClient.prompt(new Prompt(msg))
+                .tools(new CrawlerTools())
+                .call()
+                .entity(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
+                });
+        return list;
+    }
+
+    /**
+     * fixme 说明：智谱的几个免费大模型，不支持文件上传解析；若是其他的模型则可以考虑使用这个方式
+     *
+     * @param type
+     * @param bytes
+     * @return
+     */
+    public List<GatherOcDraftBo> gatherByFile(MimeType type, byte[] bytes) {
+        String rid = UUID.randomUUID().toString();
+        Media media = Media.builder().mimeType(type)
+                .data(bytes)
+                .name("文件" + type.getSubtype() + "-" + rid)
+                .id(rid)
+                .build();
+        UserMessage msg = UserMessage.builder()
+                .media(media)
+                .text("读取给你的文件，按照指定要求返回")
+                .build();
+        ArrayList<GatherOcDraftBo> list = chatClient.prompt(new Prompt(msg))
+                .tools(new CrawlerTools())
+                .call()
+                .entity(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
+                });
+        return list;
+    }
 
     public List<GatherOcDraftBo> gatherByAutoSplit(String text) {
         // 为了避免响应过长，这里进行分段处理
@@ -108,8 +177,16 @@ public class GatherAiAgent {
                     .toolCallbacks(ToolCallbacks.from(new CrawlerTools()))
                     .build();
             try {
-                ChatResponse response = chatModel.call(new Prompt(chatMemory.get(conversationId), chatOptions));
+                Prompt query = new Prompt(chatMemory.get(conversationId), chatOptions);
+                if (log.isDebugEnabled()) {
+                    log.debug("query: {}", query);
+                }
+                ChatResponse response = chatModel.call(query);
                 AssistantMessage assistantMessage = response.getResult().getOutput();
+                if (log.isDebugEnabled()) {
+                    log.debug("res: {}", assistantMessage);
+                }
+
                 chatMemory.add(conversationId, assistantMessage);
                 cnt += 1;
 
@@ -147,6 +224,10 @@ public class GatherAiAgent {
         return list;
     }
 
+
+    /**
+     * 提供给大模型的 function tools
+     */
     public class CrawlerTools {
         /**
          * 获取http地址中的表格
@@ -162,9 +243,16 @@ public class GatherAiAgent {
             Element table = document.select("table").first();
             String ans = table.html().trim();
             if (log.isDebugEnabled()) {
-                log.debug("获取到的表格内容为：{}", ans);
+                // 一行打印
+                log.debug("获取到的表格内容为：{}", ans.replaceAll("\n", ""));
             }
             return ans;
+        }
+
+        @Tool(description = "将给入的文件内容转换为文本返回")
+        public String readFileContent(@ToolParam(description = "文件路径") byte[] bytes) {
+            log.info("将给入的数据转换为文本返回");
+            return new String(bytes);
         }
     }
 
