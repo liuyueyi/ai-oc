@@ -119,7 +119,7 @@ public class OfferGatherService {
      * @return
      */
     private Function<GatherReq, List<GatherOcDraftBo>> gatherByText(String txt) {
-        String testText = StringUtils.isBlank(txt) ? ResourceUtil.readUtf8Str("data/oc-text.txt") : txt;
+        String testText = StringUtils.isBlank(txt) ? ResourceUtil.readUtf8Str("data/oc.txt") : txt;
         return (s) -> {
             return gatherAiAgent.gatherByText(testText);
         };

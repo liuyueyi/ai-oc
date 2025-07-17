@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -24,7 +26,7 @@ import java.util.List;
  */
 @Permission(role = UserRole.ADMIN)
 @RestController
-@RequestMapping(path = "/admin/gather")
+@RequestMapping(path = "/api/admin/gather")
 public class AdminOfferGatherController {
     private final OfferGatherService offerGatherService;
 
