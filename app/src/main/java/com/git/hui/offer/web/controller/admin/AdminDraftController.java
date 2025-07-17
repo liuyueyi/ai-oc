@@ -27,12 +27,12 @@ import java.util.List;
 @Slf4j
 @Permission(role = UserRole.ADMIN)
 @RestController
-@RequestMapping(path = "/admin/draft")
-public class DraftController {
+@RequestMapping(path = "/api/admin/draft")
+public class AdminDraftController {
 
     private final OcService ocService;
 
-    public DraftController(OcService ocService) {
+    public AdminDraftController(OcService ocService) {
         this.ocService = ocService;
     }
 

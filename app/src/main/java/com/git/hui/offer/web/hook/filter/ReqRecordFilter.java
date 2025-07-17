@@ -1,6 +1,7 @@
 package com.git.hui.offer.web.hook.filter;
 
 import com.git.hui.offer.components.context.ReqInfoContext;
+import com.git.hui.offer.components.context.UserBo;
 import com.git.hui.offer.components.env.SpringUtil;
 import com.git.hui.offer.constants.user.LoginConstants;
 import com.git.hui.offer.user.helper.SessionHelper;
@@ -26,7 +27,6 @@ import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -91,23 +91,35 @@ public class ReqRecordFilter implements Filter {
 
             request = this.wrapperRequest(request, reqInfo);
 
+
             // 注入用户信息
-            Optional.ofNullable(SessionUtil.findCookieByName(request, LoginConstants.SESSION_KEY))
-                    .ifPresent(cookie -> {
-                        // 从cookie中解析用户信息，放入到全局上下文中
-                        String session = cookie.getValue();
-                        Long userId = SpringUtil.getBean(SessionHelper.class).getUserIdBySession(session);
-                        reqInfo.setUserId(userId);
-                        if (userId != null) {
-                            reqInfo.setUser(SpringUtil.getBean(UserService.class).getUserBo(userId));
-                        }
-                    });
+            initUserInfo(request, reqInfo);
             ReqInfoContext.addReqInfo(reqInfo);
         } catch (Exception e) {
             log.error("init reqInfo error!", e);
         }
 
         return request;
+    }
+
+    private void initUserInfo(HttpServletRequest request, ReqInfoContext.ReqInfo reqInfo) {
+        String token = request.getHeader(LoginConstants.TOKEN_KEY);
+        if (StringUtils.isBlank(token)) {
+            Cookie ck = SessionUtil.findCookieByName(request, LoginConstants.SESSION_KEY);
+            if (ck != null) {
+                token = ck.getValue();
+            }
+        }
+
+        if (StringUtils.isBlank(token)) {
+            return;
+        }
+
+        Long userId = SpringUtil.getBean(SessionHelper.class).getUserIdBySession(token);
+        UserBo userBo = SpringUtil.getBean(UserService.class).getUserBo(userId);
+        reqInfo.setUserId(userBo.userId());
+        reqInfo.setUser(userBo);
+        reqInfo.setSession(token);
     }
 
     private void buildRequestLog(ReqInfoContext.ReqInfo req, HttpServletRequest request, long costTime) {

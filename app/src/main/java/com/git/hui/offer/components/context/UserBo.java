@@ -8,5 +8,5 @@ import com.git.hui.offer.components.permission.UserRole;
  * @author YiHui
  * @date 2025/7/15
  */
-public record UserBo(Long userId, String nickName, UserRole role) {
+public record UserBo(Long userId, String nickName, String avatar, UserRole role) {
 }

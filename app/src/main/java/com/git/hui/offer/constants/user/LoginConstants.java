@@ -5,6 +5,7 @@ package com.git.hui.offer.constants.user;
  * @date 2025/7/16
  */
 public interface LoginConstants {
+    String TOKEN_KEY = "X-OC-TOKEN";
     String SESSION_KEY = "oc-session";
     String USER_DEVICE_KEY = "oc-device";
 

@@ -2,6 +2,7 @@ package com.git.hui.offer.user.service;
 
 import com.git.hui.offer.components.bizexception.NoVlaInGuavaException;
 import com.git.hui.offer.components.context.ReqInfoContext;
+import com.git.hui.offer.components.env.SpringUtil;
 import com.git.hui.offer.constants.user.LoginConstants;
 import com.git.hui.offer.user.helper.SessionHelper;
 import com.git.hui.offer.util.CodeGenerateUtil;
@@ -90,6 +91,7 @@ public class LoginService {
         });
         // 若实际的验证码与前端显示的不同，则通知前端更新
         sseEmitter.send("initCode!");
+        sseEmitter.send("qr#" + SpringUtil.getConfig("oc.site.login-qr-img"));
         sseEmitter.send("init#" + realCode);
         return sseEmitter;
     }
@@ -149,7 +151,7 @@ public class LoginService {
             return false;
         }
 
-        String session = sessionHelper.genSession(ReqInfoContext.getReqInfo().getUserId());
+        String session = sessionHelper.genSession(ReqInfoContext.getReqInfo().getUser());
         try {
             // 登录成功，写入session
             sseEmitter.send(session);

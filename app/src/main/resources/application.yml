@@ -15,9 +15,15 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
 oc:
   jwt:
-    issuer: pai_coding # 签发者
-    secret: hello_world # 签名密钥
+    issuer: oc # 签发者
+    secret: hello_offer # 签名密钥
     expire: 2592000000 # jwt的有效期，默认30天
+  site:
+    login-qr-img: https://spring.hhui.top/spring-blog/imgs/info/wx.jpg
+    website-name: 来个OC
+    web-site-logo: https://spring.hhui.top/spring-blog/css/images/avatar.jpg
+    web-site-host: http://localhost
+    vip-periods: 360
 
 # 修改日志级别
 logging:

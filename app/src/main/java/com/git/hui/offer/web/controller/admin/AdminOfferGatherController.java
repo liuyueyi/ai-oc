@@ -25,11 +25,11 @@ import java.util.List;
 @Permission(role = UserRole.ADMIN)
 @RestController
 @RequestMapping(path = "/admin/gather")
-public class OfferGatherController {
+public class AdminOfferGatherController {
     private final OfferGatherService offerGatherService;
 
     @Autowired
-    public OfferGatherController(OfferGatherService offerGatherService) {
+    public AdminOfferGatherController(OfferGatherService offerGatherService) {
         this.offerGatherService = offerGatherService;
     }
 

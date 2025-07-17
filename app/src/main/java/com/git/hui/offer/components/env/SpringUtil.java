@@ -1,5 +1,6 @@
 package com.git.hui.offer.components.env;
 
+import com.git.hui.offer.web.config.SiteConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.ApplicationContext;
@@ -120,5 +121,15 @@ public class SpringUtil implements ApplicationContextAware, EnvironmentAware {
      */
     public static Binder getBinder() {
         return binder;
+    }
+
+
+    /**
+     * 获取站点配置
+     *
+     * @return
+     */
+    public static SiteConfig getSiteConfig() {
+        return SpringUtil.getBean(SiteConfig.class);
     }
 }

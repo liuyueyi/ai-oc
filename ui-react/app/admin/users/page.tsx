@@ -1,35 +1,55 @@
 "use client"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useEffect, useState } from "react";
+import { fetchUserList, updateUserRole, UserListItem, UserListQuery } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-interface User {
-  id: string | number
-  username: string
-  email: string
-  role: string
+function formatDateTime(ts?: number) {
+  if (!ts) return "-";
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
 }
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([])
-  const [editingUser, setEditingUser] = useState<User | null>(null)
-  const [isAddingNew, setIsAddingNew] = useState(false)
+  const [users, setUsers] = useState<UserListItem[]>([]);
+  const [query, setQuery] = useState<UserListQuery>({ page: 1, size: 10 });
+  const [total, setTotal] = useState(0);
+  const [editingUser, setEditingUser] = useState<UserListItem | null>(null);
+  const [editRole, setEditRole] = useState<number>(1);
+  const [editExpire, setEditExpire] = useState<string>("");
 
-  const handleDelete = (id: string) => {
-    setUsers(users.filter((user) => user.id !== id))
-  }
+  useEffect(() => {
+    fetchUserList(query).then(res => {
+      setUsers(res.list);
+      setTotal(res.total);
+    });
+  }, [query]);
 
-  const handleSave = (user: User) => {
-    if (isAddingNew) {
-      setUsers([...users, { ...user, id: Date.now().toString() }])
-      setIsAddingNew(false)
-    } else {
-      setUsers(users.map((u) => (u.id === user.id ? user : u)))
+  const totalPages = Math.ceil(total / (query.size || 10)) || 1;
+
+  const openEdit = (user: UserListItem) => {
+    setEditingUser(user);
+    setEditRole(user.role);
+    setEditExpire(user.expireTime ? new Date(user.expireTime).toISOString().slice(0, 10) : "");
+  };
+
+  const handleSave = async () => {
+    if (!editingUser) return;
+    let expireTime = 0;
+    if (editRole === 2) {
+      if (!editExpire) {
+        alert("VIP用户必须指定到期日");
+        return;
+      }
+      expireTime = new Date(editExpire).getTime();
     }
-    setEditingUser(null)
-  }
+    await updateUserRole({ userId: editingUser.userId, role: editRole, expireTime });
+    setEditingUser(null);
+    setQuery({ ...query }); // 触发刷新
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,42 +62,69 @@ export default function UsersPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="mb-6">
-          <Button
-            onClick={() => {
-              setIsAddingNew(true)
-              setEditingUser({ id: "", username: "", email: "", role: "" })
-            }}
-          >
-            添加新用户
-          </Button>
+        {/* 搜索条件 */}
+        <div className="flex flex-wrap gap-2 mb-4 items-center">
+          <Input placeholder="用户ID" className="w-36" value={query.userId || ""} onChange={e => setQuery(q => ({ ...q, userId: e.target.value ? Number(e.target.value) : undefined, page: 1 }))} />
+          <Input placeholder="昵称" className="w-36" value={query.displayName || ""} onChange={e => setQuery(q => ({ ...q, displayName: e.target.value, page: 1 }))} />
+          <Select value={query.role ? String(query.role) : ""} onValueChange={v => setQuery(q => ({ ...q, role: v ? Number(v) : undefined, page: 1 }))}>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="全部角色" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="0">全部角色</SelectItem>
+              <SelectItem value="1">普通用户</SelectItem>
+              <SelectItem value="2">VIP用户</SelectItem>
+              <SelectItem value="3">管理员</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button className="h-10 px-6" onClick={() => setQuery(q => ({ ...q, page: 1 }))}>查询</Button>
         </div>
 
+        {/* 用户表格 */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <Table>
+          <Table className="min-w-full text-sm">
             <TableHeader>
-              <TableRow>
-                <TableHead>用户名</TableHead>
-                <TableHead>邮箱</TableHead>
+              <TableRow className="bg-gray-100">
+                <TableHead>用户编号</TableHead>
+                <TableHead className="w-16">头像</TableHead>
+                <TableHead>昵称</TableHead>
                 <TableHead>角色</TableHead>
-                <TableHead>操作</TableHead>
+                <TableHead>会员到期日</TableHead>
+                <TableHead>加入时间</TableHead>
+                <TableHead className="w-24">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user) => (
-                <TableRow key={String(user.id)}>
-                  <TableCell className="font-medium">{user.username}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role}</TableCell>
+              {users.length === 0 ? (
+                <TableRow><TableCell colSpan={6} className="text-center text-gray-400">暂无数据</TableCell></TableRow>
+              ) : users.map(user => (
+                <TableRow key={user.userId} className="hover:bg-gray-50">
                   <TableCell>
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" onClick={() => setEditingUser(user)}>
-                        编辑
-                      </Button>
-                      <Button size="sm" variant="destructive" onClick={() => handleDelete(String(user.id))}>
-                        删除
-                      </Button>
-                    </div>
+                    {user.userId}
+                  </TableCell>
+                  <TableCell>
+                    <img src={user.avatar} alt="avatar" className="w-8 h-8 rounded-full border" />
+                  </TableCell>
+                  <TableCell>{user.displayName}</TableCell>
+                  <TableCell>
+                    <span className={
+                      user.role === 1 ? "text-gray-700" :
+                        user.role === 2 ? "text-blue-600 font-semibold" :
+                          user.role === 3 ? "text-green-600 font-semibold" : "text-gray-400"
+                    }>
+                      {user.role === 1 ? "普通用户" : user.role === 2 ? "VIP用户" : user.role === 3 ? "管理员" : "未知"}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {user.expireTime ? new Date(user.expireTime).toLocaleDateString() : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {formatDateTime(user.createTime)}
+                  </TableCell>
+                  <TableCell>
+                    <Button size="sm" variant="outline" onClick={() => openEdit(user)}>
+                      编辑
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -85,57 +132,53 @@ export default function UsersPage() {
           </Table>
         </div>
 
+        {/* 分页 - 右下角 */}
+        <div className="flex justify-end items-center gap-2 mt-4">
+          <Button size="sm" variant="outline" disabled={query.page === 1} onClick={() => setQuery(q => ({ ...q, page: (q.page || 1) - 1 }))}>上一页</Button>
+          <span className="text-sm text-gray-500 mr-2">第 {query.page} / {totalPages} 页</span>
+          <Button size="sm" variant="outline" disabled={query.page === totalPages} onClick={() => setQuery(q => ({ ...q, page: (q.page || 1) + 1 }))}>下一页</Button>
+        </div>
+
+        {/* 编辑弹窗 */}
         {editingUser && (
-          <Dialog
-            open={true}
-            onOpenChange={() => {
-              setEditingUser(null)
-              setIsAddingNew(false)
-            }}
-          >
-            <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <Dialog open={true} onOpenChange={() => setEditingUser(null)}>
+            <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>{isAddingNew ? "添加新用户" : "编辑用户"}</DialogTitle>
+                <DialogTitle>编辑用户角色</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-1 gap-4 py-4">
+              <div className="grid gap-4 py-4">
                 <div>
-                  <label className="text-sm font-medium">用户名</label>
-                  <Input
-                    value={editingUser.username}
-                    onChange={(e) => setEditingUser({ ...editingUser, username: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">邮箱</label>
-                  <Input
-                    value={editingUser.email}
-                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                  />
+                  <label className="text-sm font-medium">昵称</label>
+                  <Input value={editingUser.displayName} disabled />
                 </div>
                 <div>
                   <label className="text-sm font-medium">角色</label>
-                  <Input
-                    value={editingUser.role}
-                    onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
-                  />
+                  <Select value={String(editRole)} onValueChange={v => setEditRole(Number(v))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">普通用户</SelectItem>
+                      <SelectItem value="2">VIP用户</SelectItem>
+                      <SelectItem value="3">管理员</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+                {editRole === 2 && (
+                  <div>
+                    <label className="text-sm font-medium">会员到期日</label>
+                    <Input type="date" value={editExpire} onChange={e => setEditExpire(e.target.value)} />
+                  </div>
+                )}
               </div>
-              <div className="flex justify-end space-x-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setEditingUser(null)
-                    setIsAddingNew(false)
-                  }}
-                >
-                  取消
-                </Button>
-                <Button onClick={() => handleSave(editingUser)}>保存</Button>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setEditingUser(null)}>取消</Button>
+                <Button onClick={handleSave}>保存</Button>
               </div>
             </DialogContent>
           </Dialog>
         )}
       </div>
     </div>
-  )
-} 
+  );
+}

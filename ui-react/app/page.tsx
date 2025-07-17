@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Search, Bell, User, QrCode, Settings } from "lucide-react"
+import { useState, useCallback, useEffect } from "react"
+import { Search, Bell, User, QrCode, Settings, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -16,10 +16,19 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { fetchJobList, JobListResponse } from "@/lib/api"
-import { useEffect } from "react"
+import { fetchJobList, JobListResponse, getWxSseUrl, postWxCallback } from "@/lib/api"
 import { useRouter } from "next/navigation"
+import { useSSE } from "@/hooks/useSSE"
+import { QRCodeCanvas } from "qrcode.react";
+import { useLoginUser } from "@/hooks/useLoginUser";
 
 interface JobOffer {
   id: string | number
@@ -56,6 +65,83 @@ export default function HomePage() {
   const [total, setTotal] = useState(0)
   const [queryParams, setQueryParams] = useState<any>({})
   const router = useRouter()
+  const [loginOpen, setLoginOpen] = useState(false)
+  const [qr, setQr] = useState("")
+  const [code, setCode] = useState("")
+  const [session, setSession] = useState("")
+  const [mounted, setMounted] = useState(false)
+  const [loginLoading, setLoginLoading] = useState(false)
+  const [adminLoading, setAdminLoading] = useState(false)
+  const { userInfo, setUserInfo, logout } = useLoginUser();
+  const [sseUrl, setSseUrl] = useState("");
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (loginOpen) {
+      setSseUrl(getWxSseUrl());
+    } else {
+      setSseUrl("");
+    }
+  }, [loginOpen]);
+
+  const handleSSE = useCallback((type: string, payload: string) => {
+    if (type === "qr") setQr(payload)
+    if (type === "init") setCode(payload)
+    if (type === "login") {
+      setSession(payload)
+      setLoginOpen(false)
+      if (payload) {
+        document.cookie = payload;
+        const token = payload.substring(payload.indexOf('=') + 1, payload.indexOf(';'))
+        // 解析 jwt 并设置全局用户信息
+        const jwt = (() => {
+          try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+          } catch {
+            return null;
+          }
+        })();
+        if (jwt) {
+          const info = {
+            userId: jwt.uid,
+            role: jwt.r,
+            nickname: jwt.un,
+            avatar: jwt.av
+          };
+          setUserInfo(info);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('oc-user', JSON.stringify(info));
+            localStorage.setItem('oc-token', token);
+          }
+        }
+      }
+    }
+  }, [setUserInfo])
+
+  useSSE(sseUrl, handleSSE)
+
+  const handleWxLogin = async (type: "user" | "admin", code: String) => {
+    const content = type === "user" ? "login" : "admin"
+    const xml = `<xml><URL><![CDATA[https://hhui.top]]></URL><ToUserName><![CDATA[一灰灰blog]]></ToUserName><FromUserName><![CDATA[demoUser-${content}]]></FromUserName><CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[${code}]]></Content><MsgId>${Date.now()}</MsgId></xml>`
+    try {
+      if (type === "user") setLoginLoading(true)
+      else setAdminLoading(true)
+      await postWxCallback(xml)
+    } catch (err) {
+      // 可加 toast 错误提示
+    } finally {
+      setLoginLoading(false)
+      setAdminLoading(false)
+    }
+  }
 
   // 请求岗位数据（带分页）
   const loadJobList = (params: any = {}, page = currentPage) => {
@@ -131,7 +217,7 @@ export default function HomePage() {
   const totalPages = Math.ceil(total / itemsPerPage)
   const paginatedOffers = filteredOffers // 直接用接口返回的分页数据
 
-  if (currentView === "admin" && user?.isAdmin) {
+  if (currentView === "admin" && userInfo?.role === 3) { // 使用 userInfo 判断
     router.push("/admin")
     return null
   }
@@ -140,12 +226,11 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="px-10">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <div className="flex items-center">
-                <span className="text-2xl font-bold text-blue-600">🏢 来个 OC</span>
-                <span className="ml-2 text-yellow-500">🏠</span>
+                <span className="text-2xl font-bold text-blue-600">🏢来个OC</span>
               </div>
               <nav className="flex space-x-6">
                 <a href="#" className="text-gray-700 hover:text-blue-600">
@@ -158,39 +243,73 @@ export default function HomePage() {
             </div>
             <div className="flex items-center space-x-4">
               <Bell className="h-5 w-5 text-gray-500" />
-              {user ? (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-700">欢迎, {user.name}</span>
-                  {user.isAdmin && (
-                    <Button variant="outline" size="sm" onClick={() => setCurrentView("admin")} className="ml-2">
-                      <Settings className="h-4 w-4 mr-1" />
-                      管理后台
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <User className="h-4 w-4 mr-1" />
-                      登录
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>扫码登录</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex flex-col items-center space-y-4 py-4">
-                      <div className="w-48 h-48 bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
-                        <QrCode className="h-16 w-16 text-gray-400" />
+              {userInfo ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <span className="flex items-center cursor-pointer">
+                      <img
+                        src={userInfo.avatar}
+                        alt="avatar"
+                        className="w-8 h-8 rounded-full cursor-pointer"
+                        title={userInfo.nickname || `用户${userInfo.userId}`}
+                      />
+                      <ChevronDown className="w-4 h-4 ml-1 text-gray-500" />
+                    </span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <div className="px-3 py-2">
+                      <div className="font-medium">{userInfo.nickname || `用户${userInfo.userId}`}</div>
+                      <div className="text-xs text-gray-500">
+                        {userInfo.role === 1 ? "普通用户" : userInfo.role === 2 ? "VIP用户" : userInfo.role === 3 ? "管理员" : "未知"}
                       </div>
-                      <p className="text-sm text-gray-600 text-center">请使用手机扫描二维码登录</p>
-                      <Button onClick={handleLogin} className="w-full">
-                        模拟登录 (演示用)
-                      </Button>
                     </div>
-                  </DialogContent>
-                </Dialog>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => { /* 跳转到个人信息页 */ }}>
+                      个人信息
+                    </DropdownMenuItem>
+                    {userInfo.role === 3 && (
+                      <DropdownMenuItem onClick={() => router.push('/admin')}>
+                        管理后台
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={logout}>
+                      退出
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                mounted && (
+                  <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <User className="h-4 w-4 mr-1" />
+                        登录
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>扫码登录</DialogTitle>
+                      </DialogHeader>
+                      {qr ? (
+                        <div className="flex flex-col items-center">
+                          <QRCodeCanvas value={qr} size={180} />
+                          <div className="mt-2 text-lg font-bold">验证码：{code}</div>
+                          <div className="flex gap-4 mt-6">
+                            <Button onClick={() => handleWxLogin("user", code)} disabled={loginLoading}>
+                              {loginLoading ? "登录中..." : "普通用户登录"}
+                            </Button>
+                            <Button onClick={() => handleWxLogin("admin", code)} disabled={adminLoading} variant="secondary">
+                              {adminLoading ? "登录中..." : "管理员登录"}
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div>等待二维码...</div>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                )
               )}
             </div>
           </div>
@@ -363,7 +482,7 @@ export default function HomePage() {
 
         {/* Pagination */}
         <div className="mt-6 flex flex-col items-center">
-          <div className="text-sm text-gray-700 mb-2">共 {total} 条记录 当前在线人数: 221</div>
+          <div className="text-sm text-gray-700 mb-2">共 {total} 条记录 当前在线人数: -</div>
           <div>
             <Pagination>
               <PaginationContent>

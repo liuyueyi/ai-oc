@@ -21,4 +21,13 @@ public class UserSaveReq {
      * 第三方用户ID
      */
     private String wxId;
+
+    /**
+     * 用户名
+     */
+    private String displayName;
+    /**
+     * 头像
+     */
+    private String avatar;
 }

@@ -3,11 +3,10 @@ package com.git.hui.offer.user.dao.entity;
 import com.git.hui.offer.components.permission.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Date;
 
@@ -17,10 +16,11 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
+// 动态更新字段
+@DynamicUpdate
 @Entity(name = "user_info")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
