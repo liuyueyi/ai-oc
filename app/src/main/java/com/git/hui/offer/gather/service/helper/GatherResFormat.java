@@ -42,18 +42,30 @@ public class GatherResFormat {
      * @return
      */
     public static List<String> extact(StringBuilder remain, String text) {
+        // 干掉开头的标记
         if (text.startsWith("```json")) {
             text = text.substring("```json".length()).trim();
         } else if (text.startsWith("```")) {
             text = text.replaceAll("```", "").trim();
         }
+        if (text.endsWith("```")) {
+            // 干掉末尾的标记
+            text = text.substring(0, text.length() - "```".length()).trim();
+        }
 
-        // 如果 remain 最后是 "， 下面接着的不是 { 开头，则表示需要向前补全,
+        // 如果 remain 最后是 `",` 下面接着的不是 { 开头，则表示需要向前补全,
+        final String FIELD_END_TAG = "\"";
         int len = remain.length();
-        int index = remain.lastIndexOf("\"");
-        if (index > 0 && index == len - 1) {
-            // 已经是最后一个了
-            if (!text.startsWith("{")) {
+        int index = remain.lastIndexOf(FIELD_END_TAG);
+        if (index > 0 && index == len - FIELD_END_TAG.length()) {
+            // 表示remain中的存储的被截断的数据，是从一个完整的json中间截取的，且是当前这个对象的最后一个键值对（因为后面没有跟着`,`， 如方法说明示例中的 `"remarks": "-"`）
+            // 如果后面跟着的是 `{` 开头，则表示是一个新的json对象，我们可以将当前这个对象的结束符 `}` 添加到remain中，并返回
+            // 如果后面跟着的不是 `{` 开头，则表示remain中最后这个键值对不是这个json对象的最后一个，我们需要补全 `,`，用于拼接后面的内容
+
+            if (text.startsWith("{") || text.startsWith("[")) {
+                remain.append("\n},");
+            } else {
+                // 当前键值对非json对象的最后一个成员，需要添加 `,`   用于添加后面的键值对
                 remain.append(",");
             }
         }
@@ -62,4 +74,8 @@ public class GatherResFormat {
         return PartialJsonExtractor.extractCompleteElements(remain);
     }
 
+    public static List<String> extact(String text) {
+        StringBuilder builder = new StringBuilder(text);
+        return extact(builder, "");
+    }
 }

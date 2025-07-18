@@ -4,6 +4,7 @@ import com.git.hui.offer.components.permission.Permission;
 import com.git.hui.offer.components.permission.UserRole;
 import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
 import com.git.hui.offer.oc.dao.entity.OcInfoEntity;
+import com.git.hui.offer.oc.service.GatherService;
 import com.git.hui.offer.oc.service.OcService;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
@@ -30,20 +31,20 @@ import java.util.List;
 @RequestMapping(path = "/api/admin/draft")
 public class AdminDraftController {
 
-    private final OcService ocService;
+    private final GatherService gatherService;
 
-    public AdminDraftController(OcService ocService) {
-        this.ocService = ocService;
+    public AdminDraftController(GatherService gatherService) {
+        this.gatherService = gatherService;
     }
 
     @GetMapping(path = "list")
     public PageListVo<OcDraftEntity> list(DraftSearchReq req) {
-        return ocService.searchDraftList(req);
+        return gatherService.searchDraftList(req);
     }
 
     @GetMapping(path = "delete")
     public Boolean delete(Long draftId) {
-        return ocService.deleteDraft(draftId);
+        return gatherService.deleteDraft(draftId);
     }
 
     /**
@@ -55,7 +56,7 @@ public class AdminDraftController {
     @PostMapping(path = "update")
     public Boolean update(@RequestBody DraftOcUpdateReq req) {
         Assert.notNull(req.getId(), "id can not be null");
-        return ocService.updateDraft(req);
+        return gatherService.updateDraft(req);
     }
 
     /**
@@ -67,6 +68,6 @@ public class AdminDraftController {
     @PostMapping(path = "toOc")
     public List<OcInfoEntity> toOc(@RequestBody List<Long> ids) {
         Assert.notEmpty(ids, "请选择需要迁移的数据");
-        return ocService.moveToOc(ids);
+        return gatherService.moveToOc(ids);
     }
 }

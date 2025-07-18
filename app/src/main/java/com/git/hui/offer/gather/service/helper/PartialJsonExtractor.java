@@ -97,7 +97,7 @@ public class PartialJsonExtractor {
 
     // 清理尾部的逗号和空白字符
     private static void cleanTrailingCharacters(StringBuilder jsonBuilder) {
-        while (jsonBuilder.length() > 0) {
+        while (!jsonBuilder.isEmpty()) {
             char lastChar = jsonBuilder.charAt(jsonBuilder.length() - 1);
             if (lastChar == ',' || Character.isWhitespace(lastChar)) {
                 jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
@@ -105,24 +105,5 @@ public class PartialJsonExtractor {
                 break;
             }
         }
-    }
-    /**
-     * 测试示例
-     */
-    public static void main(String[] args) {
-        StringBuilder builder = new StringBuilder(JsonChunkParser.text1);
-        List<String> ans = extractCompleteElements(builder);
-        System.out.println(ans);
-
-        builder.append(JsonChunkParser.text2);
-        ans.addAll(extractCompleteElements(builder));
-
-        builder.append(JsonChunkParser.text3);
-        ans.addAll(extractCompleteElements(builder));
-
-        builder.append(JsonChunkParser.text4);
-        ans.addAll(extractCompleteElements(builder));
-
-        System.out.println(ans);
     }
 }

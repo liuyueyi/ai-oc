@@ -4,20 +4,18 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
+import com.git.hui.offer.gather.service.ai.AiModelFacade;
 import com.git.hui.offer.gather.service.helper.GatherResFormat;
 import com.git.hui.offer.util.json.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -28,17 +26,17 @@ import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * AI采集代理
@@ -49,55 +47,20 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class GatherAiAgent {
-    private static final String SYSTEM_PROMPT = """
-            你现在是一个专业的数据挖掘者，可以从我提供给你的文本内容、表格文件、html文本中获取用户希望的信息；
-            如果我给你的是一个http链接，则借助function tool crawlerHttpTable从链接对应的网页中找到表格元素返回给用户希望的信息
-             """;
-
-    /**
-     * 文本类大模型
-     */
-    private final ChatClient chatClient;
-
-    /**
-     * 图片视觉理解的模型
-     */
-    private final ChatClient imgChatClient;
-
-    private final ChatModel chatModel;
-
+    private final AiModelFacade aiModelFacade;
     private BeanOutputConverter<ArrayList<GatherOcDraftBo>> gatherResConverter;
 
-    /**
-     * fixme 支持多个模型的切换，现在仅支持一个模型
-     *
-     * @param chatModel
-     */
     @Autowired
-    public GatherAiAgent(ZhiPuAiChatModel chatModel) {
-        this.chatModel = chatModel;
-        chatClient = ChatClient.builder(chatModel)
-                .defaultSystem(SYSTEM_PROMPT)
-                .defaultOptions(ChatOptions.builder().stopSequences(Collections.emptyList()).build()) // 取消默认停止符
-                .defaultAdvisors(new SimpleLoggerAdvisor())
-                .build();
-        gatherResConverter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
+    public GatherAiAgent(AiModelFacade aiModelFacade) {
+        this.aiModelFacade = aiModelFacade;
+        this.gatherResConverter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
         });
-
-        // 图片理解
-        imgChatClient = ChatClient.builder(chatModel)
-                .defaultSystem(SYSTEM_PROMPT)
-                .defaultOptions(ChatOptions.builder()
-                        .model("GLM-4V-Flash")
-                        .stopSequences(Collections.emptyList()).build())
-                .defaultAdvisors(new SimpleLoggerAdvisor())
-                .build();
     }
 
 
     // 传入数据太长，导致解析的结果被截断的场景时，转用下面的 gatherByAutoSplit 调用方法
     public List<GatherOcDraftBo> gatherByText(String text) {
-        ArrayList<GatherOcDraftBo> list = chatClient.prompt(text)
+        ArrayList<GatherOcDraftBo> list = this.aiModelFacade.getChatClient().prompt(text)
                 .tools(new CrawlerTools())
                 .call()
                 .entity(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
@@ -105,6 +68,7 @@ public class GatherAiAgent {
         return list;
     }
 
+    // 适用于图片中的数据条目较小的场景，大模型可以一次将结果全部返回
     public List<GatherOcDraftBo> gatherByImg(MimeType type, byte[] bytes) {
         String rid = UUID.randomUUID().toString();
         Media media = Media.builder().mimeType(type)
@@ -116,7 +80,7 @@ public class GatherAiAgent {
                 .media(media)
                 .text("提取图片中的表格信息，按照指定要求返回")
                 .build();
-        ArrayList<GatherOcDraftBo> list = imgChatClient.prompt(new Prompt(msg))
+        ArrayList<GatherOcDraftBo> list = this.aiModelFacade.getImgChatClient().prompt(new Prompt(msg))
                 .tools(new CrawlerTools())
                 .call()
                 .entity(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
@@ -142,7 +106,7 @@ public class GatherAiAgent {
                 .media(media)
                 .text("读取给你的文件，按照指定要求返回")
                 .build();
-        ArrayList<GatherOcDraftBo> list = chatClient.prompt(new Prompt(msg))
+        ArrayList<GatherOcDraftBo> list = this.aiModelFacade.getChatClient().prompt(new Prompt(msg))
                 .tools(new CrawlerTools())
                 .call()
                 .entity(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
@@ -150,78 +114,124 @@ public class GatherAiAgent {
         return list;
     }
 
+    /**
+     * 基于文本/http链向的网页进行数据提取
+     *
+     * @param text
+     * @return
+     */
     public List<GatherOcDraftBo> gatherByAutoSplit(String text) {
-        // 为了避免响应过长，这里进行分段处理
-        // 创建 memory 实例，保存上下文
-        ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
-        String conversationId = RandomUtil.randomString(6);
+        return autoContinueChat(null, text);
+    }
 
-        SystemMessage systemMessage = new SystemMessage(SYSTEM_PROMPT);
-        chatMemory.add(conversationId, systemMessage);
+
+    /**
+     * 适用于图片内容较多，返回结果被截断的场景
+     *
+     * @param type
+     * @param bytes
+     * @return
+     */
+    public List<GatherOcDraftBo> gatherByImgAutoSplit(MimeType type, byte[] bytes) {
+        String rid = UUID.randomUUID().toString();
+        Media media = Media.builder().mimeType(type)
+                .data(bytes)
+                .name("图片-" + type.getSubtype() + "-" + rid)
+                .id("")
+                .build();
+        return autoContinueChat(media, "提取图片中的表格信息，按照指定要求返回");
+    }
+
+    /**
+     * 针对大模型响应结果截断的场景，进行多轮对话，尝试获取完整的返回
+     * 实现原理：基于 chatModel, 借助 ChatMemory 自动实现多轮对话，
+     */
+    private List<GatherOcDraftBo> autoContinueChat(Media media, String text) {
+        // 创建 memory 实例，保存上下文
+        ChatMemory chatMemory = MessageWindowChatMemory.builder().maxMessages(10).build();
+        String chatId = RandomUtil.randomString(6);
+
+        SystemMessage systemMessage = new SystemMessage(AiModelFacade.SYSTEM_PROMPT);
+        chatMemory.add(chatId, systemMessage);
 
         List<String> itemList = new ArrayList<>();
         StringBuilder remain = new StringBuilder();
         int cnt = 0;
         while (true) {
-            log.info("第{}次大模型数据解析", cnt + 1);
+            log.info("{}#第{}次大模型数据解析", chatId, cnt + 1);
             UserMessage msg;
             if (cnt == 0) {
-                msg = new UserMessage(new PromptTemplate("{text}.{format}").render(Map.of("text", text, "format", gatherResConverter.getFormat())));
+                UserMessage.Builder builder = UserMessage.builder()
+                        .text(new PromptTemplate("{text}.{format}")
+                                .render(Map.of("text", text, "format", gatherResConverter.getFormat()))
+                        );
+                if (media != null) {
+                    builder.media(media);
+                }
+                msg = builder.build();
             } else {
                 msg = new UserMessage("你之前返回的结果不完整，继续返回剩余的内容");
             }
-            chatMemory.add(conversationId, msg);
+            chatMemory.add(chatId, msg);
 
             // 工具
             ChatOptions chatOptions = ToolCallingChatOptions.builder()
+                    .model(aiModelFacade.getModel(media))
+                    // 注册给大模型回调的工具
                     .toolCallbacks(ToolCallbacks.from(new CrawlerTools()))
                     .build();
             try {
-                Prompt query = new Prompt(chatMemory.get(conversationId), chatOptions);
+                Prompt query = new Prompt(chatMemory.get(chatId), chatOptions);
                 if (log.isDebugEnabled()) {
-                    log.debug("query: {}", query);
+                    // 一行显示日志
+                    log.debug("{}#query: {}", chatId, query.toString().replaceAll("\n", ""));
                 }
-                ChatResponse response = chatModel.call(query);
+                ChatResponse response = aiModelFacade.getChatModel().call(query);
                 AssistantMessage assistantMessage = response.getResult().getOutput();
                 if (log.isDebugEnabled()) {
-                    log.debug("res: {}", assistantMessage);
+                    // 一行显示和日志
+                    log.debug("{}#res: {}", chatId, assistantMessage.toString().replaceAll("\n", ""));
                 }
 
-                chatMemory.add(conversationId, assistantMessage);
+                chatMemory.add(chatId, assistantMessage);
                 cnt += 1;
 
                 String outText = assistantMessage.getText().trim();
                 itemList.addAll(GatherResFormat.extact(remain, outText));
-//                list.addAll(GatherResFormat.discardBrokenGatherItem(gatherResConverter, outText));
-                if (cnt > 1 && outText.startsWith("```json")) {
-                    // 表示大模型总是返回相同的数据，直接跳出循环
+                if (outText.endsWith("```") || cnt >= 10) {
+                    // 做一个次数限制，避免死循环的调用大模型
+                    log.info("{}#经过{}论对话，完成大模型调用", chatId, cnt);
                     break;
                 }
-                if (outText.endsWith("```") || cnt >= 10) {
-                    // 做一个次数限制，避免无效调用大模型
-                    break;
+                if (cnt > 1 && outText.startsWith("```json")) {
+                    int jsonBeginIndex = outText.indexOf("[");
+                    if (jsonBeginIndex > 0 && jsonBeginIndex < 15) {
+                        // 表示大模型又重新返回了完整的数据，为了避免大模型总是重复解析，我们直接退出循环
+                        log.info("{}#大模型重复返回完整解析数据，主动退出多轮对话", chatId);
+                        break;
+                    }
                 }
             } catch (Exception e) {
                 // 避免因为多次调用模型出现异常，导致前面获取的数据被丢掉，我们直接跳出来，将已经解析的结果保存下来
-                log.error("gather error: {}", e.getMessage());
+                log.error("{}#gather error", chatId, e);
                 break;
             }
         }
 
-        List<GatherOcDraftBo> list = new ArrayList<>();
-        if (!itemList.isEmpty()) {
-            // 非空时，尝试合并为一个大的json数组字符串
-            StringBuilder toParse = new StringBuilder("[");
-            for (String item : itemList) {
-                try {
-                    list.add(JsonUtil.toObj(item, GatherOcDraftBo.class));
-                } catch (Exception e) {
-                    log.warn("解析异常: {}", item, e);
-                }
-            }
+        if (itemList.isEmpty()) {
+            return List.of();
         }
 
-        return list;
+        return itemList.stream().map(this::toBo).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    private GatherOcDraftBo toBo(String item) {
+        try {
+            return JsonUtil.toObj(item, GatherOcDraftBo.class);
+        } catch (Exception e) {
+            log.warn("解析异常: {}", item, e);
+        }
+        return null;
     }
 
 
@@ -231,6 +241,8 @@ public class GatherAiAgent {
     public class CrawlerTools {
         /**
          * 获取http地址中的表格
+         * <p>
+         * 说明：即便我给大模型的是一个http链接，但是无法保证大模型每次都会触发调用这个方法(😂)
          *
          * @param url
          * @return

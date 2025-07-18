@@ -11,7 +11,7 @@ import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.constants.gather.GatherTargetTypeEnum;
 import com.git.hui.offer.gather.convert.Draft2EntityConvert;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
-import com.git.hui.offer.oc.service.OcService;
+import com.git.hui.offer.oc.service.GatherService;
 import com.git.hui.offer.util.json.JsonUtil;
 import com.git.hui.offer.web.model.req.GatherReq;
 import com.google.common.base.Joiner;
@@ -47,10 +47,10 @@ public class OfferGatherService {
 
     private final GatherAiAgent gatherAiAgent;
 
-    private final OcService gatherService;
+    private final GatherService gatherService;
 
     @Autowired
-    public OfferGatherService(GatherAiAgent gatherAiAgent, OcService gatherService) {
+    public OfferGatherService(GatherAiAgent gatherAiAgent, GatherService gatherService) {
         this.gatherAiAgent = gatherAiAgent;
         this.gatherService = gatherService;
     }
@@ -133,14 +133,15 @@ public class OfferGatherService {
     }
 
     private Function<GatherReq, List<GatherOcDraftBo>> gatherByHttpUrl(String filePath) {
+        URI uri;
         try {
             // 做一个url的合法性判断
-            URI uri = URI.create(filePath.trim());
-            if (uri.getScheme() == null || !uri.getScheme().startsWith("http")) {
-                // 使用默认的网页进行兜底
-                throw new BizException(StatusEnum.UNEXPECT_ERROR, "请输入合法的url地址");
-            }
+            uri = URI.create(filePath.trim());
         } catch (Exception e) {
+            throw new BizException(StatusEnum.UNEXPECT_ERROR, "请输入合法的url地址");
+        }
+        if (uri.getScheme() == null || !uri.getScheme().startsWith("http")) {
+            // 使用默认的网页进行兜底
             throw new BizException(StatusEnum.UNEXPECT_ERROR, "请输入合法的url地址");
         }
 
@@ -154,7 +155,7 @@ public class OfferGatherService {
         MimeType type;
         if (file == null || file.isEmpty()) {
             // 使用默认的图片进行兜底
-            Resource resource = new ClassPathResource("data/oc-img.jpg");
+            Resource resource = new ClassPathResource("data/oc-img2.jpg");
             bytes = resource.getContentAsByteArray();
             type = MimeTypeUtils.IMAGE_JPEG;
         } else {
@@ -162,7 +163,7 @@ public class OfferGatherService {
             type = MimeTypeUtils.parseMimeType(file.getContentType());
         }
         return (s) -> {
-            return gatherAiAgent.gatherByImg(type, bytes);
+            return gatherAiAgent.gatherByImgAutoSplit(type, bytes);
         };
     }
 

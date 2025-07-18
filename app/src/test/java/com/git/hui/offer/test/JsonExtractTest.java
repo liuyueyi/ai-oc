@@ -1,6 +1,42 @@
-package com.git.hui.offer.gather.service.helper;
+package com.git.hui.offer.test;
 
-public interface JsonChunkParser {
+import com.git.hui.offer.gather.service.helper.GatherResFormat;
+import com.git.hui.offer.gather.service.helper.PartialJsonExtractor;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+/**
+ * @author YiHui
+ * @date 2025/7/18
+ */
+public class JsonExtractTest {
+    public static final String TXT = """
+            ,
+              {
+                "companyName": "天阳科技",
+                "companyType": "私企",
+                "deadline": "",
+                "deliveryProgress": "",
+                "internalReferralCode": "",
+                "jobAnnouncement": "2025金融AI未来计划：金融大模型开发工程师云校招启动",
+                "jobLocation": "长沙",
+                "lastUpdatedTime": "7月15日"{
+              "companyName": "天阳科技",
+              "companyType": "私企",
+              "deadline": "",
+              "deliveryProgress": "",
+              "internalReferralCode": "",
+              "jobAnnouncement": "2025金融AI未来计划：金融大模型开发工程师云校招启动",
+              "jobLocation": "长沙",
+              "lastUpdatedTime": "7月15日",
+              "position": "互联网/电子商务/计算机软件/",
+              "recruitmentType": "2026校招",
+              "relatedLink": "https://mp.weixin.qq.com/s/gpJZGuas3ktNb4hMFxwAA?m=shars_1_80800_180000_37110_40130_5_51a178shar",
+              "remarks": "",
+              "requirementTarget": "尽快申请"
+            }
+            ```""";
 
     String text1 = """
             [
@@ -155,4 +191,29 @@ public interface JsonChunkParser {
                     "updateTime": "2025-07-16T03:46:40.925+00:00"
                 },
             """;
+
+
+    @Test
+    public void test() {
+        StringBuilder builder = new StringBuilder(text1);
+        List<String> ans = PartialJsonExtractor.extractCompleteElements(builder);
+        System.out.println(ans);
+
+        builder.append(text2);
+        ans.addAll(PartialJsonExtractor.extractCompleteElements(builder));
+
+        builder.append(text3);
+        ans.addAll(PartialJsonExtractor.extractCompleteElements(builder));
+
+        builder.append(text4);
+        ans.addAll(PartialJsonExtractor.extractCompleteElements(builder));
+
+        System.out.println(ans);
+    }
+
+    @Test
+    public void testExact() {
+        List<String> ans = GatherResFormat.extact(TXT);
+        System.out.println(ans);
+    }
 }
