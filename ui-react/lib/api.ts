@@ -77,13 +77,32 @@ export async function jobDetail(id: number) {
 }
 
 
-export async function submitAIEntry(params: { content: string; model: string; type: string }) {
-  const res = await api.post("/api/admin/gather/submit", params)
+export async function submitAIEntry(params: { content: string; model: string; type: string, file: any }) {
+  if (params.file) {
+    // 传文件的方式
+    const formData = new FormData();
+    formData.append("file", params.file);
+    formData.append("model", params.model);
+    formData.append("type", params.type);
+    const ans = await api.post("/api/admin/gather/submit", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    if (ans.data && ans.data.code === 0) {
+      return ans.data.data
+    } else {
+      throw new Error(ans.data?.msg || "AI录入失败")
+    }
+  }
+
+  const res = await api.post("/api/admin/gather/submit", params, {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  })
   if (res.data && res.data.code === 0) {
     return res.data.data
   }
   throw new Error(res.data?.msg || "AI录入失败")
 }
+
 
 
 export interface DraftListQuery {

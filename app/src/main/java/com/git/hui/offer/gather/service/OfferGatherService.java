@@ -9,8 +9,9 @@ import cn.idev.excel.read.listener.ReadListener;
 import com.git.hui.offer.components.bizexception.BizException;
 import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.constants.gather.GatherTargetTypeEnum;
-import com.git.hui.offer.gather.convert.Draft2EntityConvert;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
+import com.git.hui.offer.oc.convert.DraftConvert;
+import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
 import com.git.hui.offer.oc.service.GatherService;
 import com.git.hui.offer.util.json.JsonUtil;
 import com.git.hui.offer.web.model.req.GatherReq;
@@ -55,7 +56,7 @@ public class OfferGatherService {
         this.gatherService = gatherService;
     }
 
-    public List<GatherOcDraftBo> gatherInfo(GatherReq req, MultipartFile file) throws IOException {
+    public List<OcDraftEntity> gatherInfo(GatherReq req, MultipartFile file) throws IOException {
         Function<GatherReq, List<GatherOcDraftBo>> func = switch (req.type()) {
             case TEXT -> gatherByText(req.content());
             case HTML_TEXT -> gatherByHtmlText(req.content());
@@ -67,9 +68,9 @@ public class OfferGatherService {
             return gatherFileInfo(req, file);
         }
         List<GatherOcDraftBo> list = func.apply(req);
-        log.info("返回结果是：{}", JsonUtil.toStr(list));
-        gatherService.saveDraftDataList(Draft2EntityConvert.convert(list));
-        return list;
+        log.info("大模型提取后业务对象是：{}", JsonUtil.toStr(list));
+        List<OcDraftEntity> res = gatherService.saveDraftDataList(DraftConvert.convert(list));
+        return res;
     }
 
     /**
@@ -79,7 +80,7 @@ public class OfferGatherService {
      * @return
      * @throws IOException
      */
-    public List<GatherOcDraftBo> gatherFileInfo(GatherReq req, MultipartFile file) throws IOException {
+    public List<OcDraftEntity> gatherFileInfo(GatherReq req, MultipartFile file) throws IOException {
         Pair<String, List<String>> pair;
         if (req.type() == GatherTargetTypeEnum.CSV_FILE) {
             pair = parseContentsFromCsv(file);
@@ -89,7 +90,7 @@ public class OfferGatherService {
             throw new BizException(StatusEnum.UNEXPECT_ERROR, "不支持的文件类型");
         }
 
-        List<GatherOcDraftBo> res = new ArrayList<>();
+        List<OcDraftEntity> res = new ArrayList<>();
         StringBuilder builder;
         int index = 0;
         while (index < pair.getSecond().size()) {
@@ -102,9 +103,9 @@ public class OfferGatherService {
             try {
                 // 文本解析
                 List<GatherOcDraftBo> list = gatherAiAgent.gatherByText(builder.toString());
-                log.info("返回结果是：{}", JsonUtil.toStr(list));
-                gatherService.saveDraftDataList(Draft2EntityConvert.convert(list));
-                res.addAll(list);
+                log.info("大模型提取后业务对象是：{}", JsonUtil.toStr(list));
+                List<OcDraftEntity> tmp = gatherService.saveDraftDataList(DraftConvert.convert(list));
+                res.addAll(tmp);
             } catch (Exception e) {
                 log.error("解析失败，请检查大模型是否正常", e);
             }

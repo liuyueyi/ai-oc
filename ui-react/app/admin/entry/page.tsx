@@ -1,11 +1,12 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { submitAIEntry } from "@/lib/api"
+import { useRef } from "react"
 
 
 const companyTypes = ["民企", "央国企", "事业单位", "外企"]
@@ -48,6 +49,10 @@ export default function EntryPage() {
   const [aiInput, setAiInput] = useState("")
   const [aiLoading, setAiLoading] = useState(false)
   const [aiMsg, setAiMsg] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewImg, setPreviewImg] = useState<string | null>(null);
+
 
   const handleFormChange = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -74,25 +79,69 @@ export default function EntryPage() {
   }
 
   const handleAISubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setAiLoading(true)
-    setAiMsg(null)
+    e.preventDefault();
+    setAiLoading(true);
+    setAiMsg(null);
     try {
-      submitAIEntry({
-        content: aiInput,
-        model: aiModel,
-        type: aiType,
-      }).then(res => {
-        console.log('ai录入返回结果', res);
-        setAiMsg("提交成功！" + (res.data?.msg ? `\n${res.data.msg}` : ""))
-        setAiInput("")
-      })
+      if (isFileType) {
+        if (!selectedFile) {
+          setAiMsg("请先选择文件");
+          setAiLoading(false);
+          return;
+        }
+
+        submitAIEntry({
+          content: aiInput,
+          model: aiModel,
+          type: aiType,
+          file: selectedFile
+        }).then(res => {
+          setAiMsg("提交成功！" + (res.data?.msg ? `\n${res.data.msg}` : ""));
+          setSelectedFile(null);
+        });
+      } else {
+        // 原有逻辑
+        submitAIEntry({
+          content: aiInput,
+          model: aiModel,
+          type: aiType,
+          file: null,
+        }).then(res => {
+          setAiMsg("提交成功！" + (res.data?.msg ? `\n${res.data.msg}` : ""));
+          setAiInput("");
+        });
+      }
     } catch (err: any) {
-      setAiMsg("提交失败: " + (err?.response?.data?.msg || err?.message || "未知错误"))
+      setAiMsg("提交失败: " + (err?.response?.data?.msg || err?.message || "未知错误"));
     } finally {
-      setAiLoading(false)
+      setAiLoading(false);
     }
-  }
+  };
+
+  // 判断类型
+  const isFileType = ["IMAGE", "CSV_FILE", "EXCEL_FILE"].includes(aiType);
+
+  useEffect(() => {
+    function handlePaste(e: ClipboardEvent) {
+      if (!isFileType) return;
+      const items = e.clipboardData?.items;
+      let found = false;
+      if (items) {
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].kind === "file") {
+            setSelectedFile(items[i].getAsFile());
+            found = true;
+            break;
+          }
+        }
+      }
+      if (!found && e.clipboardData?.files && e.clipboardData.files.length > 0) {
+        setSelectedFile(e.clipboardData.files[0]);
+      }
+    }
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  }, [isFileType]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -210,7 +259,75 @@ export default function EntryPage() {
               </div>
               <div>
                 <label className="text-sm font-medium">AI输入内容</label>
-                <Textarea rows={8} value={aiInput} onChange={e => setAiInput(e.target.value)} placeholder="请粘贴职位JD、简历或其他AI任务内容..." />
+                {isFileType ? (
+                  <div
+                    className="border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                    style={{ minHeight: 260, height: 320 }}
+                    onClick={() => fileInputRef.current?.click()}
+                    onDrop={e => {
+                      e.preventDefault();
+                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        setSelectedFile(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    onDragOver={e => e.preventDefault()}
+                    onPaste={e => {
+                      const items = e.clipboardData.items;
+                      for (let i = 0; i < items.length; i++) {
+                        if (items[i].kind === "file") {
+                          setSelectedFile(items[i].getAsFile());
+                          break;
+                        }
+                      }
+                    }}
+                  >
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      accept={aiType === "IMAGE" ? "image/*" : aiType === "CSV_FILE" ? ".csv" : aiType === "EXCEL_FILE" ? ".xls,.xlsx" : ""}
+                      onChange={e => {
+                        if (e.target.files && e.target.files[0]) {
+                          setSelectedFile(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    {selectedFile ? (
+                      <div className="flex flex-col items-center gap-2 px-5">
+                        {aiType === "IMAGE" && selectedFile.type.startsWith("image/") && (
+                          <img
+                            src={URL.createObjectURL(selectedFile)}
+                            alt="预览"
+                            className="full-w gap-1 max-h-100 rounded border cursor-zoom-in"
+                            style={{ objectFit: "contain" }}
+                            onClick={e => {
+                              e.stopPropagation();
+                              setPreviewImg(URL.createObjectURL(selectedFile));
+                            }}
+                          />
+                        )}
+                        <div className="flex items-center gap-2">
+                          <div className="text-blue-600 font-medium">已选择文件：{selectedFile.name}</div>
+                          <button
+                            type="button"
+                            className="ml-2 px-2 py-0.5 rounded bg-gray-200 hover:bg-gray-300 text-gray-600 text-xs"
+                            onClick={e => {
+                              e.stopPropagation();
+                              setSelectedFile(null);
+                            }}
+                            title="清除附件"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-gray-400">点击、拖拽或粘贴文件到此处上传</div>
+                    )}
+                  </div>
+                ) : (
+                  <Textarea rows={8} value={aiInput} onChange={e => setAiInput(e.target.value)} placeholder="请粘贴职位JD、简历或其他AI任务内容..." />
+                )}
               </div>
               <div className="flex justify-end">
                 <Button type="submit" disabled={aiLoading}>
@@ -226,6 +343,21 @@ export default function EntryPage() {
           </TabsContent>
         </Tabs>
       </div>
+      {/* 全屏图片预览 */}
+      {previewImg && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+          onClick={() => setPreviewImg(null)}
+          style={{ cursor: "zoom-out" }}
+        >
+          <img
+            src={previewImg}
+            alt="全屏预览"
+            className="max-w-full max-h-full rounded shadow-lg"
+            onClick={e => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   )
 } 

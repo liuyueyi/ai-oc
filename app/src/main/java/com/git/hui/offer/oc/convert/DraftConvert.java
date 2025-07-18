@@ -1,4 +1,4 @@
-package com.git.hui.offer.gather.convert;
+package com.git.hui.offer.oc.convert;
 
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
 import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author YiHui
  * @date 2025/7/14
  */
-public class Draft2EntityConvert {
+public class DraftConvert {
 
     public static OcDraftEntity convert(GatherOcDraftBo bo) {
         return new OcDraftEntity()
@@ -37,7 +37,8 @@ public class Draft2EntityConvert {
         if (CollectionUtils.isEmpty(bos)) {
             return Collections.emptyList();
         }
-        return bos.stream().map(Draft2EntityConvert::convert).toList();
+        // 注意下面返回的是不可编辑的列表
+        return bos.stream().map(DraftConvert::convert).toList();
     }
 
 }

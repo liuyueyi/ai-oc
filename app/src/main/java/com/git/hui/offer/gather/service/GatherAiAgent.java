@@ -8,6 +8,7 @@ import com.git.hui.offer.gather.service.ai.AiModelFacade;
 import com.git.hui.offer.gather.service.helper.GatherResFormat;
 import com.git.hui.offer.util.json.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -184,13 +185,13 @@ public class GatherAiAgent {
                 Prompt query = new Prompt(chatMemory.get(chatId), chatOptions);
                 if (log.isDebugEnabled()) {
                     // 一行显示日志
-                    log.debug("{}#query: {}", chatId, query.toString().replaceAll("\n", ""));
+                    log.debug("{}#req: {}", chatId, StringUtils.replaceChars(query.toString(), "\n", ""));
                 }
                 ChatResponse response = aiModelFacade.getChatModel().call(query);
                 AssistantMessage assistantMessage = response.getResult().getOutput();
                 if (log.isDebugEnabled()) {
                     // 一行显示和日志
-                    log.debug("{}#res: {}", chatId, assistantMessage.toString().replaceAll("\n", ""));
+                    log.debug("{}#res: {}", chatId, StringUtils.replaceChars(assistantMessage.toString(), "\n", ""));
                 }
 
                 chatMemory.add(chatId, assistantMessage);

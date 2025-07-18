@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,10 +59,10 @@ public class GatherService {
      *
      * @param dataList 要保存的草稿数据列表，包含多个GatherOcDraftEntity对象
      */
-    public void saveDraftDataList(List<OcDraftEntity> dataList) {
+    public List<OcDraftEntity> saveDraftDataList(List<OcDraftEntity> dataList) {
         // 以公司名称 + 工作地点 + 更新时间 + 岗位 作为去重条件
         // 保存数据之前，需要先从数据库和自身的情况，做一个去重
-        removeSameDraftItem(dataList);
+        dataList = removeSameDraftItem(dataList);
 
         // 基于db的数据，判断哪些是更新，哪些是插入
         for (OcDraftEntity data : dataList) {
@@ -95,21 +94,34 @@ public class GatherService {
                 }
             }
         }
+        return dataList;
     }
 
-    private void removeSameDraftItem(List<OcDraftEntity> dataList) {
-        Set<String> sets = new HashSet<>();
-        Iterator<OcDraftEntity> iterator = dataList.iterator();
-        while (iterator.hasNext()) {
-            OcDraftEntity data = iterator.next();
-            String key = data.getCompanyName() + data.getJobLocation() + data.getLastUpdatedTime() + data.getPosition();
+    private List<OcDraftEntity> removeSameDraftItem(List<OcDraftEntity> dataList) {
+        List<OcDraftEntity> list = new ArrayList<>(dataList.size());
+        Set<String> sets = new HashSet<>(dataList.size());
+        for (OcDraftEntity item : dataList) {
+            String key = item.getCompanyName() + item.getJobLocation() + item.getLastUpdatedTime() + item.getPosition();
             if (sets.contains(key)) {
-                // 已经存在，则移除当前这一个
-                iterator.remove();
-            } else {
-                sets.add(key);
+                continue;
             }
+            sets.add(key);
+            list.add(item);
         }
+        return list;
+
+        // 不使用下面迭代器的方式，因为传入的 dataList 可能是不可变的列表
+//        Iterator<OcDraftEntity> iterator = dataList.iterator();
+//        while (iterator.hasNext()) {
+//            OcDraftEntity data = iterator.next();
+//            String key = data.getCompanyName() + data.getJobLocation() + data.getLastUpdatedTime() + data.getPosition();
+//            if (sets.contains(key)) {
+//                // 已经存在，则移除当前这一个
+//                iterator.remove();
+//            } else {
+//                sets.add(key);
+//            }
+//        }
     }
 
     public boolean deleteDraft(Long draftId) {

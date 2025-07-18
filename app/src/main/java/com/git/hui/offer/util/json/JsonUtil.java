@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * @author YiHui
@@ -91,9 +92,17 @@ public class JsonUtil {
         }
     }
 
+    public static <T> List<T> toList(String s, Class<T> clazz) {
+        try {
+            return mapper.readValue(s, mapper.getTypeFactory().constructCollectionType(List.class, clazz));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static <T> T toObj(String s, Class<T> clazz) {
         try {
-            return (T) mapper.readValue(s, clazz);
+            return mapper.readValue(s, clazz);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -102,7 +111,7 @@ public class JsonUtil {
     @SuppressWarnings("unchecked")
     public static <T> T toObj(String s, Type type) {
         try {
-            return (T) mapper.readValue(s, new TypeReference<>() {
+            return mapper.readValue(s, new TypeReference<>() {
                 @Override
                 public Type getType() {
                     return type;

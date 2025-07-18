@@ -4,14 +4,12 @@ import com.git.hui.offer.components.permission.Permission;
 import com.git.hui.offer.components.permission.UserRole;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
 import com.git.hui.offer.gather.service.OfferGatherService;
+import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
 import com.git.hui.offer.web.model.req.GatherReq;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -36,12 +34,12 @@ public class AdminOfferGatherController {
     }
 
     @RequestMapping(path = "submit")
-    public List<GatherOcDraftBo> submit(@RequestBody(required = false) GatherReq req, HttpServletRequest request) throws IOException {
+    public List<OcDraftEntity> submit(GatherReq req, HttpServletRequest request) throws IOException {
         MultipartFile file = null;
         if (request instanceof MultipartHttpServletRequest) {
             file = ((MultipartHttpServletRequest) request).getFile("file");
         }
-        List<GatherOcDraftBo> list = offerGatherService.gatherInfo(req, file);
+        List<OcDraftEntity> list = offerGatherService.gatherInfo(req, file);
         return list;
     }
 }
