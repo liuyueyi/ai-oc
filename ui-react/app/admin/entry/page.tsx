@@ -465,16 +465,16 @@ export default function EntryPage() {
                 <table className="min-w-full text-sm border">
                   <thead className="bg-gray-100">
                     <tr>
-                      <th className="px-2 py-1 border">ID</th>
-                      <th className="px-2 py-1 border">类型</th>
-                      <th className="px-2 py-1 border">模型</th>
-                      <th className="px-2 py-1 border">状态</th>
-                      <th className="px-2 py-1 border">输入</th>
-                      <th className="px-2 py-1 border">结果</th>
-                      <th className="px-2 py-1 border">处理时间</th>
-                      <th className="px-2 py-1 border">创建时间</th>
-                      <th className="px-2 py-1 border">更新时间</th>
-                      <th className="px-2 py-1 border">操作</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">ID</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">类型</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">模型</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">状态</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">输入</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">结果</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">处理时间</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">创建时间</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">更新时间</th>
+                      <th className="px-2 py-1 border whitespace-nowrap text-center">操作</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -484,8 +484,8 @@ export default function EntryPage() {
                       <tr><td colSpan={10} className="text-center text-gray-400 py-4">暂无数据</td></tr>
                     ) : taskList.map(task => (
                       <tr key={task.id} className="hover:bg-gray-50">
-                        <td className="border px-2 py-1">{task.taskId}</td>
-                        <td className="border px-2 py-1">
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">{task.taskId}</td>
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">
                           <Badge
                             variant="outline"
                             className={
@@ -501,8 +501,8 @@ export default function EntryPage() {
                             {TASK_TYPE_MAP[task.type as keyof typeof TASK_TYPE_MAP] || task.type}
                           </Badge>
                         </td>
-                        <td className="border px-2 py-1">{task.model}</td>
-                        <td className="border px-2 py-1">
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">{task.model}</td>
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">
                           <Badge
                             variant="outline"
                             className={
@@ -516,10 +516,10 @@ export default function EntryPage() {
                             {TASK_STATE_MAP[task.state as keyof typeof TASK_STATE_MAP] || task.state}
                           </Badge>
                         </td>
-                        <td className="border px-2 py-1 max-w-xs truncate" title={task.content}>
+                        <td className="border px-2 py-1 whitespace-nowrap max-w-[200px] truncate text-center" title={task.content}>
                           {task.type === 6 && task.content ? (
                             <a href={task.content} target="_blank" rel="noopener noreferrer">
-                              <img src={task.content} alt="图片" className="max-w-[60px] max-h-[60px] rounded border hover:shadow" style={{ objectFit: 'cover' }} />
+                              <img src={task.content} alt="图片" className="max-w-[60px] max-h-[60px] rounded border hover:shadow mx-auto" style={{ objectFit: 'cover' }} />
                             </a>
                           ) : (task.type === 4 || task.type === 5) && task.content ? (
                             <a href={task.content} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">
@@ -529,7 +529,7 @@ export default function EntryPage() {
                             <span className="break-all">{task.content}</span>
                           )}
                         </td>
-                        <td className="border px-2 py-1 max-w-xs truncate" title={task.result}>
+                        <td className="border px-2 py-1 whitespace-nowrap max-w-[200px] truncate text-center" title={task.result}>
                           {(() => {
                             let parsed;
                             try {
@@ -547,10 +547,10 @@ export default function EntryPage() {
                             return parsed?.msg || task.result;
                           })()}
                         </td>
-                        <td className="border px-2 py-1">{formatDateTimeStr(task.processTime)}</td>
-                        <td className="border px-2 py-1">{formatDateTimeStr(task.createTime)}</td>
-                        <td className="border px-2 py-1">{formatDateTimeStr(task.updateTime)}</td>
-                        <td className="border px-2 py-1">
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">{formatDateTimeStr(task.processTime)}</td>
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">{formatDateTimeStr(task.createTime)}</td>
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">{formatDateTimeStr(task.updateTime)}</td>
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">
                           <Button
                             size="sm"
                             variant="outline"
@@ -559,7 +559,6 @@ export default function EntryPage() {
                               setReRunLoadingId(task.id);
                               try {
                                 await reRunTask(task.id);
-                                // 刷新任务列表
                                 setTaskQuery(q => ({ ...q }));
                               } catch (err) {
                                 alert("重跑失败: " + (err instanceof Error ? err.message : "未知错误"));

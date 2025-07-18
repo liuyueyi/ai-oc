@@ -2,6 +2,7 @@ package com.git.hui.offer.web.config;
 
 import com.git.hui.offer.components.env.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -30,7 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
         List<String> list = new ArrayList<>();
         do {
             String item = SpringUtil.getConfig(String.format(template, i));
-            if (item == null) {
+            if (StringUtils.isBlank(item)) {
                 break;
             }
             list.add(item);

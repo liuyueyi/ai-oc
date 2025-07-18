@@ -197,7 +197,7 @@ public class GatherService {
         ocRepository.flush();
 
         // 5. 将草稿中的数据状态更新为已处理
-        draftRepository.updateProcessAndStateByIds(new ArrayList<>(ocMap.keySet()), DraftProcessEnum.PROCEED.getValue(), DraftStateEnum.PUBLISHED.getValue());
+        draftRepository.updateProcessAndStateByIds(draftIds, DraftProcessEnum.PROCEED.getValue(), DraftStateEnum.PUBLISHED.getValue());
         draftRepository.flush();
 
         insertList.addAll(updateList);
