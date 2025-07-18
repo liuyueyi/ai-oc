@@ -11,6 +11,7 @@ import com.git.hui.offer.oc.dao.repository.OcRepository;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
 import com.git.hui.offer.web.model.req.DraftSearchReq;
+import com.git.hui.offer.web.model.res.GatherVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +60,14 @@ public class GatherService {
      *
      * @param dataList 要保存的草稿数据列表，包含多个GatherOcDraftEntity对象
      */
-    public List<OcDraftEntity> saveDraftDataList(List<OcDraftEntity> dataList) {
+    public GatherVo saveDraftDataList(List<OcDraftEntity> dataList) {
         // 以公司名称 + 工作地点 + 更新时间 + 岗位 作为去重条件
         // 保存数据之前，需要先从数据库和自身的情况，做一个去重
         dataList = removeSameDraftItem(dataList);
 
         // 基于db的数据，判断哪些是更新，哪些是插入
+        List<OcDraftEntity> insertList = new ArrayList<>();
+        List<OcDraftEntity> updateList = new ArrayList<>();
         for (OcDraftEntity data : dataList) {
             List<OcDraftEntity> existingRecords = draftRepository.findByUniqueKey(
                     data.getCompanyName(),
@@ -79,7 +82,8 @@ public class GatherService {
                 data.setState(DraftStateEnum.DRAFT.getValue());
                 data.setCreateTime(new Date());
                 data.setUpdateTime(new Date());
-                draftRepository.saveAndFlush(data);
+                draftRepository.save(data);
+                insertList.add(data);
             } else {
                 // 存在重复数据，更新已有的记录
                 for (OcDraftEntity existing : existingRecords) {
@@ -90,11 +94,13 @@ public class GatherService {
                     data.setCreateTime(existing.getCreateTime());
                     data.setUpdateTime(new Date());
                     // 保存更新后的记录
-                    draftRepository.saveAndFlush(existing);
+                    draftRepository.save(existing);
                 }
+                updateList.add(data);
             }
         }
-        return dataList;
+        draftRepository.flush();
+        return new GatherVo().setInsertList(insertList).setUpdateList(updateList);
     }
 
     private List<OcDraftEntity> removeSameDraftItem(List<OcDraftEntity> dataList) {

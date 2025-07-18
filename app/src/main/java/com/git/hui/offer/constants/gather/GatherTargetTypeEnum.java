@@ -11,17 +11,19 @@ import lombok.Getter;
  */
 @Getter
 public enum GatherTargetTypeEnum implements IntBaseEnum {
-    HTML_TEXT(1, "html文本"),
-    TEXT(2, "纯文本"),
-    HTTP_URL(3, "http链接"),
-    EXCEL_FILE(4, "excel文件"),
-    CSV_FILE(5, "csv文件"),
-    IMAGE(6, "图片");
+    HTML_TEXT(1, "html文本", false),
+    TEXT(2, "纯文本", false),
+    HTTP_URL(3, "http链接", false),
+    EXCEL_FILE(4, "excel文件", true),
+    CSV_FILE(5, "csv文件", true),
+    IMAGE(6, "图片", true);
     private final Integer value;
     private final String desc;
+    private final Boolean file;
 
-    GatherTargetTypeEnum(Integer value, String desc) {
+    GatherTargetTypeEnum(Integer value, String desc, boolean file) {
         this.value = value;
         this.desc = desc;
+        this.file = file;
     }
 }

@@ -76,15 +76,26 @@ export async function jobDetail(id: number) {
   throw new Error(res.data?.msg || "获取岗位信息失败")
 }
 
+function getSubmitPath(async: boolean) {
+  if (async) {
+    // 异步执行
+    return "/api/admin/gather/asyncSubmit"
+  } else {
+    // 同步执行
+    return "/api/admin/gather/submit"
+  }
+}
+
 
 export async function submitAIEntry(params: { content: string; model: string; type: string, file: any }) {
+  const async = true;
   if (params.file) {
     // 传文件的方式
     const formData = new FormData();
     formData.append("file", params.file);
     formData.append("model", params.model);
     formData.append("type", params.type);
-    const ans = await api.post("/api/admin/gather/submit", formData, {
+    const ans = await api.post(getSubmitPath(async), formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     if (ans.data && ans.data.code === 0) {
@@ -94,7 +105,7 @@ export async function submitAIEntry(params: { content: string; model: string; ty
     }
   }
 
-  const res = await api.post("/api/admin/gather/submit", params, {
+  const res = await api.post(getSubmitPath(async), params, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   })
   if (res.data && res.data.code === 0) {
@@ -103,6 +114,53 @@ export async function submitAIEntry(params: { content: string; model: string; ty
   throw new Error(res.data?.msg || "AI录入失败")
 }
 
+
+export interface TaskListQuery {
+  page?: number;
+  size?: number;
+  taskId?: number;
+  model?: string;
+  type?: number;
+  state?: number;
+}
+
+export interface TaskListItem {
+  taskId: number;
+  type: number;
+  model: string;
+  state: number;
+  content: string;
+  cnt: number;
+  result: string;
+  processTime: string;
+  createTime: string;
+  updateTime: string;
+}
+
+export interface TaskListResponse {
+  list: TaskListItem[];
+  hasMore: boolean;
+  page: number;
+  size: number;
+  total: number;
+}
+
+export async function fetchTaskList(params: TaskListQuery): Promise<TaskListResponse> {
+  const res = await api.post("/api/admin/gather/list", params);
+  if (res.data && res.data.code === 0) {
+    return res.data.data;
+  }
+  throw new Error(res.data?.msg || "获取任务列表失败");
+}
+
+
+export async function reRunTask(taskId: number): Promise<boolean> {
+  const res = await api.get(`/api/admin/gather/reRun?taskId=${taskId}`);
+  if (res.data && res.data.code === 0) {
+    return res.data.data === true;
+  }
+  throw new Error(res.data?.msg || "重跑任务失败");
+}
 
 
 export interface DraftListQuery {

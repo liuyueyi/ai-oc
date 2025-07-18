@@ -18,7 +18,6 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-// 动态更新字段
 @Entity(name = "draft_oc")
 public class OcDraftEntity {
     @Id

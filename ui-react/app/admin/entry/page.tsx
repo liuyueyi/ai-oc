@@ -7,6 +7,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { submitAIEntry } from "@/lib/api"
 import { useRef } from "react"
+import { fetchTaskList, reRunTask } from "@/lib/api";
+import { Badge } from "@/components/ui/badge";
 
 
 const companyTypes = ["民企", "央国企", "事业单位", "外企"]
@@ -24,6 +26,28 @@ const aiTypes = [{
 const aiModels = [
   { label: '清华智谱', model: 'zhipu' }, { label: 'GPT-4', model: "GPT4" }
 ]
+
+// 任务类型和状态映射
+const TASK_TYPE_MAP: Record<string, string> = {
+  1: "html文本",
+  2: "纯文本",
+  3: "http链接",
+  4: "excel文件",
+  5: "csv文件",
+  6: "图片"
+};
+const TASK_STATE_MAP: Record<string, string> = {
+  0: "未处理",
+  1: "处理中",
+  2: "成功",
+  3: "失败"
+};
+
+function formatDateTimeStr(str?: string) {
+  if (!str) return "-";
+  const d = new Date(str);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+}
 
 export default function EntryPage() {
   const [tab, setTab] = useState("ai")
@@ -52,6 +76,20 @@ export default function EntryPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImg, setPreviewImg] = useState<string | null>(null);
+
+  // 任务列表 state
+  const [taskQuery, setTaskQuery] = useState({
+    page: 1,
+    size: 10,
+    taskId: '',
+    model: '',
+    type: '',
+    state: ''
+  });
+  const [taskList, setTaskList] = useState<any[]>([]);
+  const [taskTotal, setTaskTotal] = useState(0);
+  const [taskLoading, setTaskLoading] = useState(false);
+  const [reRunLoadingId, setReRunLoadingId] = useState<number | null>(null);
 
 
   const handleFormChange = (key: string, value: string) => {
@@ -143,6 +181,24 @@ export default function EntryPage() {
     return () => window.removeEventListener("paste", handlePaste);
   }, [isFileType]);
 
+  useEffect(() => {
+    if (tab !== 'task') return;
+    setTaskLoading(true);
+    fetchTaskList({
+      page: taskQuery.page,
+      size: taskQuery.size,
+      taskId: taskQuery.taskId ? Number(taskQuery.taskId) : undefined,
+      model: taskQuery.model || undefined,
+      type: taskQuery.type && taskQuery.type !== '-1' ? Number(taskQuery.type) : undefined,
+      state: taskQuery.state && taskQuery.state !== '-1' ? Number(taskQuery.state) : undefined
+    })
+      .then(res => {
+        setTaskList(res.list || []);
+        setTaskTotal(res.total || 0);
+      })
+      .finally(() => setTaskLoading(false));
+  }, [tab, taskQuery]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b">
@@ -152,11 +208,12 @@ export default function EntryPage() {
           </div>
         </div>
       </header>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="full-w mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="mb-6">
             <TabsTrigger value="form">表单录入</TabsTrigger>
             <TabsTrigger value="ai">AI录入</TabsTrigger>
+            <TabsTrigger value="task">任务列表</TabsTrigger>
           </TabsList>
           <TabsContent value="form">
             <form className="bg-white rounded-lg shadow p-6 space-y-4" onSubmit={handleFormSubmit}>
@@ -298,7 +355,7 @@ export default function EntryPage() {
                           <img
                             src={URL.createObjectURL(selectedFile)}
                             alt="预览"
-                            className="full-w gap-1 max-h-100 rounded border cursor-zoom-in"
+                            className="full-w gap-1 max-h-60 rounded border cursor-zoom-in"
                             style={{ objectFit: "contain" }}
                             onClick={e => {
                               e.stopPropagation();
@@ -322,7 +379,39 @@ export default function EntryPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="text-gray-400">点击、拖拽或粘贴文件到此处上传</div>
+                      aiType === "IMAGE" ? (
+                        <div className="flex flex-col items-center justify-center w-full h-full">
+                          <svg className="w-16 h-16 text-sky-400 mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M20 16.58A5 5 0 0017 7h-1.26A8 8 0 104 16.25" /></svg>
+                          <div className="text-2xl font-bold text-gray-700 mb-2">上传图片提取数据报表</div>
+                          <div className="flex items-center gap-2 mb-4 text-gray-500">
+                            <span>支持三种方式：</span>
+                            <span className="bg-sky-100 text-sky-600 px-2 py-1 rounded flex items-center text-sm"><svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>点击上传</span>
+                            <span className="bg-sky-100 text-sky-600 px-2 py-1 rounded flex items-center text-sm"><svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 7v13a1 1 0 001 1h14a1 1 0 001-1V7M4 7l8-5 8 5" /></svg>拖拽图片</span>
+                            <span className="bg-sky-100 text-sky-600 px-2 py-1 rounded flex items-center text-sm"><svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 17l-4 4m0 0l-4-4m4 4V3" /></svg>Ctrl+V 粘贴</span>
+                          </div>
+                          <button
+                            type="button"
+                            className="bg-sky-400 hover:bg-sky-500 text-white font-semibold px-8 py-2 rounded-full flex items-center text-lg shadow mb-2"
+                            onClick={e => {
+                              e.stopPropagation();
+                              fileInputRef.current?.click();
+                            }}
+                          >
+                            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7l9-5 9 5" /></svg>
+                            选择图片
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center w-full h-full">
+                          <svg className="w-16 h-16 text-sky-400 mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M20 16.58A5 5 0 0017 7h-1.26A8 8 0 104 16.25" /></svg>
+                          <div className="text-2xl font-bold text-gray-700 mb-2">上传文件提取数据报表</div>
+                          <div className="flex items-center gap-2 mb-4 text-gray-500">
+                            <span>支持两种方式：</span>
+                            <span className="bg-sky-100 text-sky-600 px-2 py-1 rounded flex items-center text-sm"><svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>点击上传</span>
+                            <span className="bg-sky-100 text-sky-600 px-2 py-1 rounded flex items-center text-sm"><svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 7v13a1 1 0 001 1h14a1 1 0 001-1V7M4 7l8-5 8 5" /></svg>拖拽文件</span>
+                          </div>
+                        </div>
+                      )
                     )}
                   </div>
                 ) : (
@@ -340,6 +429,160 @@ export default function EntryPage() {
                 )}
               </div>
             </form>
+          </TabsContent>
+          <TabsContent value="task">
+            <div className="bg-white rounded-lg shadow p-6">
+              {/* 筛选条件 */}
+              <div className="flex flex-wrap gap-2 mb-4 items-center">
+                <Input placeholder="任务ID" className="w-32" value={taskQuery.taskId} onChange={e => setTaskQuery(q => ({ ...q, taskId: e.target.value, page: 1 }))} />
+                <Input placeholder="模型" className="w-32" value={taskQuery.model} onChange={e => setTaskQuery(q => ({ ...q, model: e.target.value, page: 1 }))} />
+                <Select value={taskQuery.type} onValueChange={v => setTaskQuery(q => ({ ...q, type: v, page: 1 }))}>
+                  <SelectTrigger className="w-32"><SelectValue placeholder="抓取类型" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="-1">全部类型</SelectItem>
+                    <SelectItem value="1">html文本</SelectItem>
+                    <SelectItem value="2">纯文本</SelectItem>
+                    <SelectItem value="3">http链接</SelectItem>
+                    <SelectItem value="4">excel文件</SelectItem>
+                    <SelectItem value="5">csv文件</SelectItem>
+                    <SelectItem value="6">图片</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={taskQuery.state} onValueChange={v => setTaskQuery(q => ({ ...q, state: v, page: 1 }))}>
+                  <SelectTrigger className="w-32"><SelectValue placeholder="任务状态" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="-1">全部状态</SelectItem>
+                    <SelectItem value="0">未处理</SelectItem>
+                    <SelectItem value="1">处理中</SelectItem>
+                    <SelectItem value="2">已处理</SelectItem>
+                    <SelectItem value="3">处理失败</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button className="h-10 px-6" onClick={() => setTaskQuery(q => ({ ...q, page: 1 }))}>查询</Button>
+              </div>
+              {/* 任务表格 */}
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm border">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-2 py-1 border">ID</th>
+                      <th className="px-2 py-1 border">类型</th>
+                      <th className="px-2 py-1 border">模型</th>
+                      <th className="px-2 py-1 border">状态</th>
+                      <th className="px-2 py-1 border">输入</th>
+                      <th className="px-2 py-1 border">结果</th>
+                      <th className="px-2 py-1 border">处理时间</th>
+                      <th className="px-2 py-1 border">创建时间</th>
+                      <th className="px-2 py-1 border">更新时间</th>
+                      <th className="px-2 py-1 border">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {taskLoading ? (
+                      <tr><td colSpan={10} className="text-center text-gray-400 py-4">加载中...</td></tr>
+                    ) : taskList.length === 0 ? (
+                      <tr><td colSpan={10} className="text-center text-gray-400 py-4">暂无数据</td></tr>
+                    ) : taskList.map(task => (
+                      <tr key={task.id} className="hover:bg-gray-50">
+                        <td className="border px-2 py-1">{task.taskId}</td>
+                        <td className="border px-2 py-1">
+                          <Badge
+                            variant="outline"
+                            className={
+                              task.type === 1 ? "border-blue-500 text-blue-600" :
+                                task.type === 2 ? "border-gray-400 text-gray-600" :
+                                  task.type === 3 ? "border-green-500 text-green-600" :
+                                    task.type === 4 ? "border-orange-500 text-orange-600" :
+                                      task.type === 5 ? "border-purple-500 text-purple-600" :
+                                        task.type === 6 ? "border-pink-500 text-pink-600" :
+                                          "border-gray-300 text-gray-500"
+                            }
+                          >
+                            {TASK_TYPE_MAP[task.type as keyof typeof TASK_TYPE_MAP] || task.type}
+                          </Badge>
+                        </td>
+                        <td className="border px-2 py-1">{task.model}</td>
+                        <td className="border px-2 py-1">
+                          <Badge
+                            variant="outline"
+                            className={
+                              task.state === 0 ? "border-gray-400 text-gray-600" :
+                                task.state === 1 ? "border-blue-500 text-blue-600" :
+                                  task.state === 2 ? "border-green-500 text-green-600" :
+                                    task.state === 3 ? "border-red-500 text-red-600" :
+                                      "border-gray-300 text-gray-500"
+                            }
+                          >
+                            {TASK_STATE_MAP[task.state as keyof typeof TASK_STATE_MAP] || task.state}
+                          </Badge>
+                        </td>
+                        <td className="border px-2 py-1 max-w-xs truncate" title={task.content}>
+                          {task.type === 6 && task.content ? (
+                            <a href={task.content} target="_blank" rel="noopener noreferrer">
+                              <img src={task.content} alt="图片" className="max-w-[60px] max-h-[60px] rounded border hover:shadow" style={{ objectFit: 'cover' }} />
+                            </a>
+                          ) : (task.type === 4 || task.type === 5) && task.content ? (
+                            <a href={task.content} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">
+                              {task.content.length > 32 ? task.content.slice(0, 32) + '...' : task.content}
+                            </a>
+                          ) : (
+                            <span className="break-all">{task.content}</span>
+                          )}
+                        </td>
+                        <td className="border px-2 py-1 max-w-xs truncate" title={task.result}>
+                          {(() => {
+                            let parsed;
+                            try {
+                              parsed = JSON.parse(task.result);
+                            } catch {
+                              return task.result;
+                            }
+                            const inserts = Array.isArray(parsed?.insertDraftIds) && parsed.insertDraftIds.length > 0
+                              ? `插入：${parsed.insertDraftIds.join(',')}` : '';
+                            const updates = Array.isArray(parsed?.updateDraftIds) && parsed.updateDraftIds.length > 0
+                              ? `更新：${parsed.updateDraftIds.join(',')}` : '';
+                            if (inserts && updates) return `${inserts}；${updates}`;
+                            if (inserts) return inserts;
+                            if (updates) return updates;
+                            return parsed?.msg || task.result;
+                          })()}
+                        </td>
+                        <td className="border px-2 py-1">{formatDateTimeStr(task.processTime)}</td>
+                        <td className="border px-2 py-1">{formatDateTimeStr(task.createTime)}</td>
+                        <td className="border px-2 py-1">{formatDateTimeStr(task.updateTime)}</td>
+                        <td className="border px-2 py-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={reRunLoadingId === task.id}
+                            onClick={async () => {
+                              setReRunLoadingId(task.id);
+                              try {
+                                await reRunTask(task.id);
+                                // 刷新任务列表
+                                setTaskQuery(q => ({ ...q }));
+                              } catch (err) {
+                                alert("重跑失败: " + (err instanceof Error ? err.message : "未知错误"));
+                              } finally {
+                                setReRunLoadingId(null);
+                              }
+                            }}
+                          >
+                            {reRunLoadingId === task.id ? "重跑中..." : "重跑"}
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {/* 分页 */}
+              <div className="flex justify-end items-center gap-2 mt-4">
+                <span className="text-sm text-gray-500 mr-2">第 {taskQuery.page} / {Math.ceil(taskTotal / (taskQuery.size || 10)) || 1} 页</span>
+                <Button size="sm" variant="outline" disabled={taskQuery.page === 1} onClick={() => setTaskQuery(q => ({ ...q, page: (q.page || 1) - 1 }))}>上一页</Button>
+                <Button size="sm" variant="outline" disabled={taskQuery.page >= Math.ceil(taskTotal / (taskQuery.size || 10))} onClick={() => setTaskQuery(q => ({ ...q, page: (q.page || 1) + 1 }))}>下一页</Button>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

@@ -3,7 +3,19 @@ spring:
     name: ai-oc
   config:
     import: application-ai.yml,application-dal.yml
-
+  web:
+    resources:
+      test: dd
+      # 支持本地图片上传之后的链接，其中 file:///d的用于win系统，后面的file: 适用于mac/linux系统
+      static-locations:
+        - classpath:/static/
+        - file:///d:${oc.img.abs-tmp-path}
+        - file:${oc.img.abs-tmp-path}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 8MB  # 单个文件上传大小限制
+      max-request-size: 10MB # 总请求大小限制
 
   # jap配置
   jpa:
@@ -24,6 +36,10 @@ oc:
     web-site-logo: https://spring.hhui.top/spring-blog/css/images/avatar.jpg
     web-site-host: http://localhost
     vip-periods: 360
+  img:
+    abs-tmp-path: /tmp/storage/
+    web-img-path: /oc/img/
+    cdn-host: http://localhost:8080
 
 # 修改日志级别
 logging:
@@ -31,3 +47,9 @@ logging:
     com:
       git:
         hui: info
+server:
+  port: 8080
+  compression:
+    enabled: true # 开启返回结果压缩，减少传输耗时
+    min-response-size: 2KB
+
