@@ -35,6 +35,8 @@ public interface OcDraftRepository extends JpaRepository<OcDraftEntity, Long>, J
     /**
      * 根据主键，更新 state 值
      *
+     * 说明： @Modifying 需要和 @Transactional 注解一起使用
+     *
      * @param id
      * @param state
      * @return

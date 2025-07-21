@@ -10,6 +10,7 @@ const menu = [
     { label: "录入数据", path: "/admin/entry" },
     { label: "草稿列表", path: "/admin/drafts" },
     { label: "职位列表", path: "/admin/jobs" },
+    { label: "字典管理", path: "/admin/dict" },
     { label: "用户管理", path: "/admin/users" },
 ]
 

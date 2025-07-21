@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { fetchDraftList, DraftItem, DraftListQuery, DraftListResponse, batchPublishDrafts, updateDraft } from "@/lib/api"
+import { fetchDraftList, DraftItem, DraftListQuery, DraftListResponse, batchPublishDrafts, updateDraft, deleteDraft } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 
 const PAGE_SIZE = 10
@@ -48,8 +48,11 @@ export default function DraftsPage() {
         setPage(1)
     }
 
-    const handleDelete = (id: number) => {
-        setDrafts(drafts.filter((draft) => draft.id !== id))
+    const handleDelete = async (id: number) => {
+        await deleteDraft(id).then(e => {
+            // 删除数据
+            setDrafts(drafts.filter((draft) => draft.id !== id))
+        })
     }
 
     const handleSave = async (draft: DraftItem) => {

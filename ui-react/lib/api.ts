@@ -242,6 +242,20 @@ export async function updateDraft(draft: DraftItem): Promise<boolean> {
 }
 
 
+/**
+ * 删除草稿数据
+ * @param id 
+ * @returns 
+ */
+export async function deleteDraft(id: number): Promise<boolean> {
+  const res = await api.get("/api/admin/draft/delete?draftId=" + id)
+  if (res.data && res.data.code === 0) {
+    return true
+  }
+  throw new Error(res.data?.msg || "草稿删除失败")
+}
+
+
 
 // -------------------------- 用户相关
 
@@ -298,4 +312,83 @@ export async function updateUserRole(params: { userId: number; role: number; exp
     return res.data.data === true;
   }
   throw new Error(res.data?.msg || "用户角色更新失败");
+}
+
+
+// -------------------------- 字典相关
+
+export interface DictListQuery {
+  app?: string;
+  key?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface DictListItem {
+  id: number;
+  app: string;
+  scope: number;
+  key: string;
+  value: string;
+  intro: string;
+  remark: string;
+  state: number;
+  createTime: number;
+  updateTime: number;
+}
+
+export interface DictListResponse {
+  list: DictListItem[];
+  hasMore: boolean;
+  page: number;
+  size: number;
+  total: number;
+}
+
+export async function fetchDictList(params?: DictListQuery): Promise<DictListResponse> {
+  const res = await api.get("/api/admin/dict/list", { params });
+  if (res.data && res.data.code === 0) {
+    return res.data.data;
+  }
+  throw new Error(res.data?.msg || "获取字典列表失败");
+}
+
+export interface DictSaveReq {
+  id?: number;
+  app: string;
+  scope: number;
+  key: string;
+  value: string;
+  intro: string;
+  remark: string;
+  state: number;
+}
+
+
+export async function saveDict(params: DictSaveReq): Promise<boolean> {
+  const res = await api.post("/api/admin/dict/save", params);
+  if (res.data && res.data.code === 0) {
+    return true;
+  }
+  throw new Error(res.data?.msg || "保存字典失败");
+}
+
+export async function updateDictState(id: number, state: number): Promise<boolean> {
+  const res = await api.post("/api/admin/dict/updateState", {
+    "id": id, "state": state
+  }, {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
+  if (res.data && res.data.code === 0) {
+    return true;
+  }
+  throw new Error(res.data?.msg || "更新状态失败");
+}
+
+export async function deleteDict(id: number): Promise<boolean> {
+  const res = await api.get("/api/admin/dict/delete?id=" + id);
+  if (res.data && res.data.code === 0) {
+    return true;
+  }
+  throw new Error(res.data?.msg || "删除失败");
 }

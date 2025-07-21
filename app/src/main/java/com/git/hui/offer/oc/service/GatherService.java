@@ -130,6 +130,7 @@ public class GatherService {
 //        }
     }
 
+    @Transactional
     public boolean deleteDraft(Long draftId) {
         return draftRepository.updateStateById(draftId, DraftStateEnum.DELETED.getValue()) > 0;
     }

@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { fetchJobList, JobListQuery, JobListResponse } from "@/lib/api"
+import { formatDateTime } from '@/lib/utils'
 
 interface JobOffer {
     id: string | number
@@ -54,6 +55,7 @@ export default function JobsPage() {
         setError(null)
         try {
             const res: JobListResponse = await fetchJobList({ page, size: pageSize, ...filters, ...params })
+            console.log('返回的列表信息：', res);
             setJobOffers(res.list)
             setTotal(res.total)
         } catch (e: any) {
@@ -122,7 +124,7 @@ export default function JobsPage() {
                                         <TableCell>{offer.recruitmentType}</TableCell>
                                         <TableCell>{offer.recruitmentTarget}</TableCell>
                                         <TableCell>{offer.position}</TableCell>
-                                        <TableCell>{offer.updateTime || offer.lastUpdatedTime}</TableCell>
+                                        <TableCell>{formatDateTime(offer.updateTime || offer.lastUpdatedTime)}</TableCell>
                                         <TableCell>
                                             <div className="flex space-x-2">
                                                 <Button size="sm" variant="outline" onClick={() => setEditingOffer(offer)}>
