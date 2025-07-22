@@ -1,7 +1,7 @@
 package com.git.hui.offer.web.controller.front;
 
-import com.git.hui.offer.components.permission.Permission;
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.user.permission.Permission;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.constants.user.RechargeLevelEnum;
 import com.git.hui.offer.user.service.RechargeService;
 import com.git.hui.offer.util.json.IntBaseEnum;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author YiHui
  * @date 2025/7/22
  */
-@Permission(role = UserRole.NORMAL)
+@Permission(role = UserRoleEnum.NORMAL)
 @RestController
 @RequestMapping("/api/recharge")
 public class RechargeController {

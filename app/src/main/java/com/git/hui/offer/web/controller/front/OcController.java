@@ -1,7 +1,7 @@
 package com.git.hui.offer.web.controller.front;
 
-import com.git.hui.offer.components.permission.Permission;
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.user.permission.Permission;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.constants.oc.OcStateEnum;
 import com.git.hui.offer.oc.service.OcService;
 import com.git.hui.offer.web.model.PageListVo;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2025/7/14
  */
 @Slf4j
-@Permission(role = UserRole.ALL)
+@Permission(role = UserRoleEnum.ALL)
 @RestController
 @RequestMapping(path = "/api/oc")
 @CrossOrigin

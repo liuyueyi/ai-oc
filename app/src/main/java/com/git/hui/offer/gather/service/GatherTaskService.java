@@ -158,16 +158,7 @@ public class GatherTaskService {
      */
 
     public PageListVo<TaskVo> searchList(GatherTaskSearchReq req) {
-        // 不匹配时，查询全部
-        GatherTaskStateEnum state = IntBaseEnum.getEnumByCode(GatherTaskStateEnum.class, req.getState());
-        if (state == null) {
-            req.setState(null);
-        }
 
-        GatherTargetTypeEnum type = IntBaseEnum.getEnumByCode(GatherTargetTypeEnum.class, req.getType());
-        if (type == null) {
-            req.setType(null);
-        }
         req.autoInitPage();
         PageListVo<GatherTaskEntity> page = gatherTaskRepository.findList(req);
         List<TaskVo> list = TaskConvert.toVo(page.getList(), (s) -> {

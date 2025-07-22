@@ -1,4 +1,4 @@
-package com.git.hui.offer.components.permission;
+package com.git.hui.offer.constants.user.permission;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -19,5 +19,5 @@ public @interface Permission {
      *
      * @return
      */
-    UserRole role() default UserRole.ALL;
+    UserRoleEnum role() default UserRoleEnum.ALL;
 }

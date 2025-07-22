@@ -1,7 +1,7 @@
 package com.git.hui.offer.web.controller.admin;
 
-import com.git.hui.offer.components.permission.Permission;
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.user.permission.Permission;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.user.service.UserService;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.UserSearchReq;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author YiHui
  * @date 2025/7/17
  */
-@Permission(role = UserRole.ADMIN)
+@Permission(role = UserRoleEnum.ADMIN)
 @RestController
 @RequestMapping(path = "/api/admin/user")
 public class AdminUserController {

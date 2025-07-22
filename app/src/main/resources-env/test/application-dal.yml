@@ -1,9 +1,19 @@
 spring:
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true # 当实际使用的数据库不支持liquibase，如 mariadb 时，将这个参数设置为false
   datasource:
-    url: jdbc:h2:file:${user.dir}/datas/ai-oc;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
+    url: jdbc:mysql://localhost:3306/${oc.database.name}?useUnicode=true&allowPublicKeyRetrieval=true&autoReconnect=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
     password:
-  h2:
-    console:
-      enabled: true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # jap配置
+  jpa:
+    hibernate:
+      # 不做任何操作，完全关闭自动DDL
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect

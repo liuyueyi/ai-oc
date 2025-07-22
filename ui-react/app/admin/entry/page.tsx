@@ -9,39 +9,9 @@ import { submitAIEntry } from "@/lib/api"
 import { useRef } from "react"
 import { fetchTaskList, reRunTask } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
+import { getConfigValue } from "@/lib/config";
+import { GlobalConfigItemValue } from "@/lib/api";
 
-
-const companyTypes = ["民企", "央国企", "事业单位", "外企"]
-const recruitmentTypes = ["春招", "秋招", "秋招提前批", "日常招聘"]
-const recruitmentTargets = ["2025年毕业生", "2026年毕业生", "社会招聘"]
-const aiTypes = [{
-  label: '文本',
-  value: 'TEXT'
-}, { label: 'html文本', value: 'HTML_TEXT' },
-{ label: 'http链接', value: 'HTTP_URL' },
-{ label: 'excel文件', value: 'EXCEL_FILE' },
-{ label: 'csv文件', value: 'CSV_FILE' },
-{ label: '图片', value: 'IMAGE' },
-]
-const aiModels = [
-  { label: '清华智谱', model: 'zhipu' }, { label: 'GPT-4', model: "GPT4" }
-]
-
-// 任务类型和状态映射
-const TASK_TYPE_MAP: Record<string, string> = {
-  1: "html文本",
-  2: "纯文本",
-  3: "http链接",
-  4: "excel文件",
-  5: "csv文件",
-  6: "图片"
-};
-const TASK_STATE_MAP: Record<string, string> = {
-  0: "未处理",
-  1: "处理中",
-  2: "成功",
-  3: "失败"
-};
 
 function formatDateTimeStr(str?: string) {
   if (!str) return "-";
@@ -68,8 +38,8 @@ export default function EntryPage() {
     notes: "",
   })
   // AI录入 state
-  const [aiType, setAiType] = useState(aiTypes[0].value)
-  const [aiModel, setAiModel] = useState(aiModels[0].model)
+  const [aiType, setAiType] = useState("");
+  const [aiModel, setAiModel] = useState("");
   const [aiInput, setAiInput] = useState("")
   const [aiLoading, setAiLoading] = useState(false)
   const [aiMsg, setAiMsg] = useState<string | null>(null)
@@ -91,6 +61,34 @@ export default function EntryPage() {
   const [taskLoading, setTaskLoading] = useState(false);
   const [reRunLoadingId, setReRunLoadingId] = useState<number | null>(null);
 
+  // 全局配置动态获取（修复hooks调用位置）
+  const [companyTypeOptions, setCompanyTypeOptions] = useState<GlobalConfigItemValue[]>([]);
+  const [recruitmentTypeOptions, setRecruitmentTypeOptions] = useState<GlobalConfigItemValue[]>([]);
+  const [recruitmentTargetOptions, setRecruitmentTargetOptions] = useState<GlobalConfigItemValue[]>([]);
+  const [aiModelOptions, setAiModelOptions] = useState<GlobalConfigItemValue[]>([]);
+  const [taskStateOptions, setTaskStateOptions] = useState<GlobalConfigItemValue[]>([]);
+  const [taskTypeOptions, setTaskTypeOptions] = useState<GlobalConfigItemValue[]>([]);
+  useEffect(() => {
+    getConfigValue('gather', 'GatherTargetTypeEnum').then(setTaskTypeOptions);
+    getConfigValue('gather', 'GatherModelEnum').then(setAiModelOptions);
+    getConfigValue('gather', 'GatherTaskStateEnum').then(setTaskStateOptions);
+    getConfigValue('oc', 'CompanyTypeEnum').then(setCompanyTypeOptions);
+    getConfigValue('oc', 'RecruitmentTypeEnum').then(setRecruitmentTypeOptions);
+    getConfigValue('oc', 'RecruitmentTargetEnum').then(setRecruitmentTargetOptions);
+  }, []);
+
+  // 当 taskTypeOptions 变化时，自动选中第一个
+  useEffect(() => {
+    if (taskTypeOptions.length > 0 && !aiType) {
+      setAiType(taskTypeOptions[0].value as string);
+    }
+  }, [taskTypeOptions]);
+
+  useEffect(() => {
+    if (aiModelOptions.length > 0 && !aiModel) {
+      setAiModel(aiModelOptions[0].value as string);
+    }
+  }, [aiModelOptions]);
 
   const handleFormChange = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -156,8 +154,8 @@ export default function EntryPage() {
     }
   };
 
-  // 判断类型
-  const isFileType = ["IMAGE", "CSV_FILE", "EXCEL_FILE"].includes(aiType);
+  // 判断类型（如果后端配置 intro/value 也有类似含义可用，否则可根据 value 判断）
+  const isFileType = ["4", "5", "6"].includes(aiType);
 
   useEffect(() => {
     function handlePaste(e: ClipboardEvent) {
@@ -227,7 +225,9 @@ export default function EntryPage() {
                   <Select value={form.companyType} onValueChange={v => handleFormChange("companyType", v)}>
                     <SelectTrigger><SelectValue placeholder="请选择" /></SelectTrigger>
                     <SelectContent>
-                      {companyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                      {companyTypeOptions.map((option: GlobalConfigItemValue) => (
+                        <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -240,7 +240,9 @@ export default function EntryPage() {
                   <Select value={form.recruitmentType} onValueChange={v => handleFormChange("recruitmentType", v)}>
                     <SelectTrigger><SelectValue placeholder="请选择" /></SelectTrigger>
                     <SelectContent>
-                      {recruitmentTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                      {recruitmentTypeOptions.map((option: GlobalConfigItemValue) => (
+                        <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -249,7 +251,9 @@ export default function EntryPage() {
                   <Select value={form.recruitmentTarget} onValueChange={v => handleFormChange("recruitmentTarget", v)}>
                     <SelectTrigger><SelectValue placeholder="请选择" /></SelectTrigger>
                     <SelectContent>
-                      {recruitmentTargets.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                      {recruitmentTargetOptions.map((option: GlobalConfigItemValue) => (
+                        <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -295,8 +299,8 @@ export default function EntryPage() {
                   <Select value={aiType} onValueChange={setAiType}>
                     <SelectTrigger><SelectValue placeholder="请选择" /></SelectTrigger>
                     <SelectContent>
-                      {aiTypes.map(type => (
-                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                      {taskTypeOptions.map((option: GlobalConfigItemValue) => (
+                        <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -307,8 +311,8 @@ export default function EntryPage() {
                   <Select value={aiModel} onValueChange={setAiModel}>
                     <SelectTrigger><SelectValue placeholder="请选择" /></SelectTrigger>
                     <SelectContent>
-                      {aiModels.map(model => (
-                        <SelectItem key={model.model} value={model.model}>{model.label}</SelectItem>
+                      {aiModelOptions.map((option: GlobalConfigItemValue) => (
+                        <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -342,7 +346,7 @@ export default function EntryPage() {
                       type="file"
                       ref={fileInputRef}
                       className="hidden"
-                      accept={aiType === "IMAGE" ? "image/*" : aiType === "CSV_FILE" ? ".csv" : aiType === "EXCEL_FILE" ? ".xls,.xlsx" : ""}
+                      accept={aiType === "6" ? "image/*" : aiType === "5" ? ".csv" : aiType === "4" ? ".xls,.xlsx" : ""}
                       onChange={e => {
                         if (e.target.files && e.target.files[0]) {
                           setSelectedFile(e.target.files[0]);
@@ -351,7 +355,7 @@ export default function EntryPage() {
                     />
                     {selectedFile ? (
                       <div className="flex flex-col items-center gap-2 px-5">
-                        {aiType === "IMAGE" && selectedFile.type.startsWith("image/") && (
+                        {aiType === "6" && selectedFile.type.startsWith("image/") && (
                           <img
                             src={URL.createObjectURL(selectedFile)}
                             alt="预览"
@@ -379,7 +383,7 @@ export default function EntryPage() {
                         </div>
                       </div>
                     ) : (
-                      aiType === "IMAGE" ? (
+                      aiType === "6" ? (
                         <div className="flex flex-col items-center justify-center w-full h-full">
                           <svg className="w-16 h-16 text-sky-400 mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M20 16.58A5 5 0 0017 7h-1.26A8 8 0 104 16.25" /></svg>
                           <div className="text-2xl font-bold text-gray-700 mb-2">上传图片提取数据报表</div>
@@ -435,27 +439,31 @@ export default function EntryPage() {
               {/* 筛选条件 */}
               <div className="flex flex-wrap gap-2 mb-4 items-center">
                 <Input placeholder="任务ID" className="w-32" value={taskQuery.taskId} onChange={e => setTaskQuery(q => ({ ...q, taskId: e.target.value, page: 1 }))} />
-                <Input placeholder="模型" className="w-32" value={taskQuery.model} onChange={e => setTaskQuery(q => ({ ...q, model: e.target.value, page: 1 }))} />
+                <Select value={taskQuery.model} onValueChange={v => setTaskQuery(q => ({ ...q, model: v, page: 1 }))}>
+                  <SelectTrigger className="w-32"><SelectValue placeholder="模型" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="-1">全部模型</SelectItem>
+                    {aiModelOptions.map(option => (
+                      <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Select value={taskQuery.type} onValueChange={v => setTaskQuery(q => ({ ...q, type: v, page: 1 }))}>
                   <SelectTrigger className="w-32"><SelectValue placeholder="抓取类型" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="-1">全部类型</SelectItem>
-                    <SelectItem value="1">html文本</SelectItem>
-                    <SelectItem value="2">纯文本</SelectItem>
-                    <SelectItem value="3">http链接</SelectItem>
-                    <SelectItem value="4">excel文件</SelectItem>
-                    <SelectItem value="5">csv文件</SelectItem>
-                    <SelectItem value="6">图片</SelectItem>
+                    {taskTypeOptions.map((option: GlobalConfigItemValue) => (
+                      <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <Select value={taskQuery.state} onValueChange={v => setTaskQuery(q => ({ ...q, state: v, page: 1 }))}>
                   <SelectTrigger className="w-32"><SelectValue placeholder="任务状态" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="-1">全部状态</SelectItem>
-                    <SelectItem value="0">未处理</SelectItem>
-                    <SelectItem value="1">处理中</SelectItem>
-                    <SelectItem value="2">已处理</SelectItem>
-                    <SelectItem value="3">处理失败</SelectItem>
+                    {taskStateOptions.map(option => (
+                      <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <Button className="h-10 px-6" onClick={() => setTaskQuery(q => ({ ...q, page: 1 }))}>查询</Button>
@@ -498,10 +506,18 @@ export default function EntryPage() {
                                           "border-gray-300 text-gray-500"
                             }
                           >
-                            {TASK_TYPE_MAP[task.type as keyof typeof TASK_TYPE_MAP] || task.type}
+                            {(() => {
+                              const found = taskTypeOptions.find((opt: GlobalConfigItemValue) => String(opt.value) === String(task.type));
+                              return found ? found.intro : task.type;
+                            })()}
                           </Badge>
                         </td>
-                        <td className="border px-2 py-1 whitespace-nowrap text-center">{task.model}</td>
+                        <td className="border px-2 py-1 whitespace-nowrap text-center">
+                        {(() => {
+                              const found = aiModelOptions.find(opt => String(opt.value) === String(task.model));
+                              return found ? found.intro : task.model;
+                            })()}
+                        </td>
                         <td className="border px-2 py-1 whitespace-nowrap text-center">
                           <Badge
                             variant="outline"
@@ -513,7 +529,10 @@ export default function EntryPage() {
                                       "border-gray-300 text-gray-500"
                             }
                           >
-                            {TASK_STATE_MAP[task.state as keyof typeof TASK_STATE_MAP] || task.state}
+                            {(() => {
+                              const found = taskStateOptions.find(opt => String(opt.value) === String(task.state));
+                              return found ? found.intro : task.state;
+                            })()}
                           </Badge>
                         </td>
                         <td className="border px-2 py-1 whitespace-nowrap max-w-[200px] truncate text-center" title={task.content}>

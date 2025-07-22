@@ -1,11 +1,16 @@
 package com.git.hui.offer.web.controller.admin;
 
-import com.git.hui.offer.components.permission.Permission;
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.gather.GatherModelEnum;
+import com.git.hui.offer.constants.gather.GatherTargetTypeEnum;
+import com.git.hui.offer.constants.gather.GatherTaskStateEnum;
+import com.git.hui.offer.constants.user.permission.Permission;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.gather.model.GatherFileBo;
 import com.git.hui.offer.gather.model.GatherTaskSaveBo;
 import com.git.hui.offer.gather.service.GatherTaskService;
 import com.git.hui.offer.gather.service.OfferGatherService;
+import com.git.hui.offer.util.json.IntBaseEnum;
+import com.git.hui.offer.util.json.StringBaseEnum;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.GatherReq;
 import com.git.hui.offer.web.model.req.GatherTaskSearchReq;
@@ -27,7 +32,7 @@ import java.io.IOException;
  * @author YiHui
  * @date 2025/7/14
  */
-@Permission(role = UserRole.ADMIN)
+@Permission(role = UserRoleEnum.ADMIN)
 @RestController
 @RequestMapping(path = "/api/admin/gather")
 public class AdminOfferGatherController {
@@ -76,12 +81,26 @@ public class AdminOfferGatherController {
         if (request instanceof MultipartHttpServletRequest) {
             file = ((MultipartHttpServletRequest) request).getFile("file");
         }
-        GatherTaskSaveBo saveBo = new GatherTaskSaveBo(req.type(), req.model(), req.content(), file);
+        GatherTargetTypeEnum type = IntBaseEnum.getEnumByCode(GatherTargetTypeEnum.class, req.type());
+        GatherTaskSaveBo saveBo = new GatherTaskSaveBo(type, req.model(), req.content(), file);
         return gatherTaskService.addTask(saveBo) != null;
     }
 
     @RequestMapping(path = "list")
     public PageListVo<TaskVo> list(GatherTaskSearchReq req) {
+        // 不匹配时，查询全部
+        GatherTaskStateEnum state = IntBaseEnum.getEnumByCode(GatherTaskStateEnum.class, req.getState());
+        if (state == null) {
+            req.setState(null);
+        }
+        GatherTargetTypeEnum type = IntBaseEnum.getEnumByCode(GatherTargetTypeEnum.class, req.getType());
+        if (type == null) {
+            req.setType(null);
+        }
+        GatherModelEnum model = StringBaseEnum.getEnumByCode(GatherModelEnum.class, req.getModel());
+        if (model == null) {
+            req.setModel(null);
+        }
         return gatherTaskService.searchList(req);
     }
 

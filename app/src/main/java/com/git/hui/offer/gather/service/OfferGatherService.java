@@ -17,6 +17,7 @@ import com.git.hui.offer.gather.model.TaskChangeListener;
 import com.git.hui.offer.oc.convert.DraftConvert;
 import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
 import com.git.hui.offer.oc.service.GatherService;
+import com.git.hui.offer.util.json.IntBaseEnum;
 import com.git.hui.offer.util.json.JsonUtil;
 import com.git.hui.offer.web.model.req.GatherReq;
 import com.git.hui.offer.web.model.res.GatherVo;
@@ -31,6 +32,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
 
@@ -105,7 +107,7 @@ public class OfferGatherService {
                     return;
                 }
 
-                GatherReq req = new GatherReq(bo.content(), bo.type(), bo.model());
+                GatherReq req = new GatherReq(bo.content(), bo.type().getValue(), bo.model());
                 try {
                     GatherFileBo file = null;
                     if (bo.type() == GatherTargetTypeEnum.CSV_FILE || bo.type() == GatherTargetTypeEnum.EXCEL_FILE
@@ -134,7 +136,9 @@ public class OfferGatherService {
     }
 
     public GatherVo gatherInfo(GatherReq req, GatherFileBo file) throws IOException {
-        Function<GatherReq, List<GatherOcDraftBo>> func = switch (req.type()) {
+        GatherTargetTypeEnum targetTypeEnum = IntBaseEnum.getEnumByCode(GatherTargetTypeEnum.class, req.type());
+        Assert.notNull(targetTypeEnum, "不支持的gather类型");
+        Function<GatherReq, List<GatherOcDraftBo>> func = switch (targetTypeEnum) {
             case TEXT -> gatherByText(req.content());
             case HTML_TEXT -> gatherByHtmlText(req.content());
             case HTTP_URL -> gatherByHttpUrl(req.content());
@@ -160,9 +164,9 @@ public class OfferGatherService {
      */
     public GatherVo gatherFileInfo(GatherReq req, GatherFileBo file) throws IOException {
         Pair<String, List<String>> pair;
-        if (req.type() == GatherTargetTypeEnum.CSV_FILE) {
+        if (req.type().equals(GatherTargetTypeEnum.CSV_FILE.getValue())) {
             pair = parseContentsFromCsv(file);
-        } else if (req.type() == GatherTargetTypeEnum.EXCEL_FILE) {
+        } else if (req.type().equals(GatherTargetTypeEnum.EXCEL_FILE.getValue())) {
             pair = parseContentsFromExcel(file);
         } else {
             throw new BizException(StatusEnum.UNEXPECT_ERROR, "不支持的文件类型");

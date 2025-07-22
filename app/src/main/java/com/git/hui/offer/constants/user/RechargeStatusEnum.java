@@ -4,6 +4,7 @@ import com.git.hui.offer.util.json.IntBaseEnum;
 import lombok.Getter;
 
 /**
+ * 充值状态
  * @author YiHui
  * @date 2025/7/21
  */

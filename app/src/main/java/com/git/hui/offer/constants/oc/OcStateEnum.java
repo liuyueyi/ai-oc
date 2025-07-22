@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public enum OcStateEnum implements IntBaseEnum {
     DELETED(-1, "已删除"),
-    DRAFT(0, "草稿中"),
+    DRAFT(0, "待编辑"),
     PUBLISHED(1, "已发布");
 
     private final Integer value;

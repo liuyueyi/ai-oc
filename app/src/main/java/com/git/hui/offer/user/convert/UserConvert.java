@@ -1,7 +1,7 @@
 package com.git.hui.offer.user.convert;
 
 import com.git.hui.offer.components.context.UserBo;
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.user.dao.entity.UserEntity;
 import com.git.hui.offer.util.json.IntBaseEnum;
 import com.git.hui.offer.web.model.res.UserVo;
@@ -16,15 +16,15 @@ import java.util.List;
 public class UserConvert {
 
     public static UserBo toBo(UserEntity user) {
-        return new UserBo(user.getId(), user.getDisplayName(), user.getAvatar(), IntBaseEnum.getEnumByCode(UserRole.class, user.getRole()));
+        return new UserBo(user.getId(), user.getDisplayName(), user.getAvatar(), IntBaseEnum.getEnumByCode(UserRoleEnum.class, user.getRole()));
     }
 
     public static UserVo toVo(UserEntity user) {
         long now = System.currentTimeMillis();
-        if (user.getRole().equals(UserRole.VIP.getValue())) {
+        if (user.getRole().equals(UserRoleEnum.VIP.getValue())) {
             if (user.getExpireTime() == null || user.getExpireTime().getTime() < now) {
                 // vip失效
-                user.setRole(UserRole.NORMAL.getValue());
+                user.setRole(UserRoleEnum.NORMAL.getValue());
             }
         }
         return new UserVo().setUserId(user.getId())

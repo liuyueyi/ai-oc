@@ -20,7 +20,7 @@ public class CommonController {
         this.commonDictService = commonDictService;
     }
 
-    @RequestMapping(path = "dict")
+    @RequestMapping(path = "dict", produces = "application/json;charset=UTF-8")
     public List<CommonDictVo> dicts() {
         return commonDictService.queryPublicDictList();
     }

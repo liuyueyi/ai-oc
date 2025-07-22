@@ -146,7 +146,9 @@ export interface TaskListResponse {
 }
 
 export async function fetchTaskList(params: TaskListQuery): Promise<TaskListResponse> {
-  const res = await api.post("/api/admin/gather/list", params);
+  const res = await api.post("/api/admin/gather/list", params, {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
   if (res.data && res.data.code === 0) {
     return res.data.data;
   }
@@ -455,4 +457,33 @@ export async function getRechargeList(): Promise<RechageListResponse> {
     return res.data.data;
   }
   throw new Error(res.data?.msg || "获取用户信息失败");
+}
+
+
+// ---------------- 全局配置
+
+
+export interface GlobalConfigItem {
+  app: String;
+  items: GlobalConfigItemValue[];
+}
+
+export interface GlobalConfigItemValue {
+  key: String;
+  value: String;
+  intro: String;
+}
+
+
+export async function getGlobalConfig() : Promise<{ [key: string]: GlobalConfigItem }> {
+  const res = await api.get("/api/common/dict");
+  if (res.data && res.data.code === 0) {
+    const data = res.data.data;
+    const result: { [key: string]: GlobalConfigItem } = {};
+    for (const item of data) {
+      result[item.app] = item;
+    }
+    return result;
+  }
+  throw new Error(res.data?.msg || "获取全局配置失败");
 }

@@ -16,15 +16,6 @@ spring:
       enabled: true
       max-file-size: 8MB  # 单个文件上传大小限制
       max-request-size: 10MB # 总请求大小限制
-
-  # jap配置
-  jpa:
-    hibernate:
-      ddl-auto: update
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-    show-sql: true
-    database-platform: org.hibernate.dialect.H2Dialect
 oc:
   jwt:
     issuer: oc # 签发者
@@ -44,6 +35,8 @@ oc:
     abs-tmp-path: /tmp/storage/
     web-img-path: /oc/img/
     cdn-host: http://localhost:8080
+  database:
+    name: oc
 
 # 修改日志级别
 logging:

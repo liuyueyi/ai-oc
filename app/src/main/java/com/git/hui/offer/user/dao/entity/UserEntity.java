@@ -1,6 +1,6 @@
 package com.git.hui.offer.user.dao.entity;
 
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -68,7 +68,7 @@ public class UserEntity {
     /**
      * 用户角色
      *
-     * @see UserRole#getValue()
+     * @see UserRoleEnum#getValue()
      */
     @Column(name = "role")
     private Integer role;

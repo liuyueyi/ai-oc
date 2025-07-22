@@ -1,4 +1,4 @@
-package com.git.hui.offer.components.permission;
+package com.git.hui.offer.constants.user.permission;
 
 import com.git.hui.offer.util.json.IntBaseEnum;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Getter;
  * @date 2022/8/25
  */
 @Getter
-public enum UserRole implements IntBaseEnum {
+public enum UserRoleEnum implements IntBaseEnum {
     /**
      * 登录用户
      */
@@ -30,7 +30,7 @@ public enum UserRole implements IntBaseEnum {
     private Integer value;
     private String desc;
 
-    UserRole(int code, String msg) {
+    UserRoleEnum(int code, String msg) {
         this.value = code;
         this.desc = msg;
     }

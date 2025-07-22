@@ -1,11 +1,10 @@
 package com.git.hui.offer.web.controller.admin;
 
-import com.git.hui.offer.components.permission.Permission;
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.user.permission.Permission;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
 import com.git.hui.offer.oc.dao.entity.OcInfoEntity;
 import com.git.hui.offer.oc.service.GatherService;
-import com.git.hui.offer.oc.service.OcService;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
 import com.git.hui.offer.web.model.req.DraftSearchReq;
@@ -26,7 +25,7 @@ import java.util.List;
  * @date 2025/7/14
  */
 @Slf4j
-@Permission(role = UserRole.ADMIN)
+@Permission(role = UserRoleEnum.ADMIN)
 @RestController
 @RequestMapping(path = "/api/admin/draft")
 public class AdminDraftController {

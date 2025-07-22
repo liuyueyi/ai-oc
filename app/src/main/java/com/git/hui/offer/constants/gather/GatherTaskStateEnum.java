@@ -4,13 +4,13 @@ import com.git.hui.offer.util.json.IntBaseEnum;
 import lombok.Getter;
 
 /**
- * 数据采集目标的类型
+ * 数据采集任务状态
  *
  * @author YiHui
  * @date 2025/7/14
  */
 @Getter
-public enum GatherTaskStateEnum implements IntBaseEnum {
+public enum  GatherTaskStateEnum implements IntBaseEnum {
     INIT(0, "未处理"),
     PROCESSING(1, "处理中"),
     SUCCEED(2, "已处理"),

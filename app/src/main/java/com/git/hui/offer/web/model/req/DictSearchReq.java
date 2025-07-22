@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class DictSearchReq extends PageReq {
-    private String scope;
+    private String app;
     private String key;
     private Integer state;
 }

@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getConfigValue } from "@/lib/config";
+import { GlobalConfigItemValue } from "@/lib/api";
 
 function formatDateTime(ts?: number) {
   if (!ts) return "-";
@@ -20,6 +22,7 @@ export default function UsersPage() {
   const [editingUser, setEditingUser] = useState<UserListItem | null>(null);
   const [editRole, setEditRole] = useState<number>(1);
   const [editExpire, setEditExpire] = useState<string>("");
+  const [roleOptions, setRoleOptions] = useState<GlobalConfigItemValue[]>([]);
 
   useEffect(() => {
     fetchUserList(query).then(res => {
@@ -27,6 +30,12 @@ export default function UsersPage() {
       setTotal(res.total);
     });
   }, [query]);
+
+  useEffect(() => {
+    getConfigValue('user', 'UserRoleEnum').then(options => {
+      setRoleOptions(options);
+    });
+  }, []);
 
   const totalPages = Math.ceil(total / (query.size || 10)) || 1;
 
@@ -72,9 +81,9 @@ export default function UsersPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="0">全部角色</SelectItem>
-              <SelectItem value="1">普通用户</SelectItem>
-              <SelectItem value="2">VIP用户</SelectItem>
-              <SelectItem value="3">管理员</SelectItem>
+              {roleOptions.map(option => (
+                <SelectItem value={option.value as string} key={option.value as string}>{option.intro}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Button className="h-10 px-6" onClick={() => setQuery(q => ({ ...q, page: 1 }))}>查询</Button>
@@ -107,13 +116,18 @@ export default function UsersPage() {
                   </TableCell>
                   <TableCell>{user.displayName}</TableCell>
                   <TableCell>
-                    <span className={
-                      user.role === 1 ? "text-gray-700" :
-                        user.role === 2 ? "text-blue-600 font-semibold" :
-                          user.role === 3 ? "text-green-600 font-semibold" : "text-gray-400"
-                    }>
-                      {user.role === 1 ? "普通用户" : user.role === 2 ? "VIP用户" : user.role === 3 ? "管理员" : "未知"}
-                    </span>
+                    {(() => {
+                      const role = roleOptions.find(r => Number(r.value) === user.role);
+                      return (
+                        <span className={
+                          user.role === 1 ? "text-gray-700" :
+                            user.role === 2 ? "text-blue-600 font-semibold" :
+                              user.role === 3 ? "text-green-600 font-semibold" : "text-gray-400"
+                        }>
+                          {role ? role.intro : "未知"}
+                        </span>
+                      );
+                    })()}
                   </TableCell>
                   <TableCell>
                     {user.expireTime ? new Date(user.expireTime).toLocaleDateString() : "-"}
@@ -158,9 +172,9 @@ export default function UsersPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">普通用户</SelectItem>
-                      <SelectItem value="2">VIP用户</SelectItem>
-                      <SelectItem value="3">管理员</SelectItem>
+                      {roleOptions.map(option => (
+                        <SelectItem value={option.value as string} key={option.value as string}>{option.intro}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

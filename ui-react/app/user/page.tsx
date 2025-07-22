@@ -9,6 +9,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { QRCodeCanvas } from "qrcode.react";
+import { Bell, User, ChevronDown } from "lucide-react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import { useLoginUser } from "@/hooks/useLoginUser";
+import { useRouter } from "next/navigation";
 
 const MENU = [
     { key: "vip", label: "我的会员", icon: "💎" },
@@ -61,6 +66,15 @@ export default function UserPage() {
     const [paying, setPaying] = useState(false);
     const [loading, setLoading] = useState(false);
     const [rechargeList, setRechargeList] = useState<any[]>([]);
+
+    const { userInfo: loginUserInfo, setUserInfo: setLoginUserInfo, logout: loginLogout } = useLoginUser();
+    const [loginOpen, setLoginOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         getUserDetail().then(data => {
@@ -202,7 +216,73 @@ export default function UserPage() {
 
     return (
         <div className="min-h-screen bg-[#f5f7fa]">
-            {/* 顶部横幅 */}
+            {/* 顶部导航栏 */}
+            <header className="bg-white border-b">
+                <div className="px-10">
+                    <div className="flex justify-between items-center h-16">
+                        <div className="flex items-center space-x-8">
+                            <div className="flex items-center">
+                                <span className="text-2xl font-bold text-blue-600">🏢来个OC</span>
+                            </div>
+                            <nav className="flex space-x-6">
+                                <a href="#" className="text-gray-700 hover:text-blue-600">
+                                    招聘
+                                </a>
+                                <a href="#" className="text-gray-700 hover:text-blue-600">
+                                    实习
+                                </a>
+                            </nav>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <Bell className="h-5 w-5 text-gray-500" />
+                            {loginUserInfo ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <span className="flex items-center cursor-pointer">
+                                            <img
+                                                src={loginUserInfo.avatar}
+                                                alt="avatar"
+                                                className="w-8 h-8 rounded-full cursor-pointer"
+                                                title={loginUserInfo.nickname || `用户${loginUserInfo.userId}`}
+                                            />
+                                            <ChevronDown className="w-4 h-4 ml-1 text-gray-500" />
+                                        </span>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <div className="px-3 py-2">
+                                            <div className="font-medium">{loginUserInfo.nickname || `用户${loginUserInfo.userId}`}</div>
+                                            <div className="text-xs text-gray-500">
+                                                {loginUserInfo.role === 1 ? "普通用户" : loginUserInfo.role === 2 ? "VIP用户" : loginUserInfo.role === 3 ? "管理员" : "未知"}
+                                            </div>
+                                        </div>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => { router.push('/user') }}>
+                                            个人信息
+                                        </DropdownMenuItem>
+                                        {loginUserInfo.role === 3 && (
+                                            <DropdownMenuItem onClick={() => router.push('/admin')}>
+                                                管理后台
+                                            </DropdownMenuItem>
+                                        )}
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={loginLogout}>
+                                            退出
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) : (
+                                mounted && (
+                                    <Button variant="outline" size="sm" onClick={() => setLoginOpen(true)}>
+                                        <User className="h-4 w-4 mr-1" />
+                                        登录
+                                    </Button>
+                                )
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </header>
+            {/* 原有顶部横幅 */}
             <div className="bg-white shadow-sm">
                 <div className="max-w-6xl mx-auto flex items-center justify-between px-8 py-4">
                     <div className="flex items-center space-x-4">
@@ -219,7 +299,7 @@ export default function UserPage() {
                             </div>
                         </div>
                     </div>
-                    <Button variant="outline" className="text-gray-700">退出登录</Button>
+                    {/* <Button variant="outline" className="text-gray-700" onClick={loginLogout}>退出登录</Button> */}
                 </div>
             </div>
 

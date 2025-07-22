@@ -61,6 +61,9 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination"
 
+import { getConfigValue } from "@/lib/config"
+import { GlobalConfigItemValue } from "@/lib/api"
+
 const newDictInitValue: DictSaveReq = {
     app: "",
     key: "",
@@ -85,7 +88,17 @@ export default function DictPage() {
     const [activeDict, setActiveDict] = useState<DictSaveReq>(newDictInitValue)
     const [isEditing, setIsEditing] = useState(false)
     const [dictToDelete, setDictToDelete] = useState<DictListItem | null>(null)
+    const [scopeOptions, setScopeOptions] = useState<GlobalConfigItemValue[]>([]);
+    const [appOptions, setAppOptions] = useState<GlobalConfigItemValue[]>([]);
 
+    useEffect(() => {
+        getConfigValue('dicts', 'DictScopeEnum').then(options => {
+            setScopeOptions(options);
+        });
+        getConfigValue('dicts', 'DictAppEnum').then(options => {
+            setAppOptions(options);
+        });
+    }, []);
 
     const loadDicts = async (search: { app: string, key: string, page: number, size: number }) => {
         try {
@@ -202,12 +215,11 @@ export default function DictPage() {
     }
 
     const renderScope = (scope: number) => {
-        if (scope === 1) {
-            return <Badge variant="outline">管理配置</Badge>
-        } else if (scope == 2) {
-            return <Badge variant="outline">服务配置</Badge>
+        const option = scopeOptions.find(o => Number(o.value) === scope);
+        if (option) {
+            return <Badge variant="outline">{option.intro}</Badge>
         }
-        return <Badge variant="outline">公开配置</Badge>
+        return <Badge variant="outline">未知配置</Badge>
     }
 
     return (
@@ -224,12 +236,21 @@ export default function DictPage() {
                 <div className="flex flex-wrap gap-2 mb-4 items-center">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-4">
-                            <Input
-                                placeholder="App"
-                                value={app}
-                                onChange={(e) => setApp(e.target.value)}
-                                className="max-w-xs"
-                            />
+                            <div className="flex items-center">
+                                <span className="mr-2 font-medium">App：</span>
+                                <Select value={app} onValueChange={setApp}>
+                                    <SelectTrigger className="w-40">
+                                        <SelectValue placeholder="请选择App" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {appOptions.map(option => (
+                                            <SelectItem value={option.value as string} key={option.value as string}>
+                                                {option.intro}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                             <Input
                                 placeholder="Code"
                                 value={key}
@@ -336,7 +357,21 @@ export default function DictPage() {
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="app" className="text-right">App</Label>
-                            <Input id="app" value={activeDict.app} onChange={(e) => setActiveDict({ ...activeDict, app: e.target.value })} className="col-span-3" />
+                            <Select
+                                value={activeDict.app}
+                                onValueChange={(value) => setActiveDict({ ...activeDict, app: value })}
+                            >
+                                <SelectTrigger className="w-40">
+                                    <SelectValue placeholder="请选择App" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {appOptions.map(option => (
+                                        <SelectItem value={option.value as string} key={option.value as string}>
+                                            {option.intro}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="key" className="text-right">Code</Label>
@@ -357,18 +392,12 @@ export default function DictPage() {
                                 onValueChange={(value) => setActiveDict({ ...activeDict, scope: Number(value) })}
                                 className="col-span-3 flex items-center space-x-4"
                             >
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="0" id="scope-0" />
-                                    <Label htmlFor="scope-0">公开配置</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="1" id="scope-1" />
-                                    <Label htmlFor="scope-1">管理配置</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="2" id="scope-2" />
-                                    <Label htmlFor="scope-2">服务配置</Label>
-                                </div>
+                                {scopeOptions.map(option => (
+                                    <div className="flex items-center space-x-2" key={option.value as string}>
+                                        <RadioGroupItem value={option.value as string} id={`scope-${option.value}`} />
+                                        <Label htmlFor={`scope-${option.value}`}>{option.intro}</Label>
+                                    </div>
+                                ))}
                             </RadioGroup>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">

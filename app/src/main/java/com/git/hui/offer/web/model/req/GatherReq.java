@@ -12,7 +12,7 @@ public record GatherReq(
         // 传入的内容
         String content
         // 传入的内容类型
-        , GatherTargetTypeEnum type
+        , Integer type
         // 指定的模型
         , String model
 ) {

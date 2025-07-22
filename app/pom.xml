@@ -115,11 +115,14 @@
                 <env>test</env>
             </properties>
             <dependencies>
-                <!--  使用h2database作为数据库，简化操作流程  -->
                 <dependency>
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
-                    <scope>runtime</scope>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-core</artifactId>
+                </dependency>
+                <!--  测试环境，使用mysql作为数据库 -->
+                <dependency>
+                    <groupId>com.mysql</groupId>
+                    <artifactId>mysql-connector-j</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -130,6 +133,10 @@
                 <env>prod</env>
             </properties>
             <dependencies>
+                <dependency>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-core</artifactId>
+                </dependency>
                 <!--  生产环境，使用mysql作为数据库 -->
                 <dependency>
                     <groupId>com.mysql</groupId>

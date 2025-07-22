@@ -5,7 +5,7 @@ import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.components.context.ReqInfoContext;
 import com.git.hui.offer.components.context.UserBo;
 import com.git.hui.offer.components.id.IdUtil;
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.constants.common.BaseStateEnum;
 import com.git.hui.offer.constants.user.RechargeLevelEnum;
 import com.git.hui.offer.user.convert.UserConvert;
@@ -57,7 +57,7 @@ public class UserService {
      * @return
      */
     public PageListVo<UserVo> searchUserList(UserSearchReq req) {
-        if (req.getRole() != null && req.getRole().equals(UserRole.ALL.getValue())) {
+        if (req.getRole() != null && req.getRole().equals(UserRoleEnum.ALL.getValue())) {
             req.setRole(null);
         }
         PageListVo<UserEntity> res = userRepository.findList(req);
@@ -75,7 +75,7 @@ public class UserService {
         if (user == null) {
             throw new BizException(StatusEnum.RECORDS_NOT_EXISTS, "用户不存在");
         }
-        if (Objects.equals(role, UserRole.VIP.getValue())) {
+        if (Objects.equals(role, UserRoleEnum.VIP.getValue())) {
             // vip用户，要求过期时间存在
             if (expireTime == null) {
                 expireTime = System.currentTimeMillis() + RechargeLevelEnum.MONTH.getMillSeconds();
@@ -152,7 +152,19 @@ public class UserService {
      * @return 用户id
      */
     private UserEntity registerByWx(String wxId) {
-        UserEntity user = new UserEntity().setId(IdUtil.genId()).setWxId(wxId).setRole(UserRole.NORMAL.getValue()).setCreateTime(new Date()).setUpdateTime(new Date()).setState(BaseStateEnum.NORMAL_STATE.getValue()).setDisplayName(UserRandomGenHelper.genNickName()).setAvatar(UserRandomGenHelper.genAvatar());
+        UserEntity user = new UserEntity()
+                .setId(IdUtil.genId())
+                .setWxId(wxId)
+                .setRole(UserRoleEnum.NORMAL.getValue())
+                .setCreateTime(new Date())
+                .setUpdateTime(new Date())
+                .setState(BaseStateEnum.NORMAL_STATE.getValue())
+                .setLoginName("")
+                .setPassword("")
+                .setEmail("")
+                .setIntro("")
+                .setDisplayName(UserRandomGenHelper.genNickName())
+                .setAvatar(UserRandomGenHelper.genAvatar());
         userRepository.saveAndFlush(user);
         return user;
     }

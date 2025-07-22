@@ -1,8 +1,8 @@
 package com.git.hui.offer.web.controller.front;
 
 import com.git.hui.offer.components.context.ReqInfoContext;
-import com.git.hui.offer.components.permission.Permission;
-import com.git.hui.offer.components.permission.UserRole;
+import com.git.hui.offer.constants.user.permission.Permission;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.user.service.UserService;
 import com.git.hui.offer.web.model.req.UserSaveReq;
 import com.git.hui.offer.web.model.res.UserVo;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author YiHui
  * @date 2025/7/17
  */
-@Permission(role = UserRole.NORMAL)
+@Permission(role = UserRoleEnum.NORMAL)
 @RestController
 @RequestMapping(path = "/api/user")
 public class UserController {

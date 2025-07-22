@@ -1,10 +1,12 @@
 
 package com.git.hui.offer.configs.dao.repository;
 
+import ch.qos.logback.core.util.StringCollectionUtil;
 import com.git.hui.offer.configs.dao.entity.CommonDictEntity;
 import com.git.hui.offer.constants.common.BaseStateEnum;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.DictSearchReq;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,10 +33,10 @@ public interface CommonDictRepository extends JpaRepository<CommonDictEntity, Lo
     default PageListVo<CommonDictEntity> findList(DictSearchReq req) {
         Specification<CommonDictEntity> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (req.getScope() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("scope"), req.getScope()));
+            if (StringUtils.isNotBlank(req.getApp())) {
+                predicates.add(criteriaBuilder.equal(root.get("app"), req.getApp()));
             }
-            if (req.getKey() != null) {
+            if (StringUtils.isNotBlank(req.getKey())) {
                 predicates.add(criteriaBuilder.like(root.get("key"), "%" + req.getKey() + "%"));
             }
             if (req.getState() != null) {
