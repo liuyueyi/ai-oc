@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### 支付证书
+app/src/main/resources/cert

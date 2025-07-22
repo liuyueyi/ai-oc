@@ -16,6 +16,8 @@ public class UserVo {
     private String wxId;
     private Integer role;
     private Integer state;
+    private String email;
+    private String intro;
     // vip用户的有效期
     private Long expireTime;
     private Long createTime;

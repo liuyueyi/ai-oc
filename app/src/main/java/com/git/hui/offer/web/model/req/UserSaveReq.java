@@ -30,4 +30,8 @@ public class UserSaveReq {
      * 头像
      */
     private String avatar;
+
+    private String email;
+
+    private String intro;
 }

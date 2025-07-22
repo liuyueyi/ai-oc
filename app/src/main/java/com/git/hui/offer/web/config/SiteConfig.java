@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 全局网站配置
  *
@@ -31,9 +33,8 @@ public class SiteConfig {
      * 网站域名
      */
     private String webSiteHost;
-
     /**
-     * vip有效期，单位为天
+     * 会员价格
      */
-    private Long vipPeriods;
+    private List<Integer> vipPrice;
 }

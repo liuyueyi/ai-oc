@@ -2,13 +2,16 @@ package com.git.hui.offer.web.controller.front;
 
 import cn.hutool.core.util.NumberUtil;
 import com.git.hui.offer.user.service.LoginService;
+import com.git.hui.offer.user.service.RechargeService;
 import com.git.hui.offer.user.service.UserService;
 import com.git.hui.offer.web.model.wx.BaseWxMsgResVo;
 import com.git.hui.offer.web.model.wx.WxTxtMsgReqVo;
 import com.git.hui.offer.web.model.wx.WxTxtMsgResVo;
 import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,10 +33,13 @@ public class WxController {
     private final LoginService loginService;
     private final UserService userService;
 
+    private final RechargeService rechargeService;
+
     @Autowired
-    public WxController(LoginService loginService, UserService userService) {
+    public WxController(LoginService loginService, UserService userService, RechargeService rechargeService) {
         this.loginService = loginService;
         this.userService = userService;
+        this.rechargeService = rechargeService;
     }
 
     /**
@@ -108,5 +114,17 @@ public class WxController {
         res.setFromUserName(msg.getToUserName());
         res.setToUserName(msg.getFromUserName());
         res.setCreateTime(System.currentTimeMillis() / 1000);
+    }
+
+
+    /**
+     * 微信支付回调
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping(path = "payNotify")
+    public ResponseEntity<?> wxPayCallback(HttpServletRequest request) {
+        return rechargeService.payCallback(request, rechargeService::payed);
     }
 }

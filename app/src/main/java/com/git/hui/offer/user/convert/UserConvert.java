@@ -35,6 +35,8 @@ public class UserConvert {
                 .setExpireTime(user.getExpireTime() == null ? null : user.getExpireTime().getTime())
                 .setCreateTime(user.getCreateTime().getTime())
                 .setUpdateTime(user.getUpdateTime().getTime())
+                .setEmail(user.getEmail())
+                .setIntro(user.getIntro())
                 .setWxId(user.getWxId());
     }
 

@@ -264,7 +264,7 @@ export default function HomePage() {
                       </div>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => { /* 跳转到个人信息页 */ }}>
+                    <DropdownMenuItem onClick={() => { router.push('/user') }}>
                       个人信息
                     </DropdownMenuItem>
                     {userInfo.role === 3 && (

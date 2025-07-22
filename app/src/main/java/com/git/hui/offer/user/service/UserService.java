@@ -4,10 +4,10 @@ import com.git.hui.offer.components.bizexception.BizException;
 import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.components.context.ReqInfoContext;
 import com.git.hui.offer.components.context.UserBo;
-import com.git.hui.offer.components.env.SpringUtil;
 import com.git.hui.offer.components.id.IdUtil;
 import com.git.hui.offer.components.permission.UserRole;
 import com.git.hui.offer.constants.common.BaseStateEnum;
+import com.git.hui.offer.constants.user.RechargeLevelEnum;
 import com.git.hui.offer.user.convert.UserConvert;
 import com.git.hui.offer.user.dao.entity.UserEntity;
 import com.git.hui.offer.user.dao.repository.UserRepository;
@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 用户服务
@@ -38,6 +39,15 @@ public class UserService {
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public UserVo detail(Long userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        if (user.isEmpty() || user.get().getId() == null) {
+            throw new BizException(StatusEnum.USER_NOT_EXISTS, userId);
+        }
+
+        return UserConvert.toVo(user.get());
     }
 
     /**
@@ -55,6 +65,11 @@ public class UserService {
         return PageListVo.of(list, res.getTotal(), req.getPage(), req.getSize());
     }
 
+
+    public boolean updateUserVipInfo(Long userId, Integer vipLevel) {
+        return true;
+    }
+
     public boolean updateUserRole(Long userId, Integer role, Long expireTime) {
         UserEntity user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -63,7 +78,7 @@ public class UserService {
         if (Objects.equals(role, UserRole.VIP.getValue())) {
             // vip用户，要求过期时间存在
             if (expireTime == null) {
-                expireTime = System.currentTimeMillis() + SpringUtil.getSiteConfig().getVipPeriods() * 86400_000L;
+                expireTime = System.currentTimeMillis() + RechargeLevelEnum.MONTH.getMillSeconds();
             }
             user.setExpireTime(new Date(expireTime / DateUtil.ONE_DAY_MILL * DateUtil.ONE_DAY_MILL));
         }
@@ -80,13 +95,19 @@ public class UserService {
      * @return
      */
     public UserVo updateUserInfo(UserSaveReq req) {
-        if (Objects.equals(ReqInfoContext.getReqInfo().getUserId(), req.getUserId())) {
+        if (!Objects.equals(ReqInfoContext.getReqInfo().getUserId(), req.getUserId())) {
             throw new BizException(StatusEnum.FORBID_ERROR);
         }
 
         UserEntity user = userRepository.findById(req.getUserId()).orElse(null);
         if (user == null) {
             throw new BizException(StatusEnum.RECORDS_NOT_EXISTS, "用户不存在");
+        }
+        if (StringUtils.isNotBlank(req.getEmail())) {
+            user.setEmail(req.getEmail());
+        }
+        if (StringUtils.isNotBlank(req.getIntro())) {
+            user.setIntro(req.getIntro());
         }
         if (StringUtils.isNotBlank(req.getDisplayName())) {
             user.setDisplayName(req.getDisplayName());
@@ -131,15 +152,7 @@ public class UserService {
      * @return 用户id
      */
     private UserEntity registerByWx(String wxId) {
-        UserEntity user = new UserEntity()
-                .setId(IdUtil.genId())
-                .setWxId(wxId)
-                .setRole(UserRole.NORMAL.getValue())
-                .setCreateTime(new Date())
-                .setUpdateTime(new Date())
-                .setState(BaseStateEnum.NORMAL_STATE.getValue())
-                .setDisplayName(UserRandomGenHelper.genNickName())
-                .setAvatar(UserRandomGenHelper.genAvatar());
+        UserEntity user = new UserEntity().setId(IdUtil.genId()).setWxId(wxId).setRole(UserRole.NORMAL.getValue()).setCreateTime(new Date()).setUpdateTime(new Date()).setState(BaseStateEnum.NORMAL_STATE.getValue()).setDisplayName(UserRandomGenHelper.genNickName()).setAvatar(UserRandomGenHelper.genAvatar());
         userRepository.saveAndFlush(user);
         return user;
     }

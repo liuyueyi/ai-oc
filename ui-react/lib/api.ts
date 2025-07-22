@@ -392,3 +392,67 @@ export async function deleteDict(id: number): Promise<boolean> {
   }
   throw new Error(res.data?.msg || "删除失败");
 }
+
+
+
+// ---------------- 个人用户相关
+
+export interface UserSaveReq {
+  userId: number;
+  displayName: string;
+  avatar: string;
+  email: string;
+  intro: string;
+}
+
+export async function getUserDetail() {
+  const res = await api.get("/api/user/detail");
+  if (res.data && res.data.code === 0) {
+    return res.data.data;
+  }
+  throw new Error(res.data?.msg || "获取用户信息失败");
+}
+
+export async function updateUserDetail(params: UserSaveReq) {
+  const res = await api.post("/api/user/update", params);
+  if (res.data && res.data.code === 0) {
+    return res.data.data;
+  }
+  throw new Error(res.data?.msg || "更新用户信息失败");
+}
+
+export async function toPay(vipLevel: number) {
+  const res = await api.get(`/api/recharge/toPay?vipLevel=${vipLevel}`);
+  if (res.data && res.data.code === 0) {
+    return res.data.data;
+  }
+  throw new Error(res.data?.msg || "获取支付信息失败");
+}
+
+
+export interface RechageListItem {
+  payId: number;
+  tradeNo: string;
+  amount: string;
+  level: number;
+  status: number;
+  payTime: number;
+  transactionId: string;
+}
+
+export interface RechageListResponse {
+  list: RechageListItem[];
+  hasMore: boolean;
+  page: number;
+  size: number;
+  total: number;
+}
+
+// 查询用户充值记录
+export async function getRechargeList(): Promise<RechageListResponse> {
+  const res = await api.get("/api/recharge/listRecords");
+  if (res.data && res.data.code === 0) {
+    return res.data.data;
+  }
+  throw new Error(res.data?.msg || "获取用户信息失败");
+}

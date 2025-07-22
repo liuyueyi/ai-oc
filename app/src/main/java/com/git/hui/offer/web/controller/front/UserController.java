@@ -7,6 +7,7 @@ import com.git.hui.offer.user.service.UserService;
 import com.git.hui.offer.web.model.req.UserSaveReq;
 import com.git.hui.offer.web.model.res.UserVo;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,17 +31,24 @@ public class UserController {
     /**
      * 更新用户信息
      *
-     * @param displayName 用户id
-     * @param avatar      角色
+     * @param user 用户id
      * @return
      */
     @RequestMapping(path = "update")
-    public UserVo updateUserRole(String displayName, String avatar) {
-        Assert.notNull(displayName, "用户id不能为空");
-        Assert.notNull(avatar, "角色不能为空");
-        UserSaveReq req = new UserSaveReq().setUserId(ReqInfoContext.getReqInfo().getUserId())
-                .setDisplayName(displayName)
-                .setAvatar(avatar);
-        return userService.updateUserInfo(req);
+    public UserVo updateUserRole(@RequestBody UserSaveReq user) {
+        user.setUserId(ReqInfoContext.getReqInfo().getUserId());
+        return userService.updateUserInfo(user);
+    }
+
+    /**
+     * 用户详情
+     *
+     * @return
+     */
+    @RequestMapping(path = "detail")
+    public UserVo detail() {
+        Long userId = ReqInfoContext.getReqInfo().getUserId();
+        Assert.notNull(userId, "未登录");
+        return userService.detail(userId);
     }
 }

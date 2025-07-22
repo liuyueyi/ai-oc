@@ -30,6 +30,12 @@ public class UserEntity {
     private String displayName;
 
     /**
+     * 用户邮箱
+     */
+    @Column(name = "email")
+    private String email;
+
+    /**
      * 登录用户名
      */
     @Column(name = "login_name")
@@ -46,6 +52,12 @@ public class UserEntity {
      */
     @Column(name = "avatar")
     private String avatar;
+
+    /**
+     * 个人简介
+     */
+    @Column(name = "intro")
+    private String intro;
 
     /**
      * 微信登录时，这里存储微信的三方id
