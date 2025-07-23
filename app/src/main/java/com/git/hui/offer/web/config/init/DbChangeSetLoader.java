@@ -29,20 +29,13 @@ public class DbChangeSetLoader {
     public static List<ClassPathResource> loadDbChangeSetResources(String source) {
         try {
             XMLReader xmlReader = getInstance();
-            ChangeHandler logHandler = new ChangeHandler("include", "file");
-            xmlReader.setContentHandler(logHandler);
+            ChangeHandler setHandler = new ChangeHandler("sqlFile", "path");
+            xmlReader.setContentHandler(setHandler);
             xmlReader.parse(new ClassPathResource(source.replace("classpath:", "").trim()).getFile().getPath());
-            List<String> changeSetFiles = logHandler.getSets();
+            List<String> changeSetFiles = setHandler.getSets();
 
             List<ClassPathResource> result = new ArrayList<>();
-            ChangeHandler setHandler = new ChangeHandler("sqlFile", "path");
-            for (String set : changeSetFiles) {
-                xmlReader.setContentHandler(setHandler);
-                // 解析xml
-                xmlReader.parse(new ClassPathResource(set).getFile().getPath());
-                result.addAll(setHandler.getSets().stream().map(ClassPathResource::new).collect(Collectors.toList()));
-                setHandler.reset();
-            }
+            result.addAll(changeSetFiles.stream().map(ClassPathResource::new).collect(Collectors.toList()));
             return result;
         } catch (Exception e) {
             throw new IllegalStateException("加载初始化脚本异常!");

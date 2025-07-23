@@ -1,11 +1,18 @@
 package com.git.hui.offer.web.config.init;
 
-import com.git.hui.offer.components.env.SpringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -29,9 +36,10 @@ import java.util.List;
  * @date 2022/10/15
  */
 @Slf4j
+@DependsOn("environment")
 @ConditionalOnClass(name = "liquibase.Liquibase")
 @Configuration
-public class OcDataSourceInitializer {
+public class OcDataSourceInitializer implements BeanDefinitionRegistryPostProcessor, PriorityOrdered, EnvironmentAware {
     @Value("${oc.database.name}")
     private String database;
 
@@ -41,34 +49,44 @@ public class OcDataSourceInitializer {
     @Value("${spring.liquibase.change-log}")
     private String liquibaseChangeLog;
 
-    public OcDataSourceInitializer() {
-        System.out.println("这里啦");
+    private Environment environment;
+
+    public String getDatabase() {
+        database = database != null ? database : environment.getProperty("oc.database.name");
+        return database;
     }
 
-//    @DependsOn("dataSource")
-//    @Component
-//    public class MyDataSourceInitializer extends DataSourceInitializer implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
-//        @Autowired
-//        private DataSource dataSource;
-//
-//        @PostConstruct
-//        public void MyDataSourceInitializer() {
-//            // 设置数据源
-//            setDataSource(dataSource);
-//            boolean enable = needInit(dataSource);
-//            setEnabled(enable);
-//            setDatabasePopulator(databasePopulator(enable));
-//        }
-//
-//        @Override
-//        public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-//        }
-//
-//        @Override
-//        public int getOrder() {
-//            return Ordered.HIGHEST_PRECEDENCE;
-//        }
-//    }
+    public Boolean getLiquibaseEnable() {
+        liquibaseEnable = liquibaseEnable != null ? liquibaseEnable : Boolean.parseBoolean(environment.getProperty("spring.liquibase.enabled", "true"));
+        return this.liquibaseEnable;
+    }
+
+    public String getLiquibaseChangeLog() {
+        liquibaseChangeLog = liquibaseChangeLog != null ? liquibaseChangeLog : environment.getProperty("spring.liquibase.change-log");
+        return liquibaseChangeLog;
+    }
+
+    /**
+     * 主要是确保 OcDataSourceInitializer 先初始化实现在库不存在时，进行自动创建，避免JPA启动失败
+     *
+     * @param registry
+     * @throws BeansException
+     */
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        log.info("开始初始化数据库表...");
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+        autoInitDatabase();
+    }
 
     @Bean
     public DataSourceInitializer dataSourceInitializer(final DataSource dataSource) {
@@ -78,16 +96,23 @@ public class OcDataSourceInitializer {
         boolean enable = needInit(dataSource);
         initializer.setEnabled(enable);
         initializer.setDatabasePopulator(databasePopulator(enable));
+        if (!getLiquibaseEnable()) {
+            if (!enable) {
+                log.info("非Liquibase管理数据库，非首次启动，不执行项目SQL脚本；如有需要，请手动执行更新~");
+            } else {
+                log.info("非Liquibase管理数据，首次启动，自动执行项目中SQL脚本~");
+            }
+        }
         return initializer;
     }
 
     private DatabasePopulator databasePopulator(boolean initEnable) {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         // 下面这种是根据sql文件来进行初始化；改成 liquibase 之后不再使用这种方案，由liquibase来统一管理表结构数据变更
-        if (initEnable && !liquibaseEnable) {
+        if (initEnable && !getLiquibaseEnable()) {
             // fixme: 首次启动时, 对于不支持liquibase的数据库，如mariadb，采用主动初始化
             // fixme 这种方式不支持后续动态的数据表结构更新、数据变更
-            populator.addScripts(DbChangeSetLoader.loadDbChangeSetResources(liquibaseChangeLog).toArray(new ClassPathResource[]{}));
+            populator.addScripts(DbChangeSetLoader.loadDbChangeSetResources(getLiquibaseChangeLog()).toArray(new ClassPathResource[]{}));
             populator.setSeparator(";");
             log.info("非Liquibase管理数据库，请手动执行数据库表初始化!");
         }
@@ -107,9 +132,9 @@ public class OcDataSourceInitializer {
 
         // 根据是否存在表来判断是否需要执行sql操作
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        if (!liquibaseEnable) {
+        if (!getLiquibaseEnable()) {
             // 非liquibase做数据库版本管理的，根据用户来判断是否有初始化
-            List list = jdbcTemplate.queryForList("SELECT table_name FROM information_schema.TABLES where table_name = 'user_info' and table_schema = '" + database + "';");
+            List list = jdbcTemplate.queryForList("SELECT table_name FROM information_schema.TABLES where table_name = 'user_info' and table_schema = '" + this.getDatabase() + "';");
             return CollectionUtils.isEmpty(list);
         }
 
@@ -122,20 +147,22 @@ public class OcDataSourceInitializer {
     private boolean autoInitDatabase() {
         // 查询失败，可能是数据库不存在，尝试创建数据库之后再次测试
         // 数据库链接
-        URI url = URI.create(SpringUtil.getConfigOrElse("spring.datasource.url", "spring.dynamic.datasource.master.url").substring(5));
+        URI url = URI.create(getConfigOrElse("spring.datasource.url", "spring.dynamic.datasource.master.url").substring(5));
         // 用户名
-        String uname = SpringUtil.getConfigOrElse("spring.datasource.username", "spring.dynamic.datasource.master.username");
+        String uname = getConfigOrElse("spring.datasource.username", "spring.dynamic.datasource.master.username");
         // 密码
-        String pwd = SpringUtil.getConfigOrElse("spring.datasource.password", "spring.dynamic.datasource.master.password");
+        String pwd = getConfigOrElse("spring.datasource.password", "spring.dynamic.datasource.master.password");
         // 创建连接
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://" + url.getHost() + ":" + url.getPort() +
                 "?" + url.getRawQuery(), uname, pwd);
              Statement statement = connection.createStatement()) {
+            String database = getDatabase();
             // 查询数据库是否存在
-            ResultSet set = statement.executeQuery("select schema_name from information_schema.schemata where schema_name = '" + database + "'");
+            String dbQuerySql = "select schema_name from information_schema.schemata where schema_name = '" + database + "'";
+            ResultSet set = statement.executeQuery(dbQuerySql);
             if (!set.next()) {
                 // 不存在时，创建数据库
-                String createDb = "CREATE DATABASE IF NOT EXISTS " + database;
+                String createDb = new StringBuilder("CREATE DATABASE IF NOT EXISTS `").append(database).append("`").toString();
                 connection.setAutoCommit(false);
                 statement.execute(createDb);
                 connection.commit();
@@ -151,6 +178,14 @@ public class OcDataSourceInitializer {
         } catch (SQLException e2) {
             throw new RuntimeException(e2);
         }
+    }
+
+    private String getConfigOrElse(String mainKey, String slaveKey) {
+        String ans = environment.getProperty(mainKey);
+        if (ans == null) {
+            return environment.getProperty(slaveKey);
+        }
+        return ans;
     }
 
 
