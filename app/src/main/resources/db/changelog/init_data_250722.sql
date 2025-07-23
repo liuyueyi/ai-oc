@@ -32,10 +32,16 @@ INSERT INTO oc.common_dict
 VALUES ('site', 0, 'env', 'dev', '环境', '用于前端区分当前的环境为开发，测试，还是生产', 1),
        ('site', 0, 'loginQrImg', 'http://weixin.qq.com/r/WxwpMefE-rqBraNS90lJ', '扫码登录二维码', '', 1),
        ('site', 0, 'webSiteName', '校招派', '站点名', '', 1),
-       ('site', 0, 'webSiteHost', 'https://laigeoffer.cn', '网站地址', '', 1),
-       ('site', 0, 'vipPrice', '19.99\n59.99\n139.99\n299.99', '会员价格',
-        '0 月卡会员 1 季卡会员 2 年卡会员 3 终身会员', 1)
+       ('site', 0, 'webSiteHost', 'https://laigeoffer.cn', '网站地址', '', 1)
 ;
+
+INSERT INTO oc.common_dict
+(app, `scope`, dict_key, dict_value, dict_intro, remark, state)
+VALUES
+   ('recharge', 0, 'vipPrice', '19.99', '月卡会员', '会员费用', 1),
+   ('recharge', 0, 'vipPrice', '59.99', '季卡会员', '会员费用', 1),
+   ('recharge', 0, 'vipPrice', '139.99', '年卡会员', '会员费用', 1),
+   ('recharge', 0, 'vipPrice', '299.99', '终身会员', '会员费用', 1);
 
 -- 不同业务领域字典，给前端使用
 INSERT INTO oc.common_dict
@@ -52,7 +58,8 @@ VALUES ('dicts', 0, 'DictAppEnum', 'site', '全局-站点配置', '字典配置�
        ('dicts', 0, 'DictAppEnum', 'dicts', '业务-字典配置', '字典配置应用', 1),
        ('dicts', 0, 'DictAppEnum', 'gather', '业务-数据录入', '字典配置应用', 1),
        ('dicts', 0, 'DictAppEnum', 'user', '业务-用户相关', '字典配置应用', 1),
-       ('dicts', 0, 'DictAppEnum', 'oc', '业务-职位相关', '字典配置应用', 1)
+       ('dicts', 0, 'DictAppEnum', 'oc', '业务-职位相关', '字典配置应用', 1),
+       ('dicts', 0, 'DictAppEnum', 'recharge', '业务-充值配置', '字典配置应用', 1)
 ;
 
 INSERT INTO oc.common_dict
@@ -118,13 +125,14 @@ VALUES ('oc', 0, 'RecruitmentTypeEnum', '0', '社招', '招聘类型', 1),
        ('oc', 0, 'RecruitmentTypeEnum', '103', '寒期实习', '招聘类型', 1);
 
 INSERT INTO oc.common_dict
-(app, `scope`, dict_key, dict_value, dict_intro, remark, state)
+    (app, `scope`, dict_key, dict_value, dict_intro, remark, state)
 VALUES ('oc', 0, 'RecruitmentTargetEnum', '2025年毕业生', '2025年毕业生', '招聘对象', 1),
        ('oc', 0, 'RecruitmentTargetEnum', '2026年毕业生', '2026年毕业生', '招聘对象', 1),
        ('oc', 0, 'RecruitmentTargetEnum', '2027年毕业生', '2027年毕业生', '招聘对象', 1),
        ('oc', 0, 'RecruitmentTargetEnum', '2024与2025毕业生', '2024与2025毕业生', '招聘对象', 1),
+       ('oc', 0, 'RecruitmentTargetEnum', '2025与2026毕业生', '2025与2026毕业生', '招聘对象', 1),
        ('oc', 0, 'RecruitmentTargetEnum', '其他', '其他', '招聘对象', 1)
-       ;
+;
 
 INSERT INTO oc.common_dict
     (app, `scope`, dict_key, dict_value, dict_intro, remark, state)

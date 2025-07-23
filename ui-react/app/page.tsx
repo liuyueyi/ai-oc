@@ -24,11 +24,13 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { fetchJobList, JobListResponse, getWxSseUrl, postWxCallback } from "@/lib/api"
+import { fetchJobList, JobListResponse, getWxSseUrl, postWxCallback, GlobalConfigItemValue } from "@/lib/api"
 import { useRouter } from "next/navigation"
 import { useSSE } from "@/hooks/useSSE"
 import { QRCodeCanvas } from "qrcode.react";
 import { useLoginUser } from "@/hooks/useLoginUser";
+import { getConfigValue } from "@/lib/config"
+import { useFormState } from "react-dom"
 
 interface JobOffer {
   id: string | number
@@ -47,6 +49,8 @@ interface JobOffer {
   notes: string
 }
 
+const ALL_TAG = "-1"
+
 export default function HomePage() {
   const [user, setUser] = useState<{ name: string; isAdmin: boolean } | null>(null)
   const [currentView, setCurrentView] = useState<"frontend" | "admin">("frontend")
@@ -63,6 +67,7 @@ export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const [total, setTotal] = useState(0)
+  const [online, setOnline] = useState(1)
   const [queryParams, setQueryParams] = useState<any>({})
   const router = useRouter()
   const [loginOpen, setLoginOpen] = useState(false)
@@ -75,9 +80,19 @@ export default function HomePage() {
   const { userInfo, setUserInfo, logout } = useLoginUser();
   const [sseUrl, setSseUrl] = useState("");
 
+  const [env, setEnv] = useState<GlobalConfigItemValue[]>([])
+  const [companyTypes, setCompanyTypes] = useState<GlobalConfigItemValue[]>([]);
+  const [recruitmentTypes, setRecruitmentTypes] = useState<GlobalConfigItemValue[]>([]);
+  const [recruitmentTarget, setRecruitmentTarget] = useState<GlobalConfigItemValue[]>([]);
+
   useEffect(() => {
     setMounted(true)
+    getConfigValue('site', 'env').then(setEnv)
+    getConfigValue('oc', 'CompanyTypeEnum').then(setCompanyTypes);
+    getConfigValue('oc', 'RecruitmentTypeEnum').then(setRecruitmentTypes);
+    getConfigValue('oc', 'RecruitmentTargetEnum').then(setRecruitmentTarget);
   }, [])
+
 
   useEffect(() => {
     if (loginOpen) {
@@ -170,6 +185,8 @@ export default function HomePage() {
         setJobOffers(mapped)
         setFilteredOffers(mapped)
         setTotal(data.total)
+        console.log('当前在线人数:', data.online)
+        setOnline(data.online ? data.online : 1)
       })
       .catch((err: any) => {
         console.error("获取岗位数据失败", err)
@@ -184,10 +201,10 @@ export default function HomePage() {
   const handleSearch = () => {
     const params = {
       companyName: searchFilters.companyName || undefined,
-      companyType: (searchFilters.companyType == 'all' ? undefined : searchFilters.companyType) || undefined,
+      companyType: (searchFilters.companyType == ALL_TAG ? undefined : searchFilters.companyType) || undefined,
       jobLocation: searchFilters.location || undefined,
-      recruitmentType: (searchFilters.recruitmentType == 'all' ? undefined : searchFilters.recruitmentType) || undefined,
-      recruitmentTarget: (searchFilters.recruitmentTarget == 'all' ? undefined : searchFilters.recruitmentTarget) || undefined,
+      recruitmentType: (searchFilters.recruitmentType == ALL_TAG ? undefined : searchFilters.recruitmentType) || undefined,
+      recruitmentTarget: (searchFilters.recruitmentTarget == ALL_TAG ? undefined : searchFilters.recruitmentTarget) || undefined,
       position: searchFilters.position || undefined,
     }
     setQueryParams(params)
@@ -236,9 +253,9 @@ export default function HomePage() {
                 <a href="#" className="text-gray-700 hover:text-blue-600">
                   招聘
                 </a>
-                <a href="#" className="text-gray-700 hover:text-blue-600">
+                {/* <a href="#" className="text-gray-700 hover:text-blue-600">
                   实习
-                </a>
+                </a> */}
               </nav>
             </div>
             <div className="flex items-center space-x-4">
@@ -293,19 +310,26 @@ export default function HomePage() {
                       </DialogHeader>
                       {qr ? (
                         <div className="flex flex-col items-center">
-                          <QRCodeCanvas value={qr} size={180} />
+                          <div className="text-gray text-sm py-1">关注下方二维码，在对话框中输入验证码，既可以实现自动登录哦~</div>
+                          <QRCodeCanvas className="pt-2" value={qr} size={180} />
                           <div className="mt-2 text-lg font-bold">验证码：{code}</div>
-                          <div className="flex gap-4 mt-6">
-                            <Button onClick={() => handleWxLogin("user", code)} disabled={loginLoading}>
-                              {loginLoading ? "登录中..." : "普通用户登录"}
-                            </Button>
-                            <Button onClick={() => handleWxLogin("admin", code)} disabled={adminLoading} variant="secondary">
-                              {adminLoading ? "登录中..." : "管理员登录"}
-                            </Button>
-                          </div>
+                          {
+                            // 测试环境才显示mock登录按钮
+                            (env  && env[0].value == 'dev') && (
+                              <div className="flex gap-4 mt-6">
+                                <Button onClick={() => handleWxLogin("user", code)} disabled={loginLoading}>
+                                  {loginLoading ? "登录中..." : "普通用户登录"}
+                                </Button>
+                                <Button onClick={() => handleWxLogin("admin", code)} disabled={adminLoading} variant="secondary">
+                                  {adminLoading ? "登录中..." : "管理员登录"}
+                                </Button>
+                              </div>
+                            )
+                          }
+
                         </div>
                       ) : (
-                        <div>等待二维码...</div>
+                        <div>微信登录二维码渲染中，请稍后...</div>
                       )}
                     </DialogContent>
                   </Dialog>
@@ -325,55 +349,56 @@ export default function HomePage() {
               value={searchFilters.companyName}
               onChange={(e) => setSearchFilters((prev) => ({ ...prev, companyName: e.target.value }))}
             />
-            <Select
-              value={searchFilters.companyType}
-              onValueChange={(value) => setSearchFilters((prev) => ({ ...prev, companyType: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="公司类型" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
-                <SelectItem value="民企">民企</SelectItem>
-                <SelectItem value="央国企">央国企</SelectItem>
-                <SelectItem value="事业单位">事业单位</SelectItem>
-                <SelectItem value="外企">外企</SelectItem>
-              </SelectContent>
-            </Select>
+
+            {
+              companyTypes && (
+                <Select value={searchFilters.companyType} onValueChange={(value) => setSearchFilters((prev) => ({ ...prev, companyType: value }))}>
+                  <SelectTrigger><SelectValue placeholder="公司类型" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL_TAG}>全部公司类型</SelectItem>
+                    {companyTypes.map(option => (
+                      <SelectItem key={option.intro as string} value={option.intro as string}>{option.intro}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )
+            }
+
+            {recruitmentTypes && (
+              <Select value={searchFilters.recruitmentType || ''}
+                onValueChange={(value) => setSearchFilters((prev) => ({ ...prev, recruitmentType: value }))}>
+                <SelectTrigger><SelectValue placeholder="招聘类型" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL_TAG}>全部招聘类型</SelectItem>
+                  {recruitmentTypes.map(type => (
+                    <SelectItem key={type.intro as string} value={type.intro as string}>
+                      {type.intro}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
+            {recruitmentTarget && (
+              <Select value={searchFilters.recruitmentTarget || ''}
+                onValueChange={(value) => setSearchFilters((prev) => ({ ...prev, recruitmentTarget: value }))}>
+                <SelectTrigger><SelectValue placeholder="招聘对象" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL_TAG}>全部招聘对象</SelectItem>
+                  {recruitmentTarget.map(type => (
+                    <SelectItem key={type.intro as string} value={type.intro as string}>
+                      {type.intro}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
             <Input
               placeholder="工作地点"
               value={searchFilters.location}
               onChange={(e) => setSearchFilters((prev) => ({ ...prev, location: e.target.value }))}
             />
-            <Select
-              value={searchFilters.recruitmentType}
-              onValueChange={(value) => setSearchFilters((prev) => ({ ...prev, recruitmentType: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="招聘类型" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
-                <SelectItem value="春招">春招</SelectItem>
-                <SelectItem value="秋招">秋招</SelectItem>
-                <SelectItem value="秋招提前批">秋招提前批</SelectItem>
-                <SelectItem value="日常招聘">日常招聘</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={searchFilters.recruitmentTarget}
-              onValueChange={(value) => setSearchFilters((prev) => ({ ...prev, recruitmentTarget: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="招聘对象" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
-                <SelectItem value="2025年毕业生">2025年毕业生</SelectItem>
-                <SelectItem value="2026年毕业生">2026年毕业生</SelectItem>
-                <SelectItem value="社会招聘">社会招聘</SelectItem>
-              </SelectContent>
-            </Select>
             <Input
               placeholder="岗位名称"
               value={searchFilters.position}
@@ -482,7 +507,7 @@ export default function HomePage() {
 
         {/* Pagination */}
         <div className="mt-6 flex flex-col items-center">
-          <div className="text-sm text-gray-700 mb-2">共 {total} 条记录 当前在线人数: -</div>
+          <div className="text-sm text-gray-700 mb-2">共 {total} 条记录 当前在线人数: {online}</div>
           <div>
             <Pagination>
               <PaginationContent>

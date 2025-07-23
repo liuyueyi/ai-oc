@@ -1,6 +1,8 @@
 package com.git.hui.offer.web.controller.front;
 
 import cn.hutool.core.util.NumberUtil;
+import com.git.hui.offer.constants.user.permission.Permission;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.user.service.LoginService;
 import com.git.hui.offer.user.service.RechargeService;
 import com.git.hui.offer.user.service.UserService;
@@ -27,6 +29,7 @@ import java.io.IOException;
  * @date 2025/7/16
  */
 @Slf4j
+@Permission(role = UserRoleEnum.ALL)
 @RestController
 @RequestMapping(path = "/api/wx")
 public class WxController {
@@ -68,7 +71,7 @@ public class WxController {
 
 
     /**
-     * fixme: 需要做防刷校验
+     * fixme: 做一个鉴权
      * 微信的响应返回
      * 本地测试访问: curl -X POST 'http://localhost:8080/api/wx/callback' -H 'content-type:application/xml' -d '<xml><URL><![CDATA[https://hhui.top]]></URL><ToUserName><![CDATA[一灰灰blog]]></ToUserName><FromUserName><![CDATA[demoUser1234]]></FromUserName><CreateTime>1655700579</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[login]]></Content><MsgId>11111111</MsgId></xml>' -i
      *

@@ -15,12 +15,11 @@ async function getFullConfig(): Promise<{ [key: string]: GlobalConfigItem }> {
 
     const cachedItem = localStorage.getItem(CACHE_KEY);
     const now = Date.now();
-    console.log('cachedItem', cachedItem);
 
     if (cachedItem) {
         try {
             const cache: ConfigCache = JSON.parse(cachedItem);
-            if (now - cache.timestamp < CACHE_DURATION_MS && false) {
+            if (now - cache.timestamp < CACHE_DURATION_MS) {
                 return cache.data;
             }
         } catch (error) {
@@ -29,7 +28,6 @@ async function getFullConfig(): Promise<{ [key: string]: GlobalConfigItem }> {
     }
 
     const configData = await getGlobalConfig();
-    console.log('configData', configData);
     const newCache: ConfigCache = {
         timestamp: now,
         data: configData,

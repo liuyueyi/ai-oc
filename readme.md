@@ -30,6 +30,12 @@ jdk17 + SpringBoot3.5.3 + H2/MySql + SpringJPA + SpringAI
 3. 入口类，直接启动
 
 
+说明：
+
+- dev 环境：使用h2数据库, 对应的数据库文件为：[app/src/main/resources/ai-oc.mv.db](app/src/main/resources/ai-oc.mv.db)
+- test/prod 环境：使用MySql数据库
+
+
 ## 前端工程
 
 前端相关工程放置在 [ui-react](ui-react/) 目录下

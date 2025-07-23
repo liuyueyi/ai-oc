@@ -3,13 +3,14 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { LoginUserProvider } from "@/hooks/useLoginUser"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "来个OC - 职位招聘平台",
+  title: "校招派 - 职位招聘平台",
   description: "专业的职位招聘和求职平台",
-  generator: 'v0.dev'
+  generator: '一灰灰'
 }
 
 export default function RootLayout({
@@ -23,6 +24,7 @@ export default function RootLayout({
         <LoginUserProvider>
           {children}
         </LoginUserProvider>
+        <Toaster />
       </body>
     </html>
   )

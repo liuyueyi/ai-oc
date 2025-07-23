@@ -75,8 +75,8 @@ public interface OcRepository extends JpaRepository<OcInfoEntity, Long>, JpaSpec
         Page<OcInfoEntity> ans = findAll(spec
                 // 分页查询
                 , PageRequest.of(req.getPage() - 1, req.getSize())
-                        // 根据时间倒排，时间相同的根据id进行倒排
-                        .withSort(Sort.by(Sort.Order.desc("lastUpdatedTime"), Sort.Order.desc("id")))
+                        // 根据id进行倒排
+                        .withSort(Sort.by(Sort.Order.desc("id")))
         );
         return PageListVo.of(ans.getContent(), ans.getTotalElements(), req.getPage(), req.getSize());
     }

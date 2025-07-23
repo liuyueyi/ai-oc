@@ -2,6 +2,8 @@ package com.git.hui.offer.web.controller.admin;
 
 import com.git.hui.offer.configs.dao.entity.CommonDictEntity;
 import com.git.hui.offer.configs.service.CommonDictService;
+import com.git.hui.offer.constants.user.permission.Permission;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.DictSaveReq;
 import com.git.hui.offer.web.model.req.DictSearchReq;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author YiHui
  * @date 2025/7/21
  */
+@Permission(role = UserRoleEnum.ADMIN)
 @RestController
 @RequestMapping(path = "/api/admin/dict")
 public class AdminDictController {

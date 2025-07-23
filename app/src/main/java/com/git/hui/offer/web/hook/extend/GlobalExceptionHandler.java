@@ -1,4 +1,4 @@
-package com.git.hui.offer.web.extend;
+package com.git.hui.offer.web.hook.extend;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.git.hui.offer.components.bizexception.BizException;

@@ -79,13 +79,13 @@ export default function EntryPage() {
 
   // 当 taskTypeOptions 变化时，自动选中第一个
   useEffect(() => {
-    if (taskTypeOptions.length > 0 && !aiType) {
+    if (taskTypeOptions?.length > 0 && !aiType) {
       setAiType(taskTypeOptions[0].value as string);
     }
   }, [taskTypeOptions]);
 
   useEffect(() => {
-    if (aiModelOptions.length > 0 && !aiModel) {
+    if (aiModelOptions?.length > 0 && !aiModel) {
       setAiModel(aiModelOptions[0].value as string);
     }
   }, [aiModelOptions]);
@@ -163,7 +163,7 @@ export default function EntryPage() {
       const items = e.clipboardData?.items;
       let found = false;
       if (items) {
-        for (let i = 0; i < items.length; i++) {
+        for (let i = 0; i < items?.length; i++) {
           if (items[i].kind === "file") {
             setSelectedFile(items[i].getAsFile());
             found = true;
@@ -171,7 +171,7 @@ export default function EntryPage() {
           }
         }
       }
-      if (!found && e.clipboardData?.files && e.clipboardData.files.length > 0) {
+      if (!found && e.clipboardData?.files && e.clipboardData.files?.length > 0) {
         setSelectedFile(e.clipboardData.files[0]);
       }
     }
@@ -200,7 +200,7 @@ export default function EntryPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="full-w mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <h1 className="text-2xl font-bold text-gray-900">职位录入</h1>
           </div>
@@ -334,7 +334,7 @@ export default function EntryPage() {
                     onDragOver={e => e.preventDefault()}
                     onPaste={e => {
                       const items = e.clipboardData.items;
-                      for (let i = 0; i < items.length; i++) {
+                      for (let i = 0; i < items?.length; i++) {
                         if (items[i].kind === "file") {
                           setSelectedFile(items[i].getAsFile());
                           break;
@@ -488,7 +488,7 @@ export default function EntryPage() {
                   <tbody>
                     {taskLoading ? (
                       <tr><td colSpan={10} className="text-center text-gray-400 py-4">加载中...</td></tr>
-                    ) : taskList.length === 0 ? (
+                    ) : taskList?.length === 0 ? (
                       <tr><td colSpan={10} className="text-center text-gray-400 py-4">暂无数据</td></tr>
                     ) : taskList.map(task => (
                       <tr key={task.id} className="hover:bg-gray-50">
@@ -542,7 +542,7 @@ export default function EntryPage() {
                             </a>
                           ) : (task.type === 4 || task.type === 5) && task.content ? (
                             <a href={task.content} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">
-                              {task.content.length > 32 ? task.content.slice(0, 32) + '...' : task.content}
+                              {task.content?.length > 32 ? task.content.slice(0, 32) + '...' : task.content}
                             </a>
                           ) : (
                             <span className="break-all">{task.content}</span>

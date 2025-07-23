@@ -114,8 +114,8 @@ export default function DictPage() {
     }
 
     useEffect(() => {
-        loadDicts({ app, key, page: pagination.page, size: pagination.size })
-    }, [pagination.page, pagination.size])
+        loadDicts({ key, app: app == '-1' ? '' : app, page: pagination.page, size: pagination.size })
+    }, [app, key, pagination.page, pagination.size])
 
     const handleSearch = () => {
         if (pagination.page === 1) {
@@ -206,14 +206,6 @@ export default function DictPage() {
         }
     }
 
-
-    const renderState = (state: number) => {
-        if (state === 1) {
-            return <Badge variant="default">有效</Badge>
-        }
-        return <Badge variant="secondary">未启用</Badge>
-    }
-
     const renderScope = (scope: number) => {
         const option = scopeOptions.find(o => Number(o.value) === scope);
         if (option) {
@@ -225,14 +217,14 @@ export default function DictPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <header className="bg-white border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="full-w mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <h1 className="text-2xl font-bold text-gray-900">字典管理</h1>
                         <Button onClick={handleAddNew}>添加配置</Button>
                     </div>
                 </div>
             </header>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="full-w mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div className="flex flex-wrap gap-2 mb-4 items-center">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-4">
@@ -243,6 +235,7 @@ export default function DictPage() {
                                         <SelectValue placeholder="请选择App" />
                                     </SelectTrigger>
                                     <SelectContent>
+                                        <SelectItem value="-1" key='-1'>全部查询</SelectItem>
                                         {appOptions.map(option => (
                                             <SelectItem value={option.value as string} key={option.value as string}>
                                                 {option.intro}
@@ -324,7 +317,7 @@ export default function DictPage() {
                                     </PaginationItem>
                                     <PaginationItem>
                                         <span className="text-sm text-muted-foreground">
-                                            第 {pagination.page} 页 / 共 {Math.ceil(pagination.total / pagination.size)} 页
+                                            第 {pagination.page} /{Math.ceil(pagination.total / pagination.size)} 页
                                         </span>
                                     </PaginationItem>
                                     <PaginationItem>

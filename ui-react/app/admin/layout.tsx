@@ -3,7 +3,6 @@ import React from "react"
 import { usePathname } from "next/navigation"
 import { SidebarProvider, Sidebar, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarContent } from "@/components/ui/sidebar"
 import Link from "next/link"
-import { Toaster } from "@/components/ui/toaster"
 import { Home } from "lucide-react"
 
 const menu = [
@@ -51,7 +50,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </SidebarContent>
                 </Sidebar>
                 <main className="flex-grow bg-gray-50">{children}</main>
-                <Toaster />
             </div>
         </SidebarProvider>
     )

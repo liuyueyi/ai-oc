@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author YiHui
@@ -24,9 +25,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class LoginService {
-    private final UserService userService;
-
     private final SessionHelper sessionHelper;
+
+    /**
+     * 对于单机的场景，可以直接使用本地局部变量来实现计数
+     * 对于集群的场景，可考虑借助 redis的zset 来实现集群的在线用户人数统计
+     */
+    private AtomicInteger onlineUserCnt = new AtomicInteger(0);
 
     /**
      * key = 验证码, value = 长连接
@@ -38,8 +43,7 @@ public class LoginService {
     private LoadingCache<String, String> deviceCodeCache;
 
     @Autowired
-    public LoginService(UserService userService, SessionHelper sessionHelper) {
-        this.userService = userService;
+    public LoginService(SessionHelper sessionHelper) {
         this.sessionHelper = sessionHelper;
         verifyCodeCache = CacheBuilder.newBuilder().maximumSize(300).expireAfterWrite(5, TimeUnit.MINUTES).build(new CacheLoader<String, SseEmitter>() {
             @Override
@@ -167,4 +171,23 @@ public class LoginService {
         return false;
     }
 
+
+    /**
+     * 添加在线人数
+     *
+     * @param add 正数，表示添加在线人数；负数，表示减少在线人数
+     * @return
+     */
+    public int incrOnlineUserCnt(int add) {
+        return onlineUserCnt.addAndGet(add);
+    }
+
+    /**
+     * 查询在线用户人数
+     *
+     * @return
+     */
+    public int getOnlineUserCnt() {
+        return onlineUserCnt.get();
+    }
 }

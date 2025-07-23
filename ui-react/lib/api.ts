@@ -47,6 +47,7 @@ export interface JobListQuery {
   recruitmentTarget?: string
   position?: string
   deliveryProgress?: string
+  state?: number
   page?: number
   size?: number
 }
@@ -57,11 +58,14 @@ export interface JobListResponse {
   page: number
   size: number
   total: number
+  online?: number
 }
 
 export async function fetchJobList(params?: JobListQuery): Promise<JobListResponse> {
   const res = await api.get("/api/oc/list", { params })
   if (res.data && res.data.code === 0) {
+    // 将外层的在线人数写到内部
+    res.data.data.online = res.data.online
     return res.data.data
   }
   throw new Error(res.data?.msg || "获取岗位列表失败")
@@ -75,6 +79,36 @@ export async function jobDetail(id: number) {
   }
   throw new Error(res.data?.msg || "获取岗位信息失败")
 }
+
+
+export async function fetchAdminJobList(params?: JobListQuery): Promise<JobListResponse> {
+  const res = await api.get("/api/admin/oc/list", { params })
+  if (res.data && res.data.code === 0) {
+    return res.data.data
+  }
+  throw new Error(res.data?.msg || "获取岗位列表失败")
+}
+
+export async function submitOcEntry(params: any) {
+  const res = await api.post("/api/admin/oc/save", params)
+  if (res.data && res.data.code === 0) {
+    return res.data.data
+  }
+  throw new Error(res.data?.msg || "提交岗位信息失败")
+}
+
+export async function updateOcState(params: { id: number, state: number }) {
+  console.log('这里啦');
+  const res = await api.get(`/api/admin/oc/updateState?id=${params.id}&state=${params.state}`)
+  if (res.data && res.data.code === 0) {
+    return res.data.data
+  }
+  throw new Error(res.data?.msg || "更新岗位状态失败")
+}
+
+
+//  ---------------------------- gather 相关
+
 
 function getSubmitPath(async: boolean) {
   if (async) {
@@ -176,7 +210,8 @@ export interface DraftListQuery {
   position?: string
   lastUpdatedTimeAfter?: number
   lastUpdatedTimeBefore?: number
-  state?: number
+  state?: number,
+  toProcess?: string,
 }
 
 export interface DraftItem {
@@ -210,7 +245,7 @@ export async function fetchDraftList(params: DraftListQuery): Promise<DraftListR
   if (res.data && res.data.code === 0) {
     // 兼容 data 直接为数组或为对象
     if (Array.isArray(res.data.data)) {
-      return { list: res.data.data, total: res.data.data.length }
+      return { list: res.data.data, total: res.data.data?.length }
     }
     return res.data.data
   }
@@ -276,6 +311,8 @@ export interface UserListItem {
   wxId: string;
   role: number;
   state: number;
+  email: string;
+  intro: string;
   expireTime: number | null;
   createTime: number;
   updateTime: number;
@@ -423,14 +460,31 @@ export async function updateUserDetail(params: UserSaveReq) {
   throw new Error(res.data?.msg || "更新用户信息失败");
 }
 
-export async function toPay(vipLevel: number) {
-  const res = await api.get(`/api/recharge/toPay?vipLevel=${vipLevel}`);
+export async function toPay(vipLevel: number | string | String) {
+  const res = await api.get(`/api/recharge/toPay?vipPrice=${vipLevel}`);
   if (res.data && res.data.code === 0) {
     return res.data.data;
   }
   throw new Error(res.data?.msg || "获取支付信息失败");
 }
 
+export async function markPaying(id: any) {
+  // 告诉后端已经支付成功
+  const res = await api.get(`/api/recharge/paying?rechargeId=${id}`);
+  if (res.data && res.data.code === 0) {
+    return res.data.data;
+  }
+  throw new Error(res.data?.msg || "同步支付状态失败~ 到购买记录看看吧");
+}
+
+export async function refreshPay(id: any) {
+  // 告诉后端已经支付成功
+  const res = await api.get(`/api/recharge/refreshPay?rechargeId=${id}`);
+  if (res.data && res.data.code === 0) {
+    return res.data.data;
+  }
+  throw new Error(res.data?.msg || "重置状态失败~");
+}
 
 export interface RechageListItem {
   payId: number;
@@ -475,7 +529,7 @@ export interface GlobalConfigItemValue {
 }
 
 
-export async function getGlobalConfig() : Promise<{ [key: string]: GlobalConfigItem }> {
+export async function getGlobalConfig(): Promise<{ [key: string]: GlobalConfigItem }> {
   const res = await api.get("/api/common/dict");
   if (res.data && res.data.code === 0) {
     const data = res.data.data;

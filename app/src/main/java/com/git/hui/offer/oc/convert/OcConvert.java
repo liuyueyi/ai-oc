@@ -30,7 +30,7 @@ public class OcConvert {
                 .setPosition(draft.getPosition())
                 .setDeliveryProgress(draft.getDeliveryProgress())
                 // 日期转时间
-                .setLastUpdatedTime(DateUtil.toDate(draft.getLastUpdatedTime()))
+                .setLastUpdatedTime(DateUtil.toDateOrNow(draft.getLastUpdatedTime()))
                 .setDeadline(draft.getDeadline())
                 .setRelatedLink(draft.getRelatedLink())
                 .setJobAnnouncement(draft.getJobAnnouncement())
@@ -52,7 +52,7 @@ public class OcConvert {
                 .setRecruitmentTarget(entity.getRecruitmentTarget())
                 .setPosition(entity.getPosition())
                 .setDeliveryProgress(entity.getDeliveryProgress())
-                .setLastUpdatedTime(DateUtil.time2day(entity.getLastUpdatedTime().getTime()))
+                .setLastUpdatedTime(DateUtil.time2date(entity.getLastUpdatedTime().getTime()))
                 .setDeadline(entity.getDeadline())
                 .setRelatedLink(entity.getRelatedLink())
                 .setJobAnnouncement(entity.getJobAnnouncement())

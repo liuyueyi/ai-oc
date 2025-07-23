@@ -15,6 +15,10 @@ public class ResVo<T> {
     private static final String SUCCESS_MSG = "ok";
     private int code;
     private String msg;
+    /**
+     * 在线人数
+     */
+    private int online;
     private T data;
 
     public ResVo(T t) {

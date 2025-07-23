@@ -59,7 +59,7 @@ public enum StatusEnum {
     USER_EXISTS(400_404_002, "用户已存在:%s"),
 
     // 重复支付
-    REPEAT_PAY(400_500_001, "重复支付"),
+    REPEAT_PAY(400_500_001, "您已经有一笔充值记录在支付中了哦~"),
 
     ;
 

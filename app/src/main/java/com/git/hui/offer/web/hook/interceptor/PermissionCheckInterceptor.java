@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
@@ -22,7 +23,7 @@ import org.springframework.web.servlet.AsyncHandlerInterceptor;
  * @date 2025/7/15
  */
 @Slf4j
-//@Component
+@Component
 public class PermissionCheckInterceptor implements AsyncHandlerInterceptor {
 
     @Override

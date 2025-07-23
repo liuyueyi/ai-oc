@@ -5,6 +5,8 @@ import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.components.context.ReqInfoContext;
 import com.git.hui.offer.components.env.SpringUtil;
 import com.git.hui.offer.components.id.IdUtil;
+import com.git.hui.offer.configs.service.CommonDictService;
+import com.git.hui.offer.constants.user.RechargeConstants;
 import com.git.hui.offer.constants.user.RechargeLevelEnum;
 import com.git.hui.offer.constants.user.RechargeStatusEnum;
 import com.git.hui.offer.constants.user.ThirdPayWayEnum;
@@ -17,6 +19,8 @@ import com.git.hui.offer.user.dao.repository.RechargeRepository;
 import com.git.hui.offer.user.service.pay.ThirdPayHandler;
 import com.git.hui.offer.util.json.JsonUtil;
 import com.git.hui.offer.web.model.PageListVo;
+import com.git.hui.offer.web.model.res.CommonDictVo;
+import com.git.hui.offer.web.model.res.DictItemVo;
 import com.git.hui.offer.web.model.res.RechargePayVo;
 import com.git.hui.offer.web.model.res.RechargeRecordVo;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,10 +51,13 @@ public class RechargeService {
 
     private final UserService userService;
 
-    public RechargeService(RechargeRepository rechargeRepository, ThirdPayHandler thirdPayHandler, UserService userService) {
+    private final CommonDictService commonDictService;
+
+    public RechargeService(RechargeRepository rechargeRepository, ThirdPayHandler thirdPayHandler, UserService userService, CommonDictService commonDictService) {
         this.rechargeRepository = rechargeRepository;
         this.thirdPayHandler = thirdPayHandler;
         this.userService = userService;
+        this.commonDictService = commonDictService;
     }
 
     /**
@@ -63,7 +70,8 @@ public class RechargeService {
     public PageListVo<RechargeRecordVo> listRechargeRecords() {
         Long userId = ReqInfoContext.getReqInfo().getUserId();
         List<RechargeEntity> list = rechargeRepository.findByUserIdAndStatusInOrderByIdDesc(userId,
-                List.of(RechargeStatusEnum.SUCCEED.getValue(),
+                List.of(RechargeStatusEnum.NOT_PAY.getValue(),
+                        RechargeStatusEnum.SUCCEED.getValue(),
                         RechargeStatusEnum.FAIL.getValue(),
                         RechargeStatusEnum.PAYING.getValue()));
 
@@ -128,6 +136,19 @@ public class RechargeService {
         return RechargeConvert.toVo(entity);
     }
 
+    public RechargeLevelEnum getRechargeLevel(String price) {
+        CommonDictVo dict = commonDictService.queryDict(RechargeConstants.RECHARGE_APP, RechargeConstants.VIP_PRICE_KEY);
+        if (dict == null) {
+            return null;
+        }
+        for (DictItemVo item : dict.items()) {
+            if (item.value().equals(price)) {
+                return RechargeConstants.RECHARGE_LEVEL_MAP.get(item.intro());
+            }
+        }
+        return null;
+    }
+
     private boolean checkPrePayIdValid(RechargeEntity recharge) {
         if (recharge.getPrePayId() == null || recharge.getPrePayExpireTime() == null) {
             return false;
@@ -165,6 +186,38 @@ public class RechargeService {
             } else {
                 // 直接更新为支付中
                 entity.setStatus(RechargeStatusEnum.PAYING.getValue());
+                entity.setUpdateTime(new Date());
+                rechargeRepository.saveAndFlush(entity);
+            }
+        } catch (Exception e) {
+            log.error("查询三方支付状态出现异常: {}", JsonUtil.toStr(entity), e);
+        }
+
+        // 依然返回true，将支付状态设置为true
+        return true;
+    }
+
+    @Transactional
+    public boolean refreshOrInitPay(Long rechargeId) {
+        RechargeEntity entity = rechargeRepository.selectByIdForUpdate(rechargeId);
+        if (entity == null) {
+            return false;
+        }
+
+        // 主动查询一下支付状态
+        try {
+            PayCallbackBo bo = thirdPayHandler.queryOrder(entity.getTradeNo(), ThirdPayWayEnum.ofPay(entity.getPayWay()));
+            if (bo.getPayStatus() == RechargeStatusEnum.SUCCEED || bo.getPayStatus() == RechargeStatusEnum.FAIL) {
+                // 实际结果是支付成功/支付失败时，刷新下record对应的内容
+                // 更新原来的支付状态为最新的结果
+                entity.setStatus(bo.getPayStatus().getValue());
+                entity.setPayCallbackTime(new Date(bo.getSuccessTime()));
+                entity.setUpdateTime(new Date());
+                entity.setThirdTransCode(bo.getThirdTransactionId());
+                rechargeRepository.saveAndFlush(entity);
+            } else {
+                // 直接更新为支付中
+                entity.setStatus(RechargeStatusEnum.NOT_PAY.getValue());
                 entity.setUpdateTime(new Date());
                 rechargeRepository.saveAndFlush(entity);
             }

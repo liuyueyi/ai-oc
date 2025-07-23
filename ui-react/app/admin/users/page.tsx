@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getConfigValue } from "@/lib/config";
 import { GlobalConfigItemValue } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast"
 
 function formatDateTime(ts?: number) {
   if (!ts) return "-";
@@ -23,6 +24,7 @@ export default function UsersPage() {
   const [editRole, setEditRole] = useState<number>(1);
   const [editExpire, setEditExpire] = useState<string>("");
   const [roleOptions, setRoleOptions] = useState<GlobalConfigItemValue[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchUserList(query).then(res => {
@@ -55,22 +57,27 @@ export default function UsersPage() {
       }
       expireTime = new Date(editExpire).getTime();
     }
-    await updateUserRole({ userId: editingUser.userId, role: editRole, expireTime });
-    setEditingUser(null);
-    setQuery({ ...query }); // 触发刷新
+    await updateUserRole({ userId: editingUser.userId, role: editRole, expireTime })
+      .then(res => {
+        toast({ title: "更新成功", description: "用户角色已更新", variant: "default" })
+        setEditingUser(null);
+        setQuery({ ...query }); // 触发刷新
+      }).catch(err => {
+        toast({ title: "更新失败", description: err.message, variant: "destructive" });
+      })
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="full-w mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <h1 className="text-2xl font-bold text-gray-900">用户管理</h1>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="full-w mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* 搜索条件 */}
         <div className="flex flex-wrap gap-2 mb-4 items-center">
           <Input placeholder="用户ID" className="w-36" value={query.userId || ""} onChange={e => setQuery(q => ({ ...q, userId: e.target.value ? Number(e.target.value) : undefined, page: 1 }))} />
@@ -94,17 +101,18 @@ export default function UsersPage() {
           <Table className="min-w-full text-sm">
             <TableHeader>
               <TableRow className="bg-gray-100">
-                <TableHead>用户编号</TableHead>
+                <TableHead className="w-[130px]">用户编号</TableHead>
                 <TableHead className="w-16">头像</TableHead>
                 <TableHead>昵称</TableHead>
                 <TableHead>角色</TableHead>
+                <TableHead>邮箱</TableHead>
                 <TableHead>会员到期日</TableHead>
                 <TableHead>加入时间</TableHead>
                 <TableHead className="w-24">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.length === 0 ? (
+              {users?.length === 0 ? (
                 <TableRow><TableCell colSpan={6} className="text-center text-gray-400">暂无数据</TableCell></TableRow>
               ) : users.map(user => (
                 <TableRow key={user.userId} className="hover:bg-gray-50">
@@ -129,6 +137,7 @@ export default function UsersPage() {
                       );
                     })()}
                   </TableCell>
+                  <TableCell>{user.email ? user.email : '-'}</TableCell>
                   <TableCell>
                     {user.expireTime ? new Date(user.expireTime).toLocaleDateString() : "-"}
                   </TableCell>

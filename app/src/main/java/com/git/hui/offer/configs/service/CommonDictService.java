@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author YiHui
@@ -97,6 +98,26 @@ public class CommonDictService {
         entity.setUpdateTime(new Date());
         commonDictRepository.saveAndFlush(entity);
         return true;
+    }
+
+    /**
+     * 查询字典信息
+     *
+     * @param app 应用
+     * @param key key
+     * @return
+     */
+    public CommonDictVo queryDict(String app, String key) {
+        List<CommonDictEntity> list = commonDictRepository.findByAppAndKey(app, key);
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        List<DictItemVo> itemList = list.stream().map(item -> new DictItemVo(item.getKey(), item.getValue(), item.getIntro())).toList();
+        return new CommonDictVo(app, itemList);
+    }
+
+    public Optional<CommonDictVo> queryDictForOptional(String app, String key) {
+        return Optional.ofNullable(queryDict(app, key));
     }
 
     /**

@@ -63,7 +63,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, JpaSpec
                 // 分页查询
                 , PageRequest.of(req.getPage() - 1, req.getSize())
                         // 根据时间倒排，时间相同的根据id进行倒排
-                        .withSort(Sort.by(Sort.Order.desc("updateTime"), Sort.Order.desc("id")))
+                        .withSort(Sort.by(Sort.Order.desc("id")))
         );
         return PageListVo.of(ans.getContent(), ans.getTotalElements(), req.getPage(), req.getSize());
     }

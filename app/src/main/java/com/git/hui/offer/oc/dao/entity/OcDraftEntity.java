@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * ai获取的草稿数据，通常需要进一步进行处理
@@ -108,4 +109,60 @@ public class OcDraftEntity {
     @Column(name = "update_time")
     private Date updateTime;
 
+    /**
+     * 自动将null相关字段设置为""
+     */
+    public void autoInitVal() {
+        if (this.companyName == null) {
+            this.companyName = "";
+        }
+        if (this.companyType == null) {
+            this.companyType = "";
+        }
+        if (this.jobLocation == null) {
+            this.jobLocation = "";
+        }
+        if (this.recruitmentType == null) {
+            this.recruitmentType = "";
+        }
+        if (this.recruitmentTarget == null) {
+            this.recruitmentTarget = "";
+        }
+        if (this.position == null) {
+            this.position = "";
+        }
+        if (this.deliveryProgress == null) {
+            this.deliveryProgress = "";
+        }
+        if (this.lastUpdatedTime == null) {
+            this.lastUpdatedTime = "";
+        }
+        if (this.deadline == null) {
+            this.deadline = "";
+        }
+        if (this.relatedLink == null) {
+            this.relatedLink = "";
+        }
+        if (this.jobAnnouncement == null) {
+            this.jobAnnouncement = "";
+        }
+        if (this.internalReferralCode == null) {
+            this.internalReferralCode = "";
+        }
+        if (this.remarks == null) {
+            this.remarks = "";
+        }
+        if (this.state == null) {
+            this.state = 0;
+        }
+        if (this.toProcess == null) {
+            this.toProcess = 1;
+        }
+        if (this.createTime == null) {
+            this.createTime = new Date();
+        }
+        if (this.updateTime == null) {
+            this.updateTime = new Date();
+        }
+    }
 }

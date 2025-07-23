@@ -1,13 +1,16 @@
 package com.git.hui.offer.web.controller.front;
 
+import com.git.hui.offer.components.bizexception.BizException;
+import com.git.hui.offer.components.bizexception.StatusEnum;
+import com.git.hui.offer.constants.user.RechargeLevelEnum;
 import com.git.hui.offer.constants.user.permission.Permission;
 import com.git.hui.offer.constants.user.permission.UserRoleEnum;
-import com.git.hui.offer.constants.user.RechargeLevelEnum;
 import com.git.hui.offer.user.service.RechargeService;
 import com.git.hui.offer.util.json.IntBaseEnum;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.res.RechargePayVo;
 import com.git.hui.offer.web.model.res.RechargeRecordVo;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,10 +41,19 @@ public class RechargeController {
      * @return
      */
     @RequestMapping("/toPay")
-    public RechargePayVo toPay(@RequestParam("vipLevel") Integer vipLevel) {
+    public RechargePayVo toPay(@RequestParam(value = "vipLevel", required = false) Integer vipLevel, @RequestParam(value = "vipPrice", required = false) String vipPrice) {
         RechargeLevelEnum level = IntBaseEnum.getEnumByCode(RechargeLevelEnum.class, vipLevel);
-        Assert.notNull(level, "充值等级不能为空");
+        if (level == null && StringUtils.isBlank(vipPrice)) {
+            throw new BizException(StatusEnum.ILLEGAL_ARGUMENTS_MIXED, "请选择充值会员等级或充值金额");
+        }
+        level = rechargeService.getRechargeLevel(vipPrice);
+        Assert.notNull(level, "请选择充值会员等级或充值金额");
         return rechargeService.toPay(level);
+    }
+
+    @RequestMapping("/refreshPay")
+    public boolean refreshPay(@RequestParam("rechargeId") Long rechargeId) {
+        return rechargeService.refreshOrInitPay(rechargeId);
     }
 
     /**

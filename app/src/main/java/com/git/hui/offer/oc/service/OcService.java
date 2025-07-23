@@ -2,29 +2,22 @@ package com.git.hui.offer.oc.service;
 
 import com.git.hui.offer.components.bizexception.BizException;
 import com.git.hui.offer.components.bizexception.StatusEnum;
-import com.git.hui.offer.constants.oc.DraftProcessEnum;
-import com.git.hui.offer.constants.oc.DraftStateEnum;
 import com.git.hui.offer.constants.oc.OcStateEnum;
 import com.git.hui.offer.oc.convert.OcConvert;
-import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
 import com.git.hui.offer.oc.dao.entity.OcInfoEntity;
 import com.git.hui.offer.oc.dao.repository.OcDraftRepository;
 import com.git.hui.offer.oc.dao.repository.OcRepository;
+import com.git.hui.offer.util.DateUtil;
 import com.git.hui.offer.web.model.PageListVo;
-import com.git.hui.offer.web.model.req.DraftOcUpdateReq;
-import com.git.hui.offer.web.model.req.DraftSearchReq;
+import com.git.hui.offer.web.model.req.OcSaveReq;
 import com.git.hui.offer.web.model.req.OcSearchReq;
 import com.git.hui.offer.web.model.res.OcVo;
-import org.springframework.beans.BeanUtils;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author YiHui
@@ -42,15 +35,10 @@ public class OcService {
     }
 
 
-
-
     // -------------------------------------------- oc 相关服务 ------------------------------------------
 
     public PageListVo<OcVo> searchOcList(OcSearchReq req) {
-        if (req.getState() == null) {
-            req.setState(OcStateEnum.PUBLISHED.getValue());
-        }
-        if (req.getNotState() != null) {
+        if (req.getNotState() == null) {
             // 不支持查询已删除状态的数据
             req.setNotState(OcStateEnum.DELETED.getValue());
         }
@@ -67,5 +55,72 @@ public class OcService {
         }
 
         return OcConvert.toVo(entity);
+    }
+
+    public boolean updateOc(OcSaveReq req) {
+        OcInfoEntity entity = ocRepository.getReferenceById(req.getId());
+        if (entity.getState() == null || entity.getState().equals(OcStateEnum.DELETED.getValue())) {
+            throw new BizException(StatusEnum.RECORDS_NOT_EXISTS, req.getId());
+        }
+
+        // 做增量更新
+        if (StringUtils.isNotBlank(req.getCompanyName())) {
+            entity.setCompanyName(req.getCompanyName());
+        }
+        if (StringUtils.isNotBlank(req.getCompanyType())) {
+            entity.setCompanyType(req.getCompanyType());
+        }
+        if (StringUtils.isNotBlank(req.getLocation())) {
+            entity.setJobLocation(req.getLocation());
+        }
+        if (StringUtils.isNotBlank(req.getRecruitmentType())) {
+            entity.setRecruitmentType(req.getRecruitmentType());
+        }
+        if (StringUtils.isNotBlank(req.getRecruitmentTarget())) {
+            entity.setRecruitmentTarget(req.getRecruitmentTarget());
+        }
+        if (StringUtils.isNotBlank(req.getPosition())) {
+            entity.setPosition(req.getPosition());
+        }
+        if (StringUtils.isNotBlank(req.getLastUpdatedTime())) {
+            entity.setLastUpdatedTime(DateUtil.toDateOrNow(req.getLastUpdatedTime()));
+        }
+        if (StringUtils.isNotBlank(req.getDeadline())) {
+            entity.setDeadline(req.getDeadline());
+        }
+        if (StringUtils.isNotBlank(req.getRelatedLink())) {
+            entity.setRelatedLink(req.getRelatedLink());
+        }
+        if (StringUtils.isNotBlank(req.getJobAnnouncement())) {
+            entity.setJobAnnouncement(req.getJobAnnouncement());
+        }
+        if (StringUtils.isNotBlank(req.getInternalReferralCode())) {
+            entity.setInternalReferralCode(req.getInternalReferralCode());
+        }
+        if (StringUtils.isNotBlank(req.getRemarks())) {
+            entity.setRemarks(req.getRemarks());
+        }
+        if (req.getState() != null) {
+            entity.setState(req.getState());
+        }
+        entity.setUpdateTime(new Date());
+        ocRepository.saveAndFlush(entity);
+        return true;
+    }
+
+
+    public boolean updateState(Long id, OcStateEnum state) {
+        OcInfoEntity entity = ocRepository.getReferenceById(id);
+        if (entity.getState() == null || entity.getState().equals(OcStateEnum.DELETED.getValue())) {
+            throw new BizException(StatusEnum.RECORDS_NOT_EXISTS, id);
+        }
+
+        if (entity.getState().equals(state)) {
+            return true;
+        }
+        entity.setState(state.getValue());
+        entity.setUpdateTime(new Date());
+        ocRepository.saveAndFlush(entity);
+        return true;
     }
 }

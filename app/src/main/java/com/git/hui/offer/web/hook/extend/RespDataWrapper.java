@@ -1,5 +1,7 @@
-package com.git.hui.offer.web.extend;
+package com.git.hui.offer.web.hook.extend;
 
+import com.git.hui.offer.components.env.SpringUtil;
+import com.git.hui.offer.user.service.LoginService;
 import com.git.hui.offer.util.json.JsonUtil;
 import com.git.hui.offer.web.model.ResVo;
 import org.springframework.core.MethodParameter;
@@ -27,6 +29,7 @@ public class RespDataWrapper implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         ResVo<Object> res = ResVo.success(body);
+        res.setOnline(SpringUtil.getBean(LoginService.class).getOnlineUserCnt());
         // 返回类型不是 String：直接返回
         if (returnType.getParameterType() != String.class) {
             return res;

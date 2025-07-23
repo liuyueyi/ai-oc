@@ -28,7 +28,11 @@ public interface CommonDictRepository extends JpaRepository<CommonDictEntity, Lo
      */
     List<CommonDictEntity> findAllByState(Integer state);
 
+    List<CommonDictEntity> findByAppAndKey(String app, String key);
+
     CommonDictEntity findFirstByAppAndKeyAndValue(String app, String key, String value);
+
+
 
     default PageListVo<CommonDictEntity> findList(DictSearchReq req) {
         Specification<CommonDictEntity> spec = (root, query, criteriaBuilder) -> {

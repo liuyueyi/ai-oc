@@ -17,9 +17,9 @@ public class DateUtil {
 
     public static final DateTimeFormatter DB_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
     public static final DateTimeFormatter DB_DAY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    public static final DateTimeFormatter BLOG_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm");
+    public static final DateTimeFormatter CH_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm");
 
-    public static final DateTimeFormatter BLOG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
+    public static final DateTimeFormatter CH_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
 
 
     // 微信支付日期格式
@@ -43,7 +43,7 @@ public class DateUtil {
      * @return
      */
     public static String time2day(long timestamp) {
-        return format(BLOG_TIME_FORMAT, timestamp);
+        return format(CH_TIME_FORMAT, timestamp);
     }
 
     public static String time2day(Timestamp timestamp) {
@@ -59,7 +59,7 @@ public class DateUtil {
     }
 
     public static String time2date(long timestamp) {
-        return format(BLOG_DATE_FORMAT, timestamp);
+        return format(CH_DATE_FORMAT, timestamp);
     }
 
     public static String time2date(Timestamp timestamp) {
@@ -91,8 +91,48 @@ public class DateUtil {
     }
 
     // 2025-7-11的字符串转date
-    public static Date toDate(String day) {
-        LocalDate parse = LocalDate.parse(day, DB_DAY_FORMAT);
-        return Date.from(parse.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    public static Date toDateOrNow(String day) {
+        try {
+            // 2025-7-11 格式的转换
+            LocalDate parse = LocalDate.parse(day, DB_DAY_FORMAT);
+            return Date.from(parse.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        } catch (Exception e) {
+            // 中文日期格式的转换
+            return chineseDate(day);
+        }
+    }
+
+    private static Date chineseDate(String day) {
+        int year;
+        int startIndex = 0;
+        int yearEndIndex = day.indexOf("年");
+        if (yearEndIndex < 0) {
+            year = LocalDate.now().getYear();
+        } else {
+            year = Integer.parseInt(day.substring(startIndex, yearEndIndex));
+            startIndex = yearEndIndex + 1;
+            if (year < 100) {
+                year += 2000;
+            }
+        }
+
+
+        int month;
+        int monthEndIndex = day.indexOf("月");
+        if (monthEndIndex < 0) {
+            month = LocalDate.now().getMonthValue() + 1;
+        } else {
+            month = Integer.parseInt(day.substring(startIndex, monthEndIndex));
+            startIndex = monthEndIndex + 1;
+        }
+
+        int d;
+        int dEndIndex = day.indexOf("日");
+        if (dEndIndex < 0) {
+            d = LocalDate.now().getDayOfMonth();
+        } else {
+            d = Integer.parseInt(day.substring(startIndex, dEndIndex));
+        }
+        return Date.from(LocalDate.of(year, month, d).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 }

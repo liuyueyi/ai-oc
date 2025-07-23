@@ -14,6 +14,10 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import Link from "next/link";
 import { useLoginUser } from "@/hooks/useLoginUser";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast"
+import { getConfigValue } from "@/lib/config";
+import { GlobalConfigItemValue, toPay, markPaying, refreshPay } from "@/lib/api";
+import { Badge } from "@/components/ui/badge"
 
 const MENU = [
     { key: "vip", label: "我的会员", icon: "💎" },
@@ -23,19 +27,6 @@ const MENU = [
     { key: "profile", label: "基本资料", icon: "📄" },
 ];
 
-const VIP_LEVELS = [
-    { value: 0, label: "月卡", desc: "月会员" },
-    { value: 1, label: "季卡", desc: "季会员" },
-    { value: 2, label: "年卡", desc: "年会员" },
-    { value: 3, label: "终身卡", desc: "终身会员" },
-];
-
-const PAY_STATUS_MAP = {
-    0: "待支付",
-    1: "支付中",
-    2: "支付成功",
-    3: "支付失败"
-};
 
 const newUserInitValue: UserSaveReq = {
     userId: 0,
@@ -45,17 +36,9 @@ const newUserInitValue: UserSaveReq = {
     avatar: "",
 }
 
-function getVipLevelLabel(level:number) {
-    const item = VIP_LEVELS.find(v => v.value === level);
-    return item ? item.label : level;
-}
-
-function getPayStatusText(status: number): string {
-    const statusKey = status as keyof typeof PAY_STATUS_MAP;
-    return PAY_STATUS_MAP[statusKey] || `${status}`;
-}
 
 export default function UserPage() {
+    const { toast } = useToast();
     const [userInfo, setUserInfo] = useState<any>(null);
     const [activeMenu, setActiveMenu] = useState("vip");
     const [form, setForm] = useState<UserSaveReq>(newUserInitValue);
@@ -67,30 +50,77 @@ export default function UserPage() {
     const [loading, setLoading] = useState(false);
     const [rechargeList, setRechargeList] = useState<any[]>([]);
 
+    // 充值业务数据
+    const [rechargeOptions, setRechargeOptions] = useState<GlobalConfigItemValue[]>([]);
+    const [vipOptions, setVipOptions] = useState<GlobalConfigItemValue[]>([]);
+    // 支付状态定义字典
+    const [rechargeStatusOptions, setRechargeStatusOptions] = useState<GlobalConfigItemValue[]>([]);
+
     const { userInfo: loginUserInfo, setUserInfo: setLoginUserInfo, logout: loginLogout } = useLoginUser();
     const [loginOpen, setLoginOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const router = useRouter();
 
+    const getVipLevelLabel = (level: number) => {
+        const item = vipOptions.find(v => v.value == `${level}`);
+        return item?.intro
+    }
+    const getPayStatusText = (status: number) => {
+        const item = rechargeStatusOptions.find(v => v.value == `${status}`)
+        return item?.intro
+    }
+
+
     useEffect(() => {
         setMounted(true);
+        getConfigValue('recharge', 'vipPrice').then(setRechargeOptions);
+        getConfigValue('user', 'RechargeStatusEnum').then(setRechargeStatusOptions);
+        getConfigValue('user', 'RechargeLevelEnum').then(setVipOptions);
     }, []);
+    const fetchRechargeList = async () => {
+        setLoading(true);
+        try {
+            const response = await getRechargeList();
+            console.log('发起记录查询');
+            setRechargeList(response.list);
+        } catch (error) {
+            console.error('获取充值记录失败:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         getUserDetail().then(data => {
-            setUserInfo(data);
-            const fetchRechargeList = async () => {
-                setLoading(true);
-                try {
-                    const response = await getRechargeList();
-                    console.log('发起记录查询');
-                    setRechargeList(response.list);
-                } catch (error) {
-                    console.error('获取充值记录失败:', error);
-                } finally {
-                    setLoading(false);
+            // 根据用户信息，构建vip登记
+            if (data.role == 3) {
+                // 终身会员
+                data.vipLevel = 3
+            } else if (data.role == 2) {
+                // fixme 这里是一个简单的做法，根据剩余时间来判断等级
+                // 是会员，根据到期时间与当前时间之间的间隔
+                const period = data.expireTime - Date.now()
+                if (period <= 0) {
+                    // 会员过期
+                    data.vipLevel = -1
+                } else if (period < 31 * 86400 * 1000) {
+                    // 小于一个月，月会员
+                    data.vipLevel = 0
+                } else if (period < 4 * 31 * 86400 * 1000) {
+                    // 季度
+                    data.vipLevel = 1
+                } else if (period < 3 * 366 * 31 * 86400 * 1000) {
+                    data.vipLevel = 2
+                } else {
+                    data.vipLevel = 3
                 }
-            };
+            } else {
+                // 不是会员
+                data.vipLevel = -1;
+            }
+
+            setUserInfo(data);
+
 
             if (activeMenu === "orders") {
                 console.log('当前切换为充值记录了');
@@ -120,14 +150,19 @@ export default function UserPage() {
 
 
     const handleSaveUserInfo = async () => {
-        try {
-            await updateUserDetail(form);
-            console.log('个人信息更新成功');
-            // 可添加 toast 提示
-        } catch (error) {
-            console.error('个人信息更新失败:', error);
-            // 可添加 toast 提示
-        }
+        await updateUserDetail(form).then(res => {
+            console.log('保存成功');
+            toast({
+                title: "成功",
+                description: "个人信息更新成功",
+            })
+        }).catch(err => {
+            toast({
+                title: "保存失败",
+                description: err.message,
+                variant: "destructive",
+            })
+        });
     };
 
     // 格式化倒计时为 mm:ss
@@ -142,30 +177,66 @@ export default function UserPage() {
     const handlePaying = async () => {
         if (!payInfo?.payId) return;
         setPaying(true);
-        try {
-            await fetch(`/api/recharge/paying?rechargeId=${payInfo.payId}`);
-            // 可根据需要弹toast或关闭弹窗
-        } finally {
+        await markPaying(payInfo?.payId).then(res => {
+            toast({
+                title: "支付提醒",
+                description: "支付状态变更会有一定的延时，到购买记录确认状态吧~",
+            })
+        }).catch(err => {
+            toast({
+                title: "支付提醒",
+                description: err.message,
+                variant: "destructive",
+            })
+        }).finally(() => {
             setPaying(false);
-        }
+            setPayDialogOpen(false);
+        })
     };
+
+    const handleMarkFailed = async (id: number) => {
+        await refreshPay(id).then(res => {
+            toast({
+                title: "支付提醒",
+                description: "状态刷新成功~",
+            })
+
+            if (activeMenu === "orders") {
+                fetchRechargeList();
+            }
+        }).catch(err => {
+            toast({
+                title: "支付提醒",
+                description: err.message,
+                variant: "destructive",
+            })
+        })
+    }
 
     const handleFormChange = (key: string, value: string) => {
         setForm(f => ({ ...f, [key]: value }));
     };
 
-    const handleRecharge = async (vipLevel: number) => {
-        const res = await import("@/lib/api").then(m => m.toPay(vipLevel));
-        setPayInfo(res);
-        setPayDialogOpen(true);
+    const handleRecharge = async (vipLevel: number | string | String) => {
+        await toPay(vipLevel).then(res => {
+            setPayInfo(res);
+            setPayDialogOpen(true);
+        }).catch(e => {
+            toast({
+                title: "唤起支付失败了~",
+                description: e.message,
+                variant: "destructive",
+            })
+        })
     };
 
     // 会员卡片样式
-    // 会员卡片样式
     const renderVipCard = () => {
         if (!userInfo) return null;
-        const isVip = typeof userInfo.vipLevel === 'number' && userInfo.vipLevel >= 0;
-        const isLife = userInfo.vipLevel === 3;
+        console.log('userInfo', userInfo);
+        const isVip = userInfo.role == 2 || typeof userInfo.vipLevel === 'number' && userInfo.vipLevel >= 0;
+        // 如果是管理员，则表示终身会员
+        const isLife = userInfo.role == 3 || userInfo.vipLevel === 3;
         if (!isVip) {
             // 非会员灰色卡片
             return (
@@ -184,12 +255,12 @@ export default function UserPage() {
         }
         // 会员卡片
         const level = isLife ? 3 : userInfo.vipLevel;
-        const levelInfo = VIP_LEVELS.find(l => l.value === level);
+        const levelInfo = vipOptions.find(l => l.value === `${level}`);
         return (
             <div className="relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl text-white p-8 w-full max-w-md mx-auto mb-8 overflow-hidden">
                 <div className="text-2xl font-bold mb-2 flex items-center">
-                    <span className="mr-2">{levelInfo?.label}</span>
-                    <span className="text-lg font-normal">{levelInfo?.desc}</span>
+                    <span className="mr-2">{levelInfo?.intro}</span>
+                    {/* <span className="text-lg font-normal">{levelInfo?.intro}</span> */}
                 </div>
                 <div className="text-lg mt-2">{userInfo.displayName}</div>
                 <div className="mt-4 flex items-center justify-between">
@@ -203,12 +274,22 @@ export default function UserPage() {
 
     // 充值卡片
     const renderRechargeCards = () => (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-            {VIP_LEVELS.filter(l => l.value !== 3 || userInfo?.vipLevel !== 3).map(level => (
-                <div key={level.value} className="bg-white rounded-xl shadow border p-6 flex flex-col items-center">
-                    <div className="text-xl font-bold mb-2">{level.label}</div>
-                    <div className="text-gray-500 mb-4">{level.desc}</div>
-                    <Button onClick={() => handleRecharge(level.value)}>充值</Button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mt-4">
+            {userInfo?.role != 3 && rechargeOptions.map((level, index) => (
+                <div
+                    key={`${level.value}`}
+                    className="relative overflow-hidden rounded-2xl p-1 bg-gradient-to-br from-amber-200/70 via-orange-300/70 to-rose-400/70 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 w-3/4 mx-auto"
+                >
+                    <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 flex flex-col items-center h-full">
+                        <div className="text-3xl font-bold mb-2 bg-gradient-to-r from-amber-500 to-rose-500 bg-clip-text text-transparent">￥{level.value}</div>
+                        <div className="text-gray-700 mb-4 text-center">{level.intro}</div>
+                        <Button
+                            className="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white hover:from-amber-600 hover:to-rose-600 shadow-md"
+                            onClick={() => handleRecharge(level.value)}
+                        >
+                            立即充值
+                        </Button>
+                    </div>
                 </div>
             ))}
         </div>
@@ -225,12 +306,12 @@ export default function UserPage() {
                                 <span className="text-2xl font-bold text-blue-600">🏢来个OC</span>
                             </div>
                             <nav className="flex space-x-6">
-                                <a href="#" className="text-gray-700 hover:text-blue-600">
+                                <a href="/" className="text-gray-700 hover:text-blue-600">
                                     招聘
                                 </a>
-                                <a href="#" className="text-gray-700 hover:text-blue-600">
+                                {/* <a href="/" className="text-gray-700 hover:text-blue-600">
                                     实习
-                                </a>
+                                </a> */}
                             </nav>
                         </div>
                         <div className="flex items-center space-x-4">
@@ -368,32 +449,13 @@ export default function UserPage() {
                                     {renderVipCard()}
                                     {/* 只有非终身会员且已是会员，或非会员时显示充值卡片 */}
                                     {((typeof userInfo?.vipLevel !== 'number') || (userInfo.vipLevel !== 3)) && renderRechargeCards()}
-                                    {/* 支付弹窗 */}
-                                    <Dialog open={payDialogOpen} onOpenChange={setPayDialogOpen}>
-                                        <DialogContent className="max-w-xs">
-                                            <DialogHeader>
-                                                <DialogTitle>微信支付</DialogTitle>
-                                            </DialogHeader>
-                                            {payInfo && (
-                                                <div className="flex flex-col items-center">
-                                                    <QRCodeCanvas value={payInfo.prePayId} size={180} />
-                                                    <div className="mt-4 text-sm">交易号：{payInfo.tradeNo}</div>
-                                                    <div className="mt-1 text-sm">充值金额：{payInfo.amount} 元</div>
-                                                    <div className="mt-1 text-sm text-red-500">二维码有效期：{formatCountdown(countdown)}</div>
-                                                    <Button className="mt-4 w-full" onClick={handlePaying}>
-                                                        {paying ? "处理中..." : "我已支付"}
-                                                    </Button>
-                                                </div>
-                                            )}
-                                        </DialogContent>
-                                    </Dialog>
                                 </div>
                             ) : (
                                 activeMenu === "orders" ? (
-                                    <> 
+                                    <>
                                         {loading ? (
                                             <div className="flex flex-col items-center justify-center min-h-[300px] text-gray-400 text-lg">加载中...</div>
-                                        ) : rechargeList.length === 0 ? (
+                                        ) : rechargeList?.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center min-h-[300px] text-gray-400 text-lg">暂无充值记录</div>
                                         ) : (
                                             <div className="overflow-x-auto">
@@ -407,6 +469,7 @@ export default function UserPage() {
                                                             <TableHead>支付状态</TableHead>
                                                             <TableHead>支付时间</TableHead>
                                                             <TableHead>交易ID</TableHead>
+                                                            <TableHead>编辑</TableHead>
                                                         </TableRow>
                                                     </TableHeader>
                                                     <TableBody>
@@ -416,9 +479,36 @@ export default function UserPage() {
                                                                 <TableCell>{item.tradeNo}</TableCell>
                                                                 <TableCell>{item.amount}</TableCell>
                                                                 <TableCell>{getVipLevelLabel(item.level)}</TableCell>
-                                                                <TableCell>{getPayStatusText(item.status)}</TableCell>
+                                                                <TableCell>{
+                                                                    item.status === 0 ? (
+                                                                        <Badge>{getPayStatusText(item.status)}</Badge>
+                                                                    ) : item.status === 1 ? (
+                                                                        <Badge variant="secondary">{getPayStatusText(item.status)}</Badge>
+                                                                    ) : item.status === 2 ? (
+                                                                        <Badge variant="secondary">{getPayStatusText(item.status)}</Badge>
+                                                                    ) : (
+                                                                        <Badge variant="destructive">{getPayStatusText(item.status)}</Badge>
+                                                                    )
+                                                                }</TableCell>
                                                                 <TableCell>{new Date(item.payTime).toLocaleString()}</TableCell>
                                                                 <TableCell>{item.transactionId}</TableCell>
+                                                                <TableCell>
+                                                                    {item.status === 0 && (
+                                                                        <Button variant="outline" size="sm" onClick={() => handleRecharge(item.amount)}>
+                                                                            去支付
+                                                                        </Button>
+                                                                    )}
+                                                                    {item.status === 1 && (
+                                                                        <Button variant="destructive" size="sm" onClick={() => handleMarkFailed(item.payId)}>
+                                                                            刷新
+                                                                        </Button>
+                                                                    )}
+                                                                    {item.status === 3 && (
+                                                                        <Button variant="outline" size="sm" onClick={() => handleRecharge(item.amount)}>
+                                                                            重新充值
+                                                                        </Button>
+                                                                    )}
+                                                                </TableCell>
                                                             </TableRow>
                                                         ))}
                                                     </TableBody>
@@ -432,6 +522,26 @@ export default function UserPage() {
                             )}
                         </CardContent>
                     </Card>
+
+                    {/* 支付弹窗 */}
+                    <Dialog open={payDialogOpen} onOpenChange={setPayDialogOpen}>
+                        <DialogContent className="max-w-xs">
+                            <DialogHeader>
+                                <DialogTitle>微信支付</DialogTitle>
+                            </DialogHeader>
+                            {payInfo && (
+                                <div className="flex flex-col items-center">
+                                    <QRCodeCanvas value={payInfo.prePayId} size={180} />
+                                    <div className="mt-4 text-sm">交易号：{payInfo.tradeNo}</div>
+                                    <div className="mt-1 text-sm">充值金额：{payInfo.amount} 元</div>
+                                    <div className="mt-1 text-sm text-red-500">二维码有效期：{formatCountdown(countdown)}</div>
+                                    <Button className="mt-4 w-full" onClick={handlePaying}>
+                                        {paying ? "处理中..." : "我已支付"}
+                                    </Button>
+                                </div>
+                            )}
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
         </div>

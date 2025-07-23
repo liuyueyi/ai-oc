@@ -26,6 +26,7 @@ public enum DictAppEnum implements StringBaseEnum {
     BIZ_GATHER("gather", "业务-数据录入"),
     BIZ_OC("oc", "业务-职位相关"),
     BIZ_USER("user", "业务-用户相关"),
+    BIZ_RECHARGE("recharge", "业务-充值配置"),
     ;
 
     private String value;
