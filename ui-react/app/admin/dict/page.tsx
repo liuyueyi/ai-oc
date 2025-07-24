@@ -255,13 +255,13 @@ export default function DictPage() {
                     </div>
                 </div>
                 <Card >
-                    <CardContent className="pt-6">
+                    {/* <CardContent className="pt-6"> */}
                         {loading && <p>加载中...</p>}
                         {error && <p className="text-red-500">错误: {error}</p>}
                         {!loading && !error && (
                             <Table>
                                 <TableHeader>
-                                    <TableRow>
+                                    <TableRow className="bg-gray-100">
                                         <TableHead>ID</TableHead>
                                         <TableHead>App</TableHead>
                                         <TableHead>作用域</TableHead>
@@ -335,7 +335,7 @@ export default function DictPage() {
                                 </PaginationContent>
                             </Pagination>
                         </div>
-                    </CardContent>
+                    {/* </CardContent> */}
                 </Card>
             </div>
 

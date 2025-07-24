@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { Search, Bell, User, QrCode, Settings, ChevronDown } from "lucide-react"
+import { Search, Bell, User, QrCode, Settings, ChevronDown, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -31,6 +31,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { useLoginUser } from "@/hooks/useLoginUser";
 import { getConfigValue } from "@/lib/config"
 import { useFormState } from "react-dom"
+import { useToast } from "@/hooks/use-toast"
 
 interface JobOffer {
   id: string | number
@@ -47,11 +48,13 @@ interface JobOffer {
   recruitmentNotice: string
   referralCode: string
   notes: string
+  locked?: boolean
 }
 
 const ALL_TAG = "-1"
 
 export default function HomePage() {
+  const { toast } = useToast();
   const [user, setUser] = useState<{ name: string; isAdmin: boolean } | null>(null)
   const [currentView, setCurrentView] = useState<"frontend" | "admin">("frontend")
   const [jobOffers, setJobOffers] = useState<JobOffer[]>([])
@@ -67,6 +70,7 @@ export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const [total, setTotal] = useState(0)
+  const [locked, setLocked] = useState(false)
   const [online, setOnline] = useState(1)
   const [queryParams, setQueryParams] = useState<any>({})
   const router = useRouter()
@@ -138,6 +142,8 @@ export default function HomePage() {
           }
         }
       }
+      // 重新请求下列表数据
+      handleSearch()
     }
   }, [setUserInfo])
 
@@ -152,6 +158,11 @@ export default function HomePage() {
       await postWxCallback(xml)
     } catch (err) {
       // 可加 toast 错误提示
+      toast({
+        title: "登录提醒",
+        description: "登录失败，请刷新页面再重新登录吧",
+        variant: "destructive",
+      })
     } finally {
       setLoginLoading(false)
       setAdminLoading(false)
@@ -182,6 +193,7 @@ export default function HomePage() {
           referralCode: item.internalReferralCode,
           notes: item.remarks,
         }))
+        setLocked(data.locked)
         setJobOffers(mapped)
         setFilteredOffers(mapped)
         setTotal(data.total)
@@ -224,11 +236,6 @@ export default function HomePage() {
     setQueryParams({})
     setCurrentPage(1)
     loadJobList({}, 1)
-  }
-
-  const handleLogin = () => {
-    // Simulate login - in real app this would be QR code authentication
-    setUser({ name: "管理员", isAdmin: true })
   }
 
   const totalPages = Math.ceil(total / itemsPerPage)
@@ -427,7 +434,7 @@ export default function HomePage() {
                 <TableHead className="w-24 break-words">招聘类型</TableHead>
                 <TableHead className="w-28 break-words">招聘对象</TableHead>
                 <TableHead className="w-56 break-words">岗位(大都不限专业)</TableHead>
-                <TableHead className="w-20 break-words">投递进度</TableHead>
+                {/* <TableHead className="w-20 break-words">投递进度</TableHead> */}
                 <TableHead className="w-24 break-words">更新时间</TableHead>
                 <TableHead className="w-24 break-words">投递截止</TableHead>
                 <TableHead className="w-32 break-words">相关链接</TableHead>
@@ -438,9 +445,19 @@ export default function HomePage() {
             </TableHeader>
             <TableBody>
               {paginatedOffers.map((offer) => (
-                <TableRow key={String(offer.id)} className="hover:bg-gray-50 cursor-pointer">
-                  <TableCell className="font-medium break-words w-32">
-                    <Link href={`/job?id=${offer.id}`} className="text-blue-600 hover:underline">
+                <TableRow key={String(offer.id)} className={`hover:bg-gray-50 cursor-pointer relative ${locked ? 'opacity-70' : ''}`} onClick={(e) => {
+                  if (locked) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!userInfo) {
+                      setLoginOpen(true);
+                    } else {
+                      router.push('/user');
+                    }
+                  }
+                }}>
+                  <TableCell className="font-medium break-words w-32 relative">
+                    <Link href={locked ? '#' : `/job?id=${offer.id}`} className="text-blue-600 hover:underline">
                       {offer.companyName}
                     </Link>
                   </TableCell>
@@ -473,7 +490,7 @@ export default function HomePage() {
                       {offer.position}
                     </div>
                   </TableCell>
-                  <TableCell className="break-words w-20">{offer.applicationProgress}</TableCell>
+                  {/* <TableCell className="break-words w-20">{offer.applicationProgress}</TableCell> */}
                   <TableCell className="break-words w-24">{offer.updateTime}</TableCell>
                   <TableCell className="break-words w-24">{offer.deadline}</TableCell>
                   <TableCell className="break-words w-32">
@@ -502,6 +519,12 @@ export default function HomePage() {
                 </TableRow>
               ))}
             </TableBody>
+            {locked && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-200/70 pointer-events-none">
+                <Lock className="h-8 w-8 text-red-600 mb-2" />
+                <span className="text-sm font-medium text-gray-800">加入会员，即刻解锁全部招聘信息</span>
+              </div>
+            )}
           </Table>
         </div>
 

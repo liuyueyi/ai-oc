@@ -1,11 +1,14 @@
 package com.git.hui.offer.web.config;
 
 import com.git.hui.offer.components.env.SpringUtil;
+import com.git.hui.offer.web.hook.interceptor.PermissionCheckInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.AbstractResourceResolver;
@@ -80,6 +83,16 @@ public class WebConfig implements WebMvcConfigurer {
                         return requestPath;
                     }
                 });
+    }
+
+    @Autowired
+    private PermissionCheckInterceptor permissionCheckInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(permissionCheckInterceptor)
+                .addPathPatterns("/api/**") // 根据实际需要调整路径
+                .excludePathPatterns("/api/wx"); // 排除不需要拦截的路径
     }
 
 }

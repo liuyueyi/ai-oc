@@ -35,12 +35,21 @@ public class OcController {
         // 前台接口，只支持查询已发布的数据
         req.setState(OcStateEnum.PUBLISHED.getValue());
 
+        boolean locked = false;
         if (ReqInfoContext.getReqInfo().getUserId() == null) {
             // 未登录时，永远最多只返回5个
             req.setPage(1);
             req.setSize(5);
+            locked = true;
+        } else if (ReqInfoContext.getReqInfo().getUser().role() == UserRoleEnum.NORMAL) {
+            // 非会员，永远只能看第一页的数据
+            req.setPage(1);
+            req.setSize(9);
+            locked = true;
         }
-        return ocService.searchOcList(req);
+        PageListVo<OcVo> ans = ocService.searchOcList(req);
+        ans.setLocked(locked);
+        return ans;
     }
 
 

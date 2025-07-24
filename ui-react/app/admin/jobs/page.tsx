@@ -198,7 +198,7 @@ export default function JobsPage() {
                 </div>
                 <div className="bg-white rounded-lg shadow overflow-hidden">
                     <Table>
-                        <TableHeader>
+                        <TableHeader className="bg-gray-100">
                             <TableRow>
                                 <TableHead>公司名称</TableHead>
                                 <TableHead>公司类型</TableHead>

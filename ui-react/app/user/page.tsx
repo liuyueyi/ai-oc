@@ -309,9 +309,7 @@ export default function UserPage() {
                                 <a href="/" className="text-gray-700 hover:text-blue-600">
                                     招聘
                                 </a>
-                                {/* <a href="/" className="text-gray-700 hover:text-blue-600">
-                                    实习
-                                </a> */}
+                           
                             </nav>
                         </div>
                         <div className="flex items-center space-x-4">
@@ -352,12 +350,7 @@ export default function UserPage() {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             ) : (
-                                mounted && (
-                                    <Button variant="outline" size="sm" onClick={() => setLoginOpen(true)}>
-                                        <User className="h-4 w-4 mr-1" />
-                                        登录
-                                    </Button>
-                                )
+                                null
                             )}
                         </div>
                     </div>

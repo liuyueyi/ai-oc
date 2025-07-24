@@ -38,6 +38,7 @@ export default function DraftsPage() {
     const [companyTypes, setCompanyTypes] = useState<GlobalConfigItemValue[]>([]);
     const [recruitmentTypes, setRecruitmentTypes] = useState<GlobalConfigItemValue[]>([]);
     const [recruitmentTarget, setRecruitmentTarget] = useState<GlobalConfigItemValue[]>([]);
+    const [processStates, setProcessStates] = useState<GlobalConfigItemValue[]>([]);
 
     const fetchData = async (params: DraftListQuery = {}) => {
         setLoading(true)
@@ -58,6 +59,7 @@ export default function DraftsPage() {
         getConfigValue('oc', 'CompanyTypeEnum').then(setCompanyTypes);
         getConfigValue('oc', 'RecruitmentTypeEnum').then(setRecruitmentTypes);
         getConfigValue('oc', 'RecruitmentTargetEnum').then(setRecruitmentTarget);
+        getConfigValue('oc', 'DraftProcessEnum').then(setProcessStates);
         // eslint-disable-next-line
     }, [page, filters])
 
@@ -127,9 +129,18 @@ export default function DraftsPage() {
         };
     }
 
+    const checkSelectAll = () => {
+        // 判断是否全选了
+        if (drafts.length > 0) {
+            return selectedIds.length === drafts.filter(d => d.toProcess !== 1).length
+        } else {
+            return false;
+        }
+    }
+
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
-            setSelectedIds(drafts.map(d => d.id))
+            setSelectedIds(drafts.filter(d => d.toProcess !== 1).map(d => d.id))
         } else {
             setSelectedIds([])
         }
@@ -171,7 +182,7 @@ export default function DraftsPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <header className="bg-white border-b">
-                <div className="full-w mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <h1 className="text-2xl font-bold text-gray-900">草稿列表</h1>
                         <Button onClick={handlePublish} disabled={publishLoading || selectedIds?.length === 0} className="ml-4">
@@ -180,7 +191,7 @@ export default function DraftsPage() {
                     </div>
                 </div>
             </header>
-            <div className="full-w  mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div className=" pt-4 mb-6 flex flex-wrap gap-2 items-center">
                     <Input placeholder="公司名称" className="w-32" value={filters.companyName || ''} onChange={e => handleFilterChange('companyName', e.target.value)} />
                     {
@@ -212,13 +223,27 @@ export default function DraftsPage() {
                     )}
                     <Input placeholder="工作地点" className="w-24" value={filters.jobLocation || ''} onChange={e => handleFilterChange('jobLocation', e.target.value)} />
                     <Input placeholder="岗位" className="w-24" value={filters.position || ''} onChange={e => handleFilterChange('position', e.target.value)} />
+                    <Select value={filters.toProcess || ''} onValueChange={value => handleFilterChange('toProcess', value)}>
+                        <SelectTrigger className="w-32"><SelectValue placeholder="处理状态" /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="-1">全部</SelectItem>
+                            {
+                                processStates.map(option => (
+                                    <SelectItem key={option.value as string} value={option.value as string}>{option.intro}</SelectItem>
+                                ))
+                            }
+                        </SelectContent>
+                    </Select>
                 </div>
                 {/* 只让表格区域可横向滚动 */}
                 <div className="bg-white rounded-lg shadow overflow-x-auto">
                     <Table className="min-w-[1600px] table-fixed text-sm">
-                        <TableHeader>
+                        <TableHeader className="bg-gray-100">
                             <TableRow>
-                                <TableHead className="whitespace-nowrap text-center"><input type="checkbox" checked={drafts?.length > 0 && selectedIds?.length === drafts?.length} onChange={e => handleSelectAll(e.target.checked)} /></TableHead>
+                                <TableHead className="whitespace-nowrap text-center">
+                                    <input type="checkbox" checked={checkSelectAll()}
+                                        onChange={e => handleSelectAll(e.target.checked)} />
+                                </TableHead>
                                 <TableHead className="whitespace-nowrap text-center">公司名称</TableHead>
                                 <TableHead className="whitespace-nowrap text-center">公司类型</TableHead>
                                 <TableHead className="whitespace-nowrap text-center">工作地点</TableHead>
@@ -230,7 +255,7 @@ export default function DraftsPage() {
                                 <TableHead className="whitespace-nowrap text-center">待处理</TableHead>
                                 <TableHead className="whitespace-nowrap text-center">链接</TableHead>
                                 <TableHead className="whitespace-nowrap text-center">公告</TableHead>
-                                <TableHead className="sticky right-0 bg-white z-10 whitespace-nowrap text-center w-[180px] text-white bg-gray-400">操作</TableHead>
+                                <TableHead className="sticky right-0 bg-white z-10 whitespace-nowrap text-center w-[220px] text-white bg-gray-400">操作</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -243,7 +268,7 @@ export default function DraftsPage() {
                             ) : (
                                 drafts.map((draft) => (
                                     <TableRow key={draft.id}>
-                                        <TableCell className="whitespace-nowrap text-center"><input type="checkbox" checked={selectedIds.includes(draft.id)} onChange={e => handleSelectOne(draft.id, e.target.checked)} /></TableCell>
+                                        <TableCell className="whitespace-nowrap text-center"><input type="checkbox" disabled={draft.toProcess == 1} checked={selectedIds.includes(draft.id)} onChange={e => handleSelectOne(draft.id, e.target.checked)} /></TableCell>
                                         <TableCell className="whitespace-nowrap text-center max-w-[320px] truncate break-all" title={draft.companyName}>{draft.companyName}</TableCell>
                                         <TableCell className="whitespace-nowrap text-center"><Badge variant="secondary">{draft.companyType}</Badge></TableCell>
                                         <TableCell className="whitespace-nowrap text-center max-w-[240px] truncate" title={draft.jobLocation}>{draft.jobLocation}</TableCell>
@@ -259,11 +284,16 @@ export default function DraftsPage() {
                                         <TableCell className="whitespace-nowrap text-center max-w-[360px] truncate break-all" title={draft.jobAnnouncement}>
                                             <a href={draft.jobAnnouncement} className="text-blue-800 underline" target="_blank" rel="noopener noreferrer">{draft.jobAnnouncement}</a>
                                         </TableCell>
-                                        <TableCell className="sticky right-0 bg-white z-10 whitespace-nowrap text-center w-[220px]">
+                                        <TableCell className='bg-white sticky right-0 z-10 whitespace-nowrap text-center w-[220px]'>
                                             <div className="flex justify-center space-x-2">
-                                                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white" onClick={() => handlePublishOne(draft.id)} disabled={publishOneLoadingId === draft.id}>
-                                                    {publishOneLoadingId === draft.id ? "发布中..." : "发布"}
-                                                </Button>
+                                                {
+                                                    draft.toProcess != 1 && (
+                                                        <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white" onClick={() => handlePublishOne(draft.id)} disabled={publishOneLoadingId === draft.id}>
+                                                            {publishOneLoadingId === draft.id ? "发布中..." : "发布"}
+                                                        </Button>
+                                                    )
+                                                }
+
                                                 <Button size="sm" variant="outline" onClick={() => setEditingDraft(draft)}>
                                                     编辑
                                                 </Button>

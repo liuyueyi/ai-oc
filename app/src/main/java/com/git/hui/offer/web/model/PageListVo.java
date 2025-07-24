@@ -35,6 +35,8 @@ public class PageListVo<T> {
      */
     private Long total;
 
+    private Boolean locked;
+
     public static <T> PageListVo<T> emptyVo() {
         PageListVo<T> vo = new PageListVo<>();
         vo.setList(Collections.emptyList());

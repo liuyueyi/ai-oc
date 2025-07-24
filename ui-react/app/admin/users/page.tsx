@@ -9,6 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getConfigValue } from "@/lib/config";
 import { GlobalConfigItemValue } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 function formatDateTime(ts?: number) {
   if (!ts) return "-";
@@ -156,12 +165,31 @@ export default function UsersPage() {
         </div>
 
         {/* 分页 - 右下角 */}
-        <div className="flex justify-end items-center gap-2 mt-4">
-          <Button size="sm" variant="outline" disabled={query.page === 1} onClick={() => setQuery(q => ({ ...q, page: (q.page || 1) - 1 }))}>上一页</Button>
-          <span className="text-sm text-gray-500 mr-2">第 {query.page} / {totalPages} 页</span>
-          <Button size="sm" variant="outline" disabled={query.page === totalPages} onClick={() => setQuery(q => ({ ...q, page: (q.page || 1) + 1 }))}>下一页</Button>
+        <div className="mt-4 flex justify-end">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={() => setQuery(q => ({ ...q, page: (q.page || 1) - 1 }))}
+                  className={query.page === 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground">
+                  第 {query.page} / {totalPages} 页
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={() => setQuery(q => ({ ...q, page: (q.page || 1) + 1 }))}
+                  className={query.page === totalPages ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
-
         {/* 编辑弹窗 */}
         {editingUser && (
           <Dialog open={true} onOpenChange={() => setEditingUser(null)}>

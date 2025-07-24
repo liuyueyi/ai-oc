@@ -20,6 +20,31 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// 响应拦截器，处理302重定向
+api.interceptors.response.use(
+  response => {
+    console.log('响应拦截器', response)
+    if (response.data.code == 100403003) {
+      // 清除本地缓存的登录信息
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('oc-token');
+        localStorage.removeItem('oc-user');
+        window.location.href = '/';
+      }
+      return Promise.reject("未登录");
+    }
+    return response;
+  },
+  error => {
+    if (error.response && error.response.data && error.response.data.code === 100403003) {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 /**
  * 获取微信扫码登录 SSE 订阅 URL
@@ -59,6 +84,7 @@ export interface JobListResponse {
   size: number
   total: number
   online?: number
+  locked: boolean
 }
 
 export async function fetchJobList(params?: JobListQuery): Promise<JobListResponse> {
