@@ -1,0 +1,16 @@
+oc:
+  jwt:
+    issuer: oc # 签发者
+    secret: hello_offer # 签名密钥
+    expire: 2592000000 # jwt的有效期，默认30天
+  site:
+    login-qr-img: https://spring.hhui.top/spring-blog/imgs/info/wx.jpg
+    website-name: 校招派
+    web-site-logo: https://spring.hhui.top/spring-blog/css/images/avatar.jpg
+    web-site-host: http://localhost
+  img:
+    abs-tmp-path: /tmp/storage/
+    web-img-path: /oc/img/
+    cdn-host: http://localhost:8080
+  database:
+    name: oc

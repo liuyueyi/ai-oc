@@ -3,7 +3,6 @@ package com.git.hui.offer.user.service;
 import com.git.hui.offer.components.bizexception.BizException;
 import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.components.context.ReqInfoContext;
-import com.git.hui.offer.components.env.SpringUtil;
 import com.git.hui.offer.components.id.IdUtil;
 import com.git.hui.offer.configs.service.CommonDictService;
 import com.git.hui.offer.constants.user.RechargeConstants;
@@ -17,6 +16,7 @@ import com.git.hui.offer.user.convert.RechargeConvert;
 import com.git.hui.offer.user.dao.entity.RechargeEntity;
 import com.git.hui.offer.user.dao.repository.RechargeRepository;
 import com.git.hui.offer.user.service.pay.ThirdPayHandler;
+import com.git.hui.offer.util.PriceUtil;
 import com.git.hui.offer.util.json.JsonUtil;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.res.CommonDictVo;
@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.List;
@@ -91,7 +92,8 @@ public class RechargeService {
         }
 
         // 找到最近的一个待支付记录
-        int amount = SpringUtil.getSiteConfig().getVipPrice().get(vipLevel.getValue());
+        Integer amount = getVipPrice(vipLevel);
+        Assert.notNull(amount, "充值金额不准确~");
         RechargeEntity entity = list.stream()
                 .filter(s -> s.getStatus().equals(RechargeStatusEnum.NOT_PAY.getValue()))
                 .findFirst()
@@ -144,6 +146,19 @@ public class RechargeService {
         for (DictItemVo item : dict.items()) {
             if (item.value().equals(price)) {
                 return RechargeConstants.RECHARGE_LEVEL_MAP.get(item.intro());
+            }
+        }
+        return null;
+    }
+
+    public Integer getVipPrice(RechargeLevelEnum level) {
+        CommonDictVo dict = commonDictService.queryDict(RechargeConstants.RECHARGE_APP, RechargeConstants.VIP_PRICE_KEY);
+        if (dict == null) {
+            return null;
+        }
+        for (DictItemVo item : dict.items()) {
+            if (item.intro().equals(level.getDesc())) {
+                return PriceUtil.toCentPrice(item.value());
             }
         }
         return null;

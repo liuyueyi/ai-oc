@@ -2,13 +2,13 @@
 
 --  创建两个账号：普通 + 管理员
 INSERT INTO user_info
-( wx_id, display_name, email, login_name, password, avatar, intro, `role`, state, expire_time)
-VALUES ('demoUser-login', '普通用户', '', '', '',
-        'https://cdn.tobebetterjavaer.com/paicoding/avatar/0067.png', '', 1, 1, NULL);
+(id, wx_id, display_name, email, login_name, password, avatar, intro, `role`, state, expire_time, create_time, update_time)
+VALUES (1, 'demoUser-login', '普通用户', '', '', '',
+        'https://cdn.tobebetterjavaer.com/paicoding/avatar/0067.png', '', 1, 1, NULL, now(), now());
 INSERT INTO user_info
-( wx_id, display_name, email, login_name, password, avatar, intro, `role`, state, expire_time)
-VALUES ('demoUser-admin', '管理员', '', '', '',
-        'https://cdn.tobebetterjavaer.com/paicoding/avatar/0061.png', '', 3, 1, NULL);
+(id, wx_id, display_name, email, login_name, password, avatar, intro, `role`, state, expire_time, create_time, update_time)
+VALUES (2, 'demoUser-admin', '管理员', '', '', '',
+        'https://cdn.tobebetterjavaer.com/paicoding/avatar/0061.png', '', 3, 1, NULL, now(), now());
 
 
 -- 初始化数据字典

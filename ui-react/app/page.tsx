@@ -247,7 +247,7 @@ export default function HomePage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <div className="flex items-center">
-                <span className="text-2xl font-bold text-blue-600">🏢来个OC</span>
+                <a href="/" className="text-2xl font-bold text-blue-600">🚦校招派</a>
               </div>
               <nav className="flex space-x-6">
                 <a href="#" className="text-gray-700 hover:text-blue-600">
@@ -315,7 +315,7 @@ export default function HomePage() {
                           <div className="mt-2 text-lg font-bold">验证码：{code}</div>
                           {
                             // 测试环境才显示mock登录按钮
-                            (env  && env[0].value == 'dev') && (
+                            (env && env.length > 0 && env[0].value == 'dev') && (
                               <div className="flex gap-4 mt-6">
                                 <Button onClick={() => handleWxLogin("user", code)} disabled={loginLoading}>
                                   {loginLoading ? "登录中..." : "普通用户登录"}
