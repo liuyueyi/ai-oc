@@ -457,7 +457,10 @@ export default function DraftsPage() {
                                 取消
                             </Button>
                             <Button onClick={() => handleSave(editingDraft)}>保存</Button>
-                            <Button className="bg-orange-500 hover:bg-orange-600 text-white" onClick={() => handlePublishOne(editingDraft.id)} disabled={publishOneLoadingId === editingDraft.id}>
+                            <Button className="bg-orange-500 hover:bg-orange-600 text-white" onClick={() => {
+                                handlePublishOne(editingDraft.id)
+                                setEditingDraft(null)
+                            }} disabled={publishOneLoadingId === editingDraft.id}>
                                 {publishOneLoadingId === editingDraft.id ? "发布中..." : "发布"}
                             </Button>
                         </div>

@@ -70,8 +70,8 @@ public class OcService {
         if (StringUtils.isNotBlank(req.getCompanyType())) {
             entity.setCompanyType(req.getCompanyType());
         }
-        if (StringUtils.isNotBlank(req.getLocation())) {
-            entity.setJobLocation(req.getLocation());
+        if (StringUtils.isNotBlank(req.getJobLocation())) {
+            entity.setJobLocation(req.getJobLocation());
         }
         if (StringUtils.isNotBlank(req.getRecruitmentType())) {
             entity.setRecruitmentType(req.getRecruitmentType());

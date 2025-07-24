@@ -36,7 +36,7 @@ interface JobOffer {
     id: string | number
     companyName: string
     companyType: string
-    location: string
+    jobLocation: string
     recruitmentType: string
     recruitmentTarget: string
     position: string
@@ -44,7 +44,7 @@ interface JobOffer {
     lastUpdatedTime: string
     updateTime: string
     deadline: string
-    relatedLinks: string
+    relatedLink: string
     jobAnnouncement: string
     internalReferralCode: string
     state: number,
@@ -402,22 +402,22 @@ export default function JobsPage() {
                                         onChange={(e) => setEditingOffer({ ...editingOffer, position: e.target.value })}
                                     />
                                 </div>
-                                <div className={editingOffer.location ? 'col-span-1' : 'text-red-500 col-span-1'}>
+                                <div className={editingOffer.jobLocation ? 'col-span-1' : 'text-red-500 col-span-1'}>
                                     <label className="text-sm font-medium">工作地点</label>
                                     <textarea
                                         className="w-full p-2 border rounded-md"
                                         rows={2}
-                                        value={editingOffer.location}
-                                        onChange={(e) => setEditingOffer({ ...editingOffer, location: e.target.value })}
+                                        value={editingOffer.jobLocation}
+                                        onChange={(e) => setEditingOffer({ ...editingOffer, jobLocation: e.target.value })}
                                     />
                                 </div>
 
-                                <div className={editingOffer.relatedLinks ? 'col-span-1' : 'text-red-500 col-span-1'}>
+                                <div className={editingOffer.relatedLink ? 'col-span-1' : 'text-red-500 col-span-1'}>
                                     <label className="text-sm font-medium">相关链接</label>
                                     <input
                                         className="w-full p-2 border rounded-md"
-                                        value={editingOffer.relatedLinks}
-                                        onChange={(e) => setEditingOffer({ ...editingOffer, relatedLinks: e.target.value })}
+                                        value={editingOffer.relatedLink}
+                                        onChange={(e) => setEditingOffer({ ...editingOffer, relatedLink: e.target.value })}
                                     />
                                 </div>
                                 <div className={editingOffer.jobAnnouncement ? 'col-span-1' : 'text-red-500 col-span-1'}>

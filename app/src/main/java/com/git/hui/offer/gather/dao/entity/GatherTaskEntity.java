@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicUpdate;
@@ -49,10 +50,11 @@ public class GatherTaskEntity {
     private Integer state;
 
     /**
-     * 传入的数据
+     * 传入的数据，添加 @Lob 注解，解决h2database时，传入数据太大的报错
      * - 如果是文件，则这里存储文件转存到oss后的地址
      * - 如果不是文件，则直接存储用户传入的文本内容
      */
+    @Lob
     @Column(name = "content")
     private String content;
 

@@ -20,7 +20,7 @@ public class OcSaveReq extends PageReq {
     /**
      * 工作地点
      */
-    private String location;
+    private String jobLocation;
     /**
      * 招聘类型
      */
