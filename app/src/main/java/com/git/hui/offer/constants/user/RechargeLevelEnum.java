@@ -11,9 +11,9 @@ import lombok.Getter;
  */
 @Getter
 public enum RechargeLevelEnum implements IntBaseEnum {
-    MONTH(0, "月会员", 31),
-    QUARTER(1, "季会员", 93),
-    YEAR(2, "年会员", 366),
+    MONTH(0, "月卡会员", 31),
+    QUARTER(1, "季卡会员", 93),
+    YEAR(2, "年卡会员", 366),
     LIFE(3, "终身会员", 9999);
     private final Integer value;
     private final String desc;
