@@ -30,7 +30,7 @@ public class OcVo {
     /**
      * 工作地点
      */
-    private List<String> jobLocation;
+    private String jobLocation;
     /**
      * 招聘类型
      */

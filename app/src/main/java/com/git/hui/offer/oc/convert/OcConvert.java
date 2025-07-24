@@ -47,7 +47,7 @@ public class OcConvert {
                 .setDraftId(entity.getDraftId())
                 .setCompanyName(entity.getCompanyName())
                 .setCompanyType(entity.getCompanyType())
-                .setJobLocation(Arrays.asList(entity.getJobLocation().split(",")))
+                .setJobLocation(entity.getJobLocation())
                 .setRecruitmentType(entity.getRecruitmentType())
                 .setRecruitmentTarget(entity.getRecruitmentTarget())
                 .setPosition(entity.getPosition())
