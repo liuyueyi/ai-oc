@@ -14,7 +14,7 @@ interface JobDetail {
     draftId: number
     companyName: string
     companyType: string
-    jobLocation: string[]
+    jobLocation: string
     recruitmentType: string
     recruitmentTarget: string
     position: string
@@ -123,7 +123,7 @@ export default function JobDetailPage() {
                                 <div className="flex items-center text-sm text-gray-600 space-x-4">
                                     <div className="flex items-center">
                                         <MapPin className="h-4 w-4 mr-1" />
-                                        {job.jobLocation && job.jobLocation.join("，")}
+                                        {job.jobLocation}
                                     </div>
                                     <div className="flex items-center">
                                         <Calendar className="h-4 w-4 mr-1" />
@@ -183,7 +183,7 @@ export default function JobDetailPage() {
                                 <Separator />
                                 <div>
                                     <h4 className="font-medium text-gray-900 mb-1">工作地点</h4>
-                                    <p className="text-gray-600">{job.jobLocation && job.jobLocation.join("，")}</p>
+                                    <p className="text-gray-600">{job.jobLocation }</p>
                                 </div>
                             </CardContent>
                         </Card>

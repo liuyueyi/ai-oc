@@ -303,13 +303,13 @@ export default function UserPage() {
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center space-x-8">
                             <div className="flex items-center">
-                                <span className="text-2xl font-bold text-blue-600">🏢来个OC</span>
+                                <a href="/" className="text-2xl font-bold text-blue-600">🚦校招派</a>
                             </div>
                             <nav className="flex space-x-6">
                                 <a href="/" className="text-gray-700 hover:text-blue-600">
                                     招聘
                                 </a>
-                           
+
                             </nav>
                         </div>
                         <div className="flex items-center space-x-4">
