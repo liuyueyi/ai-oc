@@ -45,17 +45,6 @@ public class PermissionCheckInterceptor implements HandlerInterceptor {
 
 
             if (ReqInfoContext.getReqInfo() == null || ReqInfoContext.getReqInfo().getUserId() == null) {
-                // 访问需要登录的页面时，直接跳转到登录界面
-                String referer = ReqInfoContext.getReqInfo().getReferer();
-                if (StringUtils.isNotBlank(referer)) {
-                    URL url = new URL(referer);
-                    if (Objects.equals(url.getAuthority(), ReqInfoContext.getReqInfo().getHost())) {
-                        response.sendRedirect("/");
-                        return false;
-                    }
-                }
-
-                // 非同源
                 response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
                 response.getWriter().println(JsonUtil.toStr(ResVo.fail(StatusEnum.FORBID_NOTLOGIN)));
                 response.getWriter().flush();
