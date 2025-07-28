@@ -14,4 +14,4 @@ oc:
     web-img-path: /oc/img/
     cdn-host: http://localhost:8080
   database:
-    name: oc
+    name: ai-oc
