@@ -1,9 +1,9 @@
 package com.git.hui.offer.user.service.pay;
 
 import com.git.hui.offer.constants.user.ThirdPayWayEnum;
-import com.git.hui.offer.oc.model.PayCallbackBo;
-import com.git.hui.offer.oc.model.PrePayInfoResBo;
-import com.git.hui.offer.oc.model.ThirdPayOrderReqBo;
+import com.git.hui.offer.user.model.PayCallbackBo;
+import com.git.hui.offer.user.model.PrePayInfoResBo;
+import com.git.hui.offer.user.model.ThirdPayOrderReqBo;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 

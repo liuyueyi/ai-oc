@@ -31,4 +31,9 @@ public class SiteConfig {
      * 网站域名
      */
     private String webSiteHost;
+
+    /**
+     * 网站url地址（包含端口）
+     */
+    private String webSiteUrl;
 }

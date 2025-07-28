@@ -164,6 +164,11 @@ function toast({ ...props }: Toast) {
     },
   })
 
+  // 3秒后自动关闭
+  setTimeout(() => {
+    dismiss()
+  }, 3000);
+
   return {
     id: id,
     dismiss,

@@ -4,10 +4,11 @@ import com.git.hui.offer.components.bizexception.BizException;
 import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.components.context.ReqInfoContext;
 import com.git.hui.offer.components.context.UserBo;
+import com.git.hui.offer.components.env.SpringUtil;
 import com.git.hui.offer.components.id.IdUtil;
-import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.constants.common.BaseStateEnum;
 import com.git.hui.offer.constants.user.RechargeLevelEnum;
+import com.git.hui.offer.constants.user.permission.UserRoleEnum;
 import com.git.hui.offer.user.convert.UserConvert;
 import com.git.hui.offer.user.dao.entity.UserEntity;
 import com.git.hui.offer.user.dao.repository.UserRepository;
@@ -16,13 +17,16 @@ import com.git.hui.offer.util.DateUtil;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.UserSaveReq;
 import com.git.hui.offer.web.model.req.UserSearchReq;
+import com.git.hui.offer.web.model.res.McpConfigVo;
 import com.git.hui.offer.web.model.res.UserVo;
 import io.micrometer.common.util.StringUtils;
+import org.springframework.ai.mcp.server.autoconfigure.McpServerProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,11 +38,12 @@ import java.util.Optional;
  */
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
+    private final McpServerProperties mcpServerProperties;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, McpServerProperties mcpServerProperties) {
         this.userRepository = userRepository;
+        this.mcpServerProperties = mcpServerProperties;
     }
 
     public UserVo detail(Long userId) {
@@ -47,7 +52,18 @@ public class UserService {
             throw new BizException(StatusEnum.USER_NOT_EXISTS, userId);
         }
 
-        return UserConvert.toVo(user.get());
+        UserVo vo = UserConvert.toVo(user.get());
+        vo.setConfig(buildMcpConfig(user.get()));
+        return vo;
+    }
+
+    private McpConfigVo buildMcpConfig(UserEntity user) {
+        McpConfigVo configVo = new McpConfigVo("sse",
+                SpringUtil.getSiteConfig().getWebSiteUrl() + mcpServerProperties.getSseEndpoint(),
+                mcpServerProperties.getVersion(),
+                Map.of("Authorization", "Bearer " + user.getWxId())
+        );
+        return configVo;
     }
 
     /**
@@ -177,6 +193,14 @@ public class UserService {
      */
     public UserBo getUserBo(Long userId) {
         UserEntity user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        return UserConvert.toBo(user);
+    }
+
+    public UserBo getUserByWxId(String wxId) {
+        UserEntity user = userRepository.findByWxId(wxId);
         if (user == null) {
             return null;
         }

@@ -16,6 +16,22 @@ spring:
       max-file-size: 8MB  # 单个文件上传大小限制
       max-request-size: 10MB # 总请求大小限制
 
+  ai:
+    mcp:
+      server:
+        name: 校招派
+        type: sync
+        instructions: "校招派是一个专业的校招信息推荐服务，可以根据您输入的个人求职意愿如求职公司类型、工作地点要求、求职岗位、校招或者实习、毕业年限，自动匹配返回最优的校招信息列表，让你不再错过招聘信息"
+        sse-endpoint: /api/sse
+        sse-message-endpoint: /api/mcp/messages
+        version: 1.0.0
+        capabilities:
+          tool: true # 是否支持工具
+          resource: true # 是否支持资源
+          prompt: true # 是否支持提示词
+          completion: true # 是否支持补全
+
+
 # 修改日志级别
 logging:
   level:

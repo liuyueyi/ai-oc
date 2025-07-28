@@ -1,4 +1,4 @@
-package com.git.hui.offer.oc.model;
+package com.git.hui.offer.user.model;
 
 import com.git.hui.offer.constants.user.ThirdPayWayEnum;
 import lombok.Data;

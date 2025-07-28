@@ -34,3 +34,6 @@ build/
 
 ### 支付证书
 app/src/main/resources/cert
+
+# 本地开发时包含ai采集结果的数据库，不提交到仓库
+datas/ai-oc-my.mv.db

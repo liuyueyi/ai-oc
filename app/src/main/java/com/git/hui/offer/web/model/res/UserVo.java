@@ -22,4 +22,9 @@ public class UserVo {
     private Long expireTime;
     private Long createTime;
     private Long updateTime;
+
+    /**
+     * mcp配置信息
+     */
+    private McpConfigVo config;
 }

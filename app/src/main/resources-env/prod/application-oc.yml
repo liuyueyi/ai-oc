@@ -8,6 +8,7 @@ oc:
     website-name: 校招派
     web-site-logo: https://spring.hhui.top/spring-blog/css/images/avatar.jpg
     web-site-host: https://laigeoffer.cn
+    web-site-url: ${oc.site.web-site-host}
   img:
     abs-tmp-path: /tmp/storage/
     web-img-path: /oc/img/

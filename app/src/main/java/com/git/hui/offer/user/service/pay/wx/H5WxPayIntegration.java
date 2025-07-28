@@ -2,8 +2,8 @@ package com.git.hui.offer.user.service.pay.wx;
 
 import com.git.hui.offer.components.context.ReqInfoContext;
 import com.git.hui.offer.constants.user.ThirdPayWayEnum;
-import com.git.hui.offer.oc.model.PayCallbackBo;
-import com.git.hui.offer.oc.model.ThirdPayOrderReqBo;
+import com.git.hui.offer.user.model.PayCallbackBo;
+import com.git.hui.offer.user.model.ThirdPayOrderReqBo;
 import com.git.hui.offer.util.json.JsonUtil;
 import com.git.hui.offer.web.config.WxPayConfig;
 import com.wechat.pay.java.core.Config;

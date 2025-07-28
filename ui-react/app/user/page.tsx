@@ -50,6 +50,10 @@ export default function UserPage() {
     const [loading, setLoading] = useState(false);
     const [rechargeList, setRechargeList] = useState<any[]>([]);
 
+    // MCP配置相关
+    const [mcpConfigDialogOpen, setMcpConfigDialogOpen] = useState(false);
+    const [mcpConfig, setMcpConfig] = useState("");
+
     // 充值业务数据
     const [rechargeOptions, setRechargeOptions] = useState<GlobalConfigItemValue[]>([]);
     const [vipOptions, setVipOptions] = useState<GlobalConfigItemValue[]>([]);
@@ -77,6 +81,7 @@ export default function UserPage() {
         getConfigValue('user', 'RechargeStatusEnum').then(setRechargeStatusOptions);
         getConfigValue('user', 'RechargeLevelEnum').then(setVipOptions);
     }, []);
+
     const fetchRechargeList = async () => {
         setLoading(true);
         try {
@@ -88,6 +93,23 @@ export default function UserPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    // 处理复制MCP配置到剪贴板
+    const handleCopyMcpConfig = () => {
+        navigator.clipboard.writeText(mcpConfig).then(() => {
+            toast({
+                title: "成功",
+                description: "配置已复制到剪贴板",
+            });
+            setMcpConfigDialogOpen(false)
+        }).catch(err => {
+            toast({
+                title: "失败",
+                description: "复制失败: " + err.message,
+                variant: "destructive",
+            });
+        });
     };
 
     useEffect(() => {
@@ -121,6 +143,14 @@ export default function UserPage() {
 
             setUserInfo(data);
 
+
+            // 完成mcp相关配置
+            let mcpConfigs = {
+                "mcpServers": {
+                    "校招派": data.config
+                }
+            }
+            setMcpConfig(JSON.stringify(mcpConfigs, null, 2));
 
             if (activeMenu === "orders") {
                 console.log('当前切换为充值记录了');
@@ -257,18 +287,30 @@ export default function UserPage() {
         const level = isLife ? 3 : userInfo.vipLevel;
         const levelInfo = vipOptions.find(l => l.value === `${level}`);
         return (
-            <div className="relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl text-white p-8 w-full max-w-md mx-auto mb-8 overflow-hidden">
-                <div className="text-2xl font-bold mb-2 flex items-center">
-                    <span className="mr-2">{levelInfo?.intro}</span>
-                    {/* <span className="text-lg font-normal">{levelInfo?.intro}</span> */}
+            <div>
+                {/* 在右上角，添加一个 MCP配置的按钮 */}
+                <div className="flex justify-end">
+                    <Button 
+                        onClick={() => setMcpConfigDialogOpen(true)}
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    >
+                        MCP配置
+                    </Button>
                 </div>
-                <div className="text-lg mt-2">{userInfo.displayName}</div>
-                <div className="mt-4 flex items-center justify-between">
-                    <div className="text-sm opacity-80">会员ID: {userInfo.userId}</div>
-                    <div className="text-sm opacity-80">{isLife ? "永久有效" : `到期日: ${userInfo.expireTime ? new Date(userInfo.expireTime).toLocaleDateString() : '-'}`}</div>
+                <div className="relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl text-white p-8 w-full max-w-md mx-auto mb-8 overflow-hidden">
+                    <div className="text-2xl font-bold mb-2 flex items-center">
+                        <span className="mr-2">{levelInfo?.intro}</span>
+                        {/* <span className="text-lg font-normal">{levelInfo?.intro}</span> */}
+                    </div>
+                    <div className="text-lg mt-2">{userInfo.displayName}</div>
+                    <div className="mt-4 flex items-center justify-between">
+                        <div className="text-sm opacity-80">会员ID: {userInfo.userId}</div>
+                        <div className="text-sm opacity-80">{isLife ? "永久有效" : `到期日: ${userInfo.expireTime ? new Date(userInfo.expireTime).toLocaleDateString() : '-'}`}</div>
+                    </div>
+                    <div className="absolute right-6 top-6 text-4xl opacity-20">VIP</div>
                 </div>
-                <div className="absolute right-6 top-6 text-4xl opacity-20">VIP</div>
             </div>
+
         );
     };
 
@@ -344,6 +386,14 @@ export default function UserPage() {
                                             </DropdownMenuItem>
                                         )}
                                         <DropdownMenuSeparator />
+                                        {(userInfo?.role === 2 || userInfo?.role === 3) && (
+                                            <>
+                                                <DropdownMenuItem onClick={() => setMcpConfigDialogOpen(true)}>
+                                                    MCP配置
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                            </>
+                                        )}
                                         <DropdownMenuItem onClick={loginLogout}>
                                             退出
                                         </DropdownMenuItem>
@@ -533,6 +583,32 @@ export default function UserPage() {
                                     </Button>
                                 </div>
                             )}
+                        </DialogContent>
+                    </Dialog>
+                    {/* MCP配置弹窗 */}
+                    <Dialog open={mcpConfigDialogOpen} onOpenChange={setMcpConfigDialogOpen}>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                                <DialogTitle>MCP Server配置</DialogTitle>
+                            </DialogHeader>
+                            <div className="py-4">
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium mb-2">配置信息</label>
+                                    <textarea
+                                        readOnly
+                                        value={mcpConfig}
+                                        className="w-full h-64 p-3 border rounded-md font-mono text-sm bg-gray-50"
+                                    />
+                                </div>
+                                <div className="flex justify-end space-x-3">
+                                    <Button variant="outline" onClick={() => setMcpConfigDialogOpen(false)}>
+                                        取消
+                                    </Button>
+                                    <Button onClick={handleCopyMcpConfig}>
+                                        复制
+                                    </Button>
+                                </div>
+                            </div>
                         </DialogContent>
                     </Dialog>
                 </div>
