@@ -1,5 +1,6 @@
 package com.git.hui.offer.gather.service.ai;
 
+import com.git.hui.offer.gather.service.ai.impl.spark.SparkLiteModel;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.model.ChatModel;
@@ -35,13 +36,17 @@ public class AiModelFacade {
 
     private final ChatModel chatModel;
 
+    private final SparkLiteModel sparkLiteModel;
+
     /**
      * fixme 待集成多个模型
      *
      * @param chatModel
      */
-    public AiModelFacade(ZhiPuAiChatModel chatModel) {
+    public AiModelFacade(ZhiPuAiChatModel chatModel, SparkLiteModel sparkLiteModel) {
         this.chatModel = chatModel;
+        this.sparkLiteModel = sparkLiteModel;
+
         chatClient = ChatClient.builder(chatModel)
                 .defaultSystem(SYSTEM_PROMPT)
                 .defaultOptions(ChatOptions.builder().stopSequences(Collections.emptyList()).build()) // 取消默认停止符
@@ -69,6 +74,14 @@ public class AiModelFacade {
 
     public ChatModel getChatModel() {
         return chatModel;
+    }
+
+    public ChatClient getSparkClient() {
+        return ChatClient.builder(sparkLiteModel)
+                .defaultSystem(SYSTEM_PROMPT)
+                .defaultOptions(ChatOptions.builder().stopSequences(Collections.emptyList()).build()) // 取消默认停止符
+                .defaultAdvisors(new SimpleLoggerAdvisor())
+                .build();
     }
 
     public String getModel(Media media) {

@@ -248,8 +248,8 @@ public class GatherAiAgent {
          * @param url
          * @return
          */
-        @Tool(description = "从给定的http对应的网页中获取表格内容")
-        public String crawlerHttpTable(@ToolParam(description = "url地址") String url) {
+        @Tool(description = "输入一个http链接，返回这个http链接对应的网页中的表格内容")
+        public String crawlerHttpTable(@ToolParam(description = "http格式的url地址") String url) {
             log.info("开始获取表格内容: {}", url);
             String text = HttpUtil.get(url, CharsetUtil.CHARSET_UTF_8);
             Document document = Jsoup.parse(text);

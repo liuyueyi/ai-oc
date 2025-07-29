@@ -6,3 +6,17 @@ spring:
       chat:
         options:
           model: GLM-4-Flash
+    spark:
+      # https://console.xfyun.cn/services/cbm
+      # api-key 使用你自己申请的进行替换；如果为了安全考虑，可以通过启动参数进行设置
+      base-url: https://spark-api-open.xf-yun.com/v1/chat/completions
+      api-key: ${spark-api-key}
+      chat:
+        options:
+          model: lite
+
+
+logging:
+  level:
+    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
+    com.git.hui.offer.gather.service.GatherAiAgent: debug  # 开发时，输出debug调试日志，用于显示与大模型交互的输入/返回

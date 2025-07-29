@@ -573,11 +573,11 @@ export default function EntryPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            disabled={reRunLoadingId === task.id}
+                            disabled={reRunLoadingId === task.taskId}
                             onClick={async () => {
-                              setReRunLoadingId(task.id);
+                              setReRunLoadingId(task.taskId);
                               try {
-                                await reRunTask(task.id);
+                                await reRunTask(task.taskId);
                                 setTaskQuery(q => ({ ...q }));
                               } catch (err) {
                                 alert("重跑失败: " + (err instanceof Error ? err.message : "未知错误"));
@@ -586,7 +586,7 @@ export default function EntryPage() {
                               }
                             }}
                           >
-                            {reRunLoadingId === task.id ? "重跑中..." : "重跑"}
+                            {reRunLoadingId === task.taskId ? "重跑中..." : "重跑"}
                           </Button>
                         </td>
                       </tr>

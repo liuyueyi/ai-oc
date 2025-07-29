@@ -7,6 +7,14 @@ spring:
       chat:
         options:
           model: GLM-4-Flash
+    spark:
+      # https://console.xfyun.cn/services/cbm
+      # api-key 使用你自己申请的进行替换；如果为了安全考虑，可以通过启动参数进行设置
+      base-url: https://spark-api-open.xf-yun.com/v1/chat/completions
+      api-key: ${spark-api-key}
+      chat:
+        options:
+          model: lite
 
 
 logging:
