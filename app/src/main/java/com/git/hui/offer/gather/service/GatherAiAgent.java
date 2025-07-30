@@ -54,6 +54,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class GatherAiAgent {
+    // 最大聊天次数
+    private final Integer MAX_CHAT_CNT = 10;
     private final OcAiModelContext ocAiModelContext;
     private BeanOutputConverter<ArrayList<GatherOcDraftBo>> gatherResConverter;
 
@@ -158,12 +160,13 @@ public class GatherAiAgent {
      */
     private List<GatherOcDraftBo> autoContinueChat(GatherModelEnum model, Media media, String text) {
         // 创建 memory 实例，保存上下文
-        ChatMemory chatMemory = MessageWindowChatMemory.builder().maxMessages(10).build();
+        ChatMemory chatMemory = MessageWindowChatMemory.builder().maxMessages(MAX_CHAT_CNT).build();
         String chatId = RandomUtil.randomString(6);
 
         SystemMessage systemMessage = new SystemMessage(OcChatModelApi.GATHER_SYSTEM_PROMPT);
         chatMemory.add(chatId, systemMessage);
 
+        // 选择具体交互的大模型
         Pair<ChatModel, String> modelPair = ocAiModelContext.model(ModelSelectReq.of(model, media == null ? GatherModelTypeEnum.CHAT_MODEL : GatherModelTypeEnum.IMAGE_MODEL));
 
         List<String> itemList = new ArrayList<>();
@@ -209,8 +212,8 @@ public class GatherAiAgent {
                 cnt += 1;
 
                 String outText = assistantMessage.getText().trim();
-                itemList.addAll(GatherResFormat.extact(remain, outText));
-                if (outText.endsWith("```") || cnt >= 10) {
+                itemList.addAll(GatherResFormat.extract(remain, outText));
+                if (outText.endsWith("```") || cnt >= MAX_CHAT_CNT) {
                     // 做一个次数限制，避免死循环的调用大模型
                     log.info("{}#经过{}论对话，完成大模型调用", chatId, cnt);
                     break;

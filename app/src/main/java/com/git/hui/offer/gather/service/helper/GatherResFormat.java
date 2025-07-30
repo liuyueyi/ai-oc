@@ -41,7 +41,7 @@ public class GatherResFormat {
      * @param text
      * @return
      */
-    public static List<String> extact(StringBuilder remain, String text) {
+    public static List<String> extract(StringBuilder remain, String text) {
         // 干掉开头的标记
         if (text.startsWith("```json")) {
             text = text.substring("```json".length()).trim();
@@ -74,8 +74,8 @@ public class GatherResFormat {
         return PartialJsonExtractor.extractCompleteElements(remain);
     }
 
-    public static List<String> extact(String text) {
+    public static List<String> extract(String text) {
         StringBuilder builder = new StringBuilder(text);
-        return extact(builder, "");
+        return extract(builder, "");
     }
 }

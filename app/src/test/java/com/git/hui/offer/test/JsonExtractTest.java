@@ -213,7 +213,7 @@ public class JsonExtractTest {
 
     @Test
     public void testExact() {
-        List<String> ans = GatherResFormat.extact(TXT);
+        List<String> ans = GatherResFormat.extract(TXT);
         System.out.println(ans);
     }
 }
