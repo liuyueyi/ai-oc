@@ -61,6 +61,11 @@ public enum StatusEnum {
     // 重复支付
     REPEAT_PAY(400_500_001, "您已经有一笔充值记录在支付中了哦~"),
 
+
+    // ---------------------------------
+    // 模型相关
+    MODEL_NOT_SUPPORT(500_400_002, "模型不支持"),
+    MODEL_MISMATCH_SUPPORT(500_400_002, "没有匹配的模型可用"),
     ;
 
     private int code;

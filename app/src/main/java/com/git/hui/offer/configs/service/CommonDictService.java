@@ -5,6 +5,7 @@ import com.git.hui.offer.components.bizexception.StatusEnum;
 import com.git.hui.offer.configs.dao.entity.CommonDictEntity;
 import com.git.hui.offer.configs.dao.repository.CommonDictRepository;
 import com.git.hui.offer.constants.common.BaseStateEnum;
+import com.git.hui.offer.constants.common.SiteConstants;
 import com.git.hui.offer.web.model.PageListVo;
 import com.git.hui.offer.web.model.req.DictSaveReq;
 import com.git.hui.offer.web.model.req.DictSearchReq;
@@ -12,6 +13,7 @@ import com.git.hui.offer.web.model.res.CommonDictVo;
 import com.git.hui.offer.web.model.res.DictItemVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -139,5 +141,18 @@ public class CommonDictService {
             ans.add(vo);
         });
         return ans;
+    }
+
+    /**
+     * 判断当前运行环境，主要根据配置的 env 来决定，只有 prod 环境下，才会返回 true
+     *
+     * @return true 表示生产环境
+     */
+    public boolean prodEnv() {
+        CommonDictVo dict = queryDict(SiteConstants.APP, SiteConstants.ENV_KEY);
+        if (dict == null || CollectionUtils.isEmpty(dict.items())) {
+            return false;
+        }
+        return SiteConstants.ENV_PROD.equalsIgnoreCase(dict.items().get(0).value());
     }
 }

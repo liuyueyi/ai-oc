@@ -8,6 +8,8 @@ import cn.idev.excel.metadata.data.ReadCellData;
 import cn.idev.excel.read.listener.ReadListener;
 import com.git.hui.offer.components.bizexception.BizException;
 import com.git.hui.offer.components.bizexception.StatusEnum;
+import com.git.hui.offer.configs.service.CommonDictService;
+import com.git.hui.offer.constants.gather.GatherModelEnum;
 import com.git.hui.offer.constants.gather.GatherTargetTypeEnum;
 import com.git.hui.offer.gather.model.GatherFileBo;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
@@ -19,6 +21,7 @@ import com.git.hui.offer.oc.dao.entity.OcDraftEntity;
 import com.git.hui.offer.oc.service.GatherService;
 import com.git.hui.offer.util.json.IntBaseEnum;
 import com.git.hui.offer.util.json.JsonUtil;
+import com.git.hui.offer.util.json.StringBaseEnum;
 import com.git.hui.offer.web.model.req.GatherReq;
 import com.git.hui.offer.web.model.res.GatherVo;
 import com.google.common.base.Joiner;
@@ -65,11 +68,14 @@ public class OfferGatherService {
 
     private final GatherTaskService gatherTaskService;
 
+    private final CommonDictService commonDictService;
+
     @Autowired
-    public OfferGatherService(GatherAiAgent gatherAiAgent, GatherService gatherService, GatherTaskService gatherTaskService) {
+    public OfferGatherService(GatherAiAgent gatherAiAgent, GatherService gatherService, GatherTaskService gatherTaskService, CommonDictService commonDictService) {
         this.gatherAiAgent = gatherAiAgent;
         this.gatherService = gatherService;
         this.gatherTaskService = gatherTaskService;
+        this.commonDictService = commonDictService;
     }
 
     /**
@@ -138,11 +144,12 @@ public class OfferGatherService {
     public GatherVo gatherInfo(GatherReq req, GatherFileBo file) throws IOException {
         GatherTargetTypeEnum targetTypeEnum = IntBaseEnum.getEnumByCode(GatherTargetTypeEnum.class, req.type());
         Assert.notNull(targetTypeEnum, "不支持的gather类型");
+        GatherModelEnum model = StringBaseEnum.getEnumByCode(GatherModelEnum.class, req.model());
         Function<GatherReq, List<GatherOcDraftBo>> func = switch (targetTypeEnum) {
-            case TEXT -> gatherByText(req.content());
-            case HTML_TEXT -> gatherByHtmlText(req.content());
-            case HTTP_URL -> gatherByHttpUrl(req.content());
-            case IMAGE -> gatherByImg(file);
+            case TEXT -> gatherByText(model, req.content());
+            case HTML_TEXT -> gatherByHtmlText(model, req.content());
+            case HTTP_URL -> gatherByHttpUrl(model, req.content());
+            case IMAGE -> gatherByImg(model, file);
             default -> null;
         };
         if (func == null) {
@@ -172,6 +179,9 @@ public class OfferGatherService {
             throw new BizException(StatusEnum.UNEXPECT_ERROR, "不支持的文件类型");
         }
 
+        // 获取用户选中的模型
+        GatherModelEnum model = StringBaseEnum.getEnumByCode(GatherModelEnum.class, req.model());
+
         List<OcDraftEntity> insert = new ArrayList<>();
         List<OcDraftEntity> update = new ArrayList<>();
         StringBuilder builder;
@@ -185,7 +195,7 @@ public class OfferGatherService {
 
             try {
                 // 文本解析
-                List<GatherOcDraftBo> list = gatherAiAgent.gatherByText(builder.toString());
+                List<GatherOcDraftBo> list = gatherAiAgent.gatherByText(model, builder.toString());
                 log.info("大模型提取后业务对象是：{}", JsonUtil.toStr(list));
                 GatherVo tmp = gatherService.saveDraftDataList(DraftConvert.convert(list));
                 insert.addAll(tmp.getInsertList());
@@ -204,21 +214,32 @@ public class OfferGatherService {
      *
      * @return
      */
-    private Function<GatherReq, List<GatherOcDraftBo>> gatherByText(String txt) {
-        String testText = StringUtils.isBlank(txt) ? ResourceUtil.readUtf8Str("data/oc.txt") : txt;
-        return (s) -> {
-            return gatherAiAgent.gatherByText(testText);
-        };
+    private Function<GatherReq, List<GatherOcDraftBo>> gatherByText(GatherModelEnum model, String txt) {
+        if (commonDictService.prodEnv() && StringUtils.isBlank(txt)) {
+            // 生产环境，传入了空字符串，不做任何处理
+            return (s) -> List.of();
+        } else {
+            // 开发测试时，不传就用默认的输入参数
+            final String testText = StringUtils.isBlank(txt) ? ResourceUtil.readUtf8Str("data/oc.txt") : txt;
+            return (s) -> {
+                return gatherAiAgent.gatherByText(model, testText);
+            };
+        }
     }
 
-    private Function<GatherReq, List<GatherOcDraftBo>> gatherByHtmlText(String text) {
+    private Function<GatherReq, List<GatherOcDraftBo>> gatherByHtmlText(GatherModelEnum model, String text) {
+        if (commonDictService.prodEnv() && StringUtils.isBlank(text)) {
+            // 生产环境，传入了空字符串，不做任何处理
+            return (s) -> List.of();
+        }
+
         String testText = StringUtils.isBlank(text) ? ResourceUtil.readUtf8Str("data/oc-html.txt") : text;
         return (s) -> {
-            return gatherAiAgent.gatherByAutoSplit(testText);
+            return gatherAiAgent.gatherByAutoSplit(model, testText);
         };
     }
 
-    private Function<GatherReq, List<GatherOcDraftBo>> gatherByHttpUrl(String filePath) {
+    private Function<GatherReq, List<GatherOcDraftBo>> gatherByHttpUrl(GatherModelEnum model, String filePath) {
         URI uri;
         try {
             // 做一个url的合法性判断
@@ -232,13 +253,19 @@ public class OfferGatherService {
         }
 
         return (s) -> {
-            return gatherAiAgent.gatherByAutoSplit(filePath);
+            return gatherAiAgent.gatherByAutoSplit(model, filePath);
         };
     }
 
-    private Function<GatherReq, List<GatherOcDraftBo>> gatherByImg(GatherFileBo file) throws IOException {
+    private Function<GatherReq, List<GatherOcDraftBo>> gatherByImg(GatherModelEnum model, GatherFileBo file) throws IOException {
         byte[] bytes;
         MimeType type;
+        if (file == null && commonDictService.prodEnv()) {
+            // 生产环境，没有传图片，直接返回空
+            return (s) -> List.of();
+        }
+
+
         if (file == null) {
             // 使用默认的图片进行兜底
             Resource resource = new ClassPathResource("data/oc-img2.jpg");
@@ -249,7 +276,7 @@ public class OfferGatherService {
             type = MimeTypeUtils.parseMimeType(file.contentType());
         }
         return (s) -> {
-            return gatherAiAgent.gatherByImgAutoSplit(type, bytes);
+            return gatherAiAgent.gatherByImgAutoSplit(model, type, bytes);
         };
     }
 

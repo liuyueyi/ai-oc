@@ -3,8 +3,12 @@ package com.git.hui.offer.gather.service;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
+import com.git.hui.offer.constants.gather.GatherModelEnum;
+import com.git.hui.offer.constants.gather.GatherModelTypeEnum;
 import com.git.hui.offer.gather.model.GatherOcDraftBo;
-import com.git.hui.offer.gather.service.ai.AiModelFacade;
+import com.git.hui.offer.gather.model.ModelSelectReq;
+import com.git.hui.offer.gather.service.ai.OcAiModelContext;
+import com.git.hui.offer.gather.service.ai.OcChatModelApi;
 import com.git.hui.offer.gather.service.helper.GatherResFormat;
 import com.git.hui.offer.util.json.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +21,7 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -29,6 +34,7 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
 
@@ -48,20 +54,21 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class GatherAiAgent {
-    private final AiModelFacade aiModelFacade;
+    private final OcAiModelContext ocAiModelContext;
     private BeanOutputConverter<ArrayList<GatherOcDraftBo>> gatherResConverter;
 
     @Autowired
-    public GatherAiAgent(AiModelFacade aiModelFacade) {
-        this.aiModelFacade = aiModelFacade;
+    public GatherAiAgent(OcAiModelContext aiModelFacade) {
+        this.ocAiModelContext = aiModelFacade;
         this.gatherResConverter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
         });
     }
 
 
     // 传入数据太长，导致解析的结果被截断的场景时，转用下面的 gatherByAutoSplit 调用方法
-    public List<GatherOcDraftBo> gatherByText(String text) {
-        ArrayList<GatherOcDraftBo> list = this.aiModelFacade.getChatClient().prompt(text)
+    public List<GatherOcDraftBo> gatherByText(GatherModelEnum model, String text) {
+        ArrayList<GatherOcDraftBo> list = this.ocAiModelContext.chatClient(ModelSelectReq.of(model, GatherModelTypeEnum.CHAT_MODEL))
+                .prompt(text)
                 .tools(new CrawlerTools())
                 .call()
                 .entity(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
@@ -70,7 +77,7 @@ public class GatherAiAgent {
     }
 
     // 适用于图片中的数据条目较小的场景，大模型可以一次将结果全部返回
-    public List<GatherOcDraftBo> gatherByImg(MimeType type, byte[] bytes) {
+    public List<GatherOcDraftBo> gatherByImg(GatherModelEnum model, MimeType type, byte[] bytes) {
         String rid = UUID.randomUUID().toString();
         Media media = Media.builder().mimeType(type)
                 .data(bytes)
@@ -81,7 +88,8 @@ public class GatherAiAgent {
                 .media(media)
                 .text("提取图片中的表格信息，按照指定要求返回")
                 .build();
-        ArrayList<GatherOcDraftBo> list = this.aiModelFacade.getImgChatClient().prompt(new Prompt(msg))
+        ArrayList<GatherOcDraftBo> list = this.ocAiModelContext.chatClient(ModelSelectReq.of(model, GatherModelTypeEnum.IMAGE_MODEL))
+                .prompt(new Prompt(msg))
                 .tools(new CrawlerTools())
                 .call()
                 .entity(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
@@ -96,7 +104,7 @@ public class GatherAiAgent {
      * @param bytes
      * @return
      */
-    public List<GatherOcDraftBo> gatherByFile(MimeType type, byte[] bytes) {
+    public List<GatherOcDraftBo> gatherByFile(GatherModelEnum model, MimeType type, byte[] bytes) {
         String rid = UUID.randomUUID().toString();
         Media media = Media.builder().mimeType(type)
                 .data(bytes)
@@ -107,7 +115,8 @@ public class GatherAiAgent {
                 .media(media)
                 .text("读取给你的文件，按照指定要求返回")
                 .build();
-        ArrayList<GatherOcDraftBo> list = this.aiModelFacade.getChatClient().prompt(new Prompt(msg))
+        ArrayList<GatherOcDraftBo> list = this.ocAiModelContext.chatClient(ModelSelectReq.of(model, GatherModelTypeEnum.CHAT_MODEL))
+                .prompt(new Prompt(msg))
                 .tools(new CrawlerTools())
                 .call()
                 .entity(new ParameterizedTypeReference<ArrayList<GatherOcDraftBo>>() {
@@ -121,8 +130,8 @@ public class GatherAiAgent {
      * @param text
      * @return
      */
-    public List<GatherOcDraftBo> gatherByAutoSplit(String text) {
-        return autoContinueChat(null, text);
+    public List<GatherOcDraftBo> gatherByAutoSplit(GatherModelEnum model, String text) {
+        return autoContinueChat(model, null, text);
     }
 
 
@@ -133,27 +142,29 @@ public class GatherAiAgent {
      * @param bytes
      * @return
      */
-    public List<GatherOcDraftBo> gatherByImgAutoSplit(MimeType type, byte[] bytes) {
+    public List<GatherOcDraftBo> gatherByImgAutoSplit(GatherModelEnum model, MimeType type, byte[] bytes) {
         String rid = UUID.randomUUID().toString();
         Media media = Media.builder().mimeType(type)
                 .data(bytes)
                 .name("图片-" + type.getSubtype() + "-" + rid)
                 .id("")
                 .build();
-        return autoContinueChat(media, "提取图片中的表格信息，按照指定要求返回");
+        return autoContinueChat(model, media, "提取图片中的表格信息，按照指定要求返回");
     }
 
     /**
      * 针对大模型响应结果截断的场景，进行多轮对话，尝试获取完整的返回
      * 实现原理：基于 chatModel, 借助 ChatMemory 自动实现多轮对话，
      */
-    private List<GatherOcDraftBo> autoContinueChat(Media media, String text) {
+    private List<GatherOcDraftBo> autoContinueChat(GatherModelEnum model, Media media, String text) {
         // 创建 memory 实例，保存上下文
         ChatMemory chatMemory = MessageWindowChatMemory.builder().maxMessages(10).build();
         String chatId = RandomUtil.randomString(6);
 
-        SystemMessage systemMessage = new SystemMessage(AiModelFacade.SYSTEM_PROMPT);
+        SystemMessage systemMessage = new SystemMessage(OcChatModelApi.GATHER_SYSTEM_PROMPT);
         chatMemory.add(chatId, systemMessage);
+
+        Pair<ChatModel, String> modelPair = ocAiModelContext.model(ModelSelectReq.of(model, media == null ? GatherModelTypeEnum.CHAT_MODEL : GatherModelTypeEnum.IMAGE_MODEL));
 
         List<String> itemList = new ArrayList<>();
         StringBuilder remain = new StringBuilder();
@@ -177,7 +188,7 @@ public class GatherAiAgent {
 
             // 工具
             ChatOptions chatOptions = ToolCallingChatOptions.builder()
-                    .model(aiModelFacade.getModel(media))
+                    .model(modelPair.getSecond())
                     // 注册给大模型回调的工具
                     .toolCallbacks(ToolCallbacks.from(new CrawlerTools()))
                     .build();
@@ -187,7 +198,7 @@ public class GatherAiAgent {
                     // 一行显示日志
                     log.debug("{}#req: {}", chatId, StringUtils.replaceChars(query.toString(), "\n", ""));
                 }
-                ChatResponse response = aiModelFacade.getChatModel().call(query);
+                ChatResponse response = modelPair.getFirst().call(query);
                 AssistantMessage assistantMessage = response.getResult().getOutput();
                 if (log.isDebugEnabled()) {
                     // 一行显示和日志

@@ -81,4 +81,13 @@ public class SparkLiteModel implements ChatModel {
         ChatResponse response = new ChatResponse(generations, SparkModelConvert.from(reqTime, model, chatCompletionChunk));
         return response;
     }
+
+    /**
+     * 默认的模型名
+     *
+     * @return
+     */
+    public String defaultModelName() {
+        return sparkConfig.getChat().options().model();
+    }
 }
