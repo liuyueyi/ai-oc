@@ -15,6 +15,18 @@ spring:
       chat:
         options:
           model: lite
+    mcp:
+      client:
+        #  使用本地的mcp server，通过进程通信，我们这里演示的是使用 selenium 来实现网页数据抓取
+        stdio:
+          servers-configuration: classpath:mcp-servers.json
+        # 如果想要体验 MCP Server，请将下面的 false 改成 true
+        enabled: false
+        name: 校招派MCP
+        version: 1.0.0
+        request-timeout: 30s
+        # 注意，这里使用的是异步，因此代码中获取的也应该是异步的 McpAsyncClient
+        type: async
 
 
 logging:

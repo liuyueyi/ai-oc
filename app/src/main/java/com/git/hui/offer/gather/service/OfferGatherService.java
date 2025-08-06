@@ -240,16 +240,8 @@ public class OfferGatherService {
     }
 
     private Function<GatherReq, List<GatherOcDraftBo>> gatherByHttpUrl(GatherModelEnum model, String filePath) {
-        URI uri;
-        try {
-            // 做一个url的合法性判断
-            uri = URI.create(filePath.trim());
-        } catch (Exception e) {
-            throw new BizException(StatusEnum.UNEXPECT_ERROR, "请输入合法的url地址");
-        }
-        if (uri.getScheme() == null || !uri.getScheme().startsWith("http")) {
-            // 使用默认的网页进行兜底
-            throw new BizException(StatusEnum.UNEXPECT_ERROR, "请输入合法的url地址");
+        if (!filePath.matches(".*https?://[\\w.-]+(?:\\.[\\w\\.-]+)+[/\\w\\.-]*.*")) {
+            throw new BizException(StatusEnum.UNEXPECT_ERROR, "请输入包含合法url地址的文本");
         }
 
         return (s) -> {

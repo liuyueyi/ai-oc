@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "selenium": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@angiejones/mcp-selenium",
+        "D:/"
+      ]
+    }
+  }
+}

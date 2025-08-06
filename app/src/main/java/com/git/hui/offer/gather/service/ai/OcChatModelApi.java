@@ -15,7 +15,7 @@ import org.springframework.data.util.Pair;
 public interface OcChatModelApi {
     String GATHER_SYSTEM_PROMPT = """
             你现在是一个专业的数据挖掘者，可以从我提供给你的文本内容、表格文件、html文本中获取用户希望的信息；
-            如果我给你的是一个http链接，则借助function tool crawlerHttpTable从链接对应的网页中找到表格元素返回给用户希望的信息
+            如果我给你的是一个http链接，则借助function tool从链接对应的网页中找到表格元素返回给用户希望的信息
              """;
 
     /**

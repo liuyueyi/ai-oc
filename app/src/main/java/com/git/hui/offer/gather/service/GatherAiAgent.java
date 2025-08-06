@@ -11,6 +11,8 @@ import com.git.hui.offer.gather.service.ai.OcAiModelContext;
 import com.git.hui.offer.gather.service.ai.OcChatModelApi;
 import com.git.hui.offer.gather.service.helper.GatherResFormat;
 import com.git.hui.offer.util.json.JsonUtil;
+import io.modelcontextprotocol.client.McpAsyncClient;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -28,14 +30,18 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.support.ToolCallbacks;
+import org.springframework.ai.tool.StaticToolCallbackProvider;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeType;
 
 import java.util.ArrayList;
@@ -59,13 +65,43 @@ public class GatherAiAgent {
     private final OcAiModelContext ocAiModelContext;
     private BeanOutputConverter<ArrayList<GatherOcDraftBo>> gatherResConverter;
 
+    /**
+     * 给大模型使用的工具提供类
+     */
+    private ToolCallbackProvider toolCallbackProvider;
+
     @Autowired
     public GatherAiAgent(OcAiModelContext aiModelFacade) {
         this.ocAiModelContext = aiModelFacade;
         this.gatherResConverter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
         });
+
     }
 
+    /**
+     * 将MCP Server注册大模型的回调工具
+     *
+     * @param mcpClients
+     */
+    @Autowired(required = false)
+    public void setToolCallbackProvider(List<McpAsyncClient> mcpClients) {
+        if (!CollectionUtils.isEmpty(mcpClients)) {
+            // mcp server provider
+            this.toolCallbackProvider = new AsyncMcpToolCallbackProvider(mcpClients);
+            log.info("----> 将 MCP Server 注册为大模型的回调工具 <-----");
+        }
+    }
+
+    /**
+     * 没有MCP Server时，使用本地的工具作为大模型的回调工具
+     */
+    @PostConstruct
+    public void initLocalToolCallback() {
+        if (this.toolCallbackProvider == null) {
+            this.toolCallbackProvider = new StaticToolCallbackProvider(ToolCallbacks.from(new CrawlerTools()));
+            log.info("----> 将应用的 CrawlerTools 注册为大模型的回调工具 <-----");
+        }
+    }
 
     // 传入数据太长，导致解析的结果被截断的场景时，转用下面的 gatherByAutoSplit 调用方法
     public List<GatherOcDraftBo> gatherByText(GatherModelEnum model, String text) {
@@ -193,7 +229,7 @@ public class GatherAiAgent {
             ChatOptions chatOptions = ToolCallingChatOptions.builder()
                     .model(modelPair.getSecond())
                     // 注册给大模型回调的工具
-                    .toolCallbacks(ToolCallbacks.from(new CrawlerTools()))
+                    .toolCallbacks(toolCallbackProvider.getToolCallbacks())
                     .build();
             try {
                 Prompt query = new Prompt(chatMemory.get(chatId), chatOptions);

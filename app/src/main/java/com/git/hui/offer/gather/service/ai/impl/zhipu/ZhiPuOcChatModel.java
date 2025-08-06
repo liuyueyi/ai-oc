@@ -2,14 +2,18 @@ package com.git.hui.offer.gather.service.ai.impl.zhipu;
 
 import com.git.hui.offer.constants.gather.GatherModelEnum;
 import com.git.hui.offer.gather.service.ai.impl.AbsOcChatModelApi;
+import io.modelcontextprotocol.client.McpAsyncClient;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author YiHui
@@ -27,13 +31,15 @@ public class ZhiPuOcChatModel extends AbsOcChatModelApi {
     private final ChatClient chatClient;
     private final ChatClient imgClient;
 
-    public ZhiPuOcChatModel(ZhiPuAiChatModel zhiPuAiChatModel) {
+    public ZhiPuOcChatModel(ZhiPuAiChatModel zhiPuAiChatModel, List<McpAsyncClient> mcpClients) {
         this.zhiPuAiChatModel = zhiPuAiChatModel;
 
         chatClient = ChatClient.builder(zhiPuAiChatModel)
                 .defaultSystem(GATHER_SYSTEM_PROMPT)
                 .defaultOptions(ChatOptions.builder().stopSequences(Collections.emptyList()).build()) // 取消默认停止符
                 .defaultAdvisors(new SimpleLoggerAdvisor())
+                // 将MCP Client 注册为工具
+                .defaultToolCallbacks(new AsyncMcpToolCallbackProvider(mcpClients))
                 .build();
 
         // 图片理解
